@@ -51,5 +51,22 @@
         "compress": true
       }
     }
-  }
+  },
+  "repos": [
+    {
+      "repoName": "fk-config-service-confd",
+      "repoVersion": 1,
+      "repoReferenceType": "HEAD"
+    },
+    {
+      "repoName": "logsvc",
+      "repoVersion": 1,
+      "repoReferenceType": "HEAD"
+    },
+    {
+      "repoName": "cosmos-ubuntu-xenial-prod",
+      "repoVersion": 1,
+      "repoReferenceType": "HEAD"
+    }
+  ]
 }

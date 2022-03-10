@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/go-dmux/breaker"
 	"sync"
 	"time"
 )
@@ -61,10 +62,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{})
+	Consume(msg interface{}, cirBreak *breaker.Breaker)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int)
+	BatchConsume(msg []interface{}, version int, cirBreaker *breaker.Breaker)
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -190,8 +191,8 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
+	cirBreak := breaker.New(3, 2, 1*time.Second)
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, cirBreak)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
@@ -208,7 +209,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, cirBreak)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
@@ -231,11 +232,11 @@ func shutdown(ch []chan interface{}, wg *sync.WaitGroup) {
 	wg.Wait()
 }
 
-func setup(size, qsize, batchSize int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
+func setup(size, qsize, batchSize int, sink Sink, version int, cirBreak *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
 	if version == 1 && batchSize == 1 {
-		return simpleSetup(size, qsize, sink)
+		return simpleSetup(size, qsize, sink, cirBreak)
 	} else {
-		return batchSetup(size, qsize, batchSize, sink, version)
+		return batchSetup(size, qsize, batchSize, sink, version, cirBreak)
 	}
 }
 
@@ -251,7 +252,7 @@ func setup(size, qsize, batchSize int, sink Sink, version int) ([]chan interface
 // BatchConsumer will update its batch array index from one entry each of respective channel index. (This provides
 // ability for consumer to consume in parallel) and then flush the batch.
 // Close of any channel in a BatchConsumer will stop the BatchConsumer.
-func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
+func batchSetup(sz, qsz, batchsz int, sink Sink, version int, cirBreaker *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
 	size := sz * batchsz // create double nuber of channels
 
 	wg := new(sync.WaitGroup)
@@ -294,7 +295,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version)
+				sk.BatchConsume(batch, version, cirBreaker)
 			}
 
 		}(i)
@@ -302,7 +303,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	return ch, wg
 }
 
-func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGroup) {
+func simpleSetup(size, qsize int, sink Sink, cirBreaker *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
@@ -311,7 +312,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
-				sk.Consume(msg)
+				sk.Consume(msg, cirBreaker)
 			}
 			wg.Done()
 		}(i)
