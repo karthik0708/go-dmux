@@ -9,7 +9,10 @@
         "dmux": {
           "size": 250,
           "distributor_type": "Hash",
-          "batch_size": 1
+          "batch_size": 1,
+          "error_threshold": 2,
+          "success_threshold": 3,
+          "breaker_timeout": "0.1s"
         },
         "source": {
           "name": "source_name",
@@ -51,22 +54,5 @@
         "compress": true
       }
     }
-  },
-  "repos": [
-    {
-      "repoName": "fk-config-service-confd",
-      "repoVersion": 1,
-      "repoReferenceType": "HEAD"
-    },
-    {
-      "repoName": "logsvc",
-      "repoVersion": 1,
-      "repoReferenceType": "HEAD"
-    },
-    {
-      "repoName": "cosmos-ubuntu-xenial-prod",
-      "repoVersion": 1,
-      "repoReferenceType": "HEAD"
-    }
-  ]
+  }
 }

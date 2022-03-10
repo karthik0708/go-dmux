@@ -160,6 +160,8 @@ func (h *HTTPSink) Consume(msg interface{}, cirBreaker *breaker.Breaker) {
 
 }
 
+//retryPre implements a circuit breaker with parameters taken from config to provide a guardrail
+//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
 func (h *HTTPSink) retryPre(msg interface{}, url string, cirBreaker *breaker.Breaker) {
 	for {
 		if err := cirBreaker.Run(breakerOnPre(msg, url, h)); err == nil {
@@ -183,6 +185,8 @@ func breakerOnPre(msg interface{}, url string, h *HTTPSink) func() error {
 	}
 }
 
+//retryPost implements a circuit breaker with parameters taken from config to provide a guardrail
+//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
 func (h *HTTPSink) retryPost(msg interface{}, state bool,
 	url string, cirBreaker *breaker.Breaker) {
 	for {
@@ -208,6 +212,8 @@ func breakerOnPost(msg interface{}, url string, h *HTTPSink, state bool) func() 
 	}
 }
 
+//retryExecute implements a circuit breaker with parameters taken from config to provide a guardrail
+//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), cirBreaker *breaker.Breaker) bool {
 	var respCode int

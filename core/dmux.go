@@ -30,7 +30,10 @@ type DmuxConf struct {
 	SinkQSize       int             `json:"sink_queue_size"`
 	DistributorType DistributorType `json:"distributor_type"`
 	BatchSize       int             `json:"batch_size"`
-	Version         int             `json:"version"`
+	Version         int 			`json:"version"`
+	ErrorThreshold  int 			`json:"error_threshold"`
+	SuccessThreshold int 			`json:"success_threshold"`
+	BreakerTimeout  Duration   `json:"breaker_timeout"`
 }
 
 // ControlMsg is the struct passed to Dmux control Channel to enable it
@@ -99,12 +102,17 @@ type Dmux struct {
 	err                    chan error
 	distribute             Distributor
 	version                int
+	errorThreshold		   int
+	successThreshold       int
+	breakerTimeout			time.Duration
 }
 
 const defaultSourceQSize int = 1
 const defaultSinkQSize int = 100
 const defaultBatchSize int = 1
 const defaultVersion int = 1
+const defaultThreshold int = 1
+const defaultTimeout = 1*time.Second
 
 //GetDmux is public method used to Get instance of a Dmux struct
 func GetDmux(conf DmuxConf, d Distributor) *Dmux {
@@ -115,6 +123,9 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 	sinkQSize := defaultSinkQSize
 	batchSize := defaultBatchSize
 	version := defaultVersion
+	errorThreshold := defaultThreshold
+	successThreshold := defaultThreshold
+	breakerTimeout := defaultTimeout
 
 	if conf.SourceQSize > 0 {
 		sourceQSize = conf.SourceQSize
@@ -132,7 +143,20 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 		version = conf.Version
 	}
 
-	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version}
+	if conf.ErrorThreshold > 1 {
+		errorThreshold = conf.ErrorThreshold
+	}
+
+	if conf.SuccessThreshold > 1 {
+		successThreshold = conf.SuccessThreshold
+	}
+
+	if conf.BreakerTimeout.Duration > 1*time.Second {
+		breakerTimeout = conf.BreakerTimeout.Duration
+	}
+
+
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, successThreshold, breakerTimeout}
 	return output
 }
 
@@ -191,8 +215,9 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	cirBreak := breaker.New(3, 2, 1*time.Second)
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, cirBreak)
+	//create a circuit Breaker
+	cirBreaker := breaker.New(d.errorThreshold, d.successThreshold, d.breakerTimeout)
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, cirBreaker)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
@@ -209,7 +234,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, cirBreak)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, cirBreaker)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
