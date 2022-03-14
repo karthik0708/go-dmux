@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"github.com/go-dmux/breaker"
+	"github.com/eapache/go-resiliency/breaker"
 	"sync"
 	"time"
 )

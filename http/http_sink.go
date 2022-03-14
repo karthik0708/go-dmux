@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/go-dmux/breaker"
+	"github.com/eapache/go-resiliency/breaker"
 	"io"
 	"io/ioutil"
 	"log"

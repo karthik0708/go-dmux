@@ -1,0 +1,18 @@
+2022/03/14 20:05:14 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 breaker_timeout:0.1s distributor_type:Hash error_threshold:2 size:250 success_threshold:3] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
+2022/03/14 20:05:14 Starting  kafka_http
+2022/03/14 20:05:14 Connected to [::1]:2181
+2022/03/14 20:05:14 Authenticated: id=72077625656475652, timeout=6000
+2022/03/14 20:05:14 Re-submitting `0` credentials after reconnect
+2022/03/14 20:40:25 /sample-topic/0//74 after kafka source
+2022/03/14 20:40:29 /sample-topic/0//74 before http sink
+2022/03/14 20:40:29 Recv loop terminated: err=read tcp [::1]:62424->[::1]:2181: i/o timeout
+2022/03/14 20:40:49 Send loop terminated: err=<nil>
+2022/03/14 20:40:52 Connected to 127.0.0.1:2181
+2022/03/14 20:40:52 Authentication failed: zk: session has been expired by the server
+2022/03/14 20:42:20 Failed to connect to [::1]:2181: dial tcp [::1]:2181: i/o timeout
+2022/03/14 20:42:29 /sample-topic/0//74 after http sink, status = true
+2022/03/14 20:42:29 Failed to connect to 127.0.0.1:2181: dial tcp 127.0.0.1:2181: i/o timeout
+2022/03/14 20:42:31 Failed to connect to [::1]:2181: dial tcp [::1]:2181: i/o timeout
+2022/03/14 20:42:31 Connected to 127.0.0.1:2181
+2022/03/14 20:42:31 Authenticated: id=72077625656475653, timeout=6000
+2022/03/14 20:42:31 Re-submitting `0` credentials after reconnect
