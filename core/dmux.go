@@ -32,7 +32,6 @@ type DmuxConf struct {
 	BatchSize       int             `json:"batch_size"`
 	Version         int 			`json:"version"`
 	ErrorThreshold  int 			`json:"error_threshold"`
-	SuccessThreshold int 			`json:"success_threshold"`
 	BreakerTimeout  Duration   `json:"breaker_timeout"`
 }
 
@@ -103,7 +102,6 @@ type Dmux struct {
 	distribute             Distributor
 	version                int
 	errorThreshold		   int
-	successThreshold       int
 	breakerTimeout			time.Duration
 }
 
@@ -124,7 +122,6 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 	batchSize := defaultBatchSize
 	version := defaultVersion
 	errorThreshold := defaultThreshold
-	successThreshold := defaultThreshold
 	breakerTimeout := defaultTimeout
 
 	if conf.SourceQSize > 0 {
@@ -147,16 +144,12 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 		errorThreshold = conf.ErrorThreshold
 	}
 
-	if conf.SuccessThreshold > 1 {
-		successThreshold = conf.SuccessThreshold
-	}
-
 	if conf.BreakerTimeout.Duration > 1*time.Second {
 		breakerTimeout = conf.BreakerTimeout.Duration
 	}
 
 
-	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, successThreshold, breakerTimeout}
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, breakerTimeout}
 	return output
 }
 
@@ -216,7 +209,9 @@ func getStopMsg() ControlMsg {
 
 func (d *Dmux) run(source Source, sink Sink) {
 	//create a circuit Breaker
-	cirBreaker := breaker.New(d.errorThreshold, d.successThreshold, d.breakerTimeout)
+	//Success threshold value does not matter because once the message is processed it breaks out of
+	//the retry loop and the breaker will be reset at sink for another message
+	cirBreaker := breaker.New(d.errorThreshold, 1, d.breakerTimeout)
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, cirBreaker)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source

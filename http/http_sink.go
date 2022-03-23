@@ -161,85 +161,77 @@ func (h *HTTPSink) Consume(msg interface{}, cirBreaker *breaker.Breaker) {
 }
 
 //retryPre implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
+//Once the errorThreshold is reached breaker is activated
 func (h *HTTPSink) retryPre(msg interface{}, url string, cirBreaker *breaker.Breaker) {
 	for {
-		if err := cirBreaker.Run(breakerOnPre(msg, url, h)); err == nil {
+		err := cirBreaker.Run(func() error{
+			status := h.pre(h.hook, msg, url)
+			if status {
+				return nil
+			} else{
+				return errors.New("pre processing failed")
+			}
+		})
+		if err == nil {
 			break
-		}
-		log.Println("retry in http_sink pre ", url)
-		time.Sleep(h.conf.RetryInterval.Duration)
-	}
-}
-
-func breakerOnPre(msg interface{}, url string, h *HTTPSink) func() error {
-	status := h.pre(h.hook, msg, url)
-	if status {
-		return func() error {
-			return nil
-		}
-	} else{
-		return func() error {
-			return errors.New("error in pre")
+		} else{
+			if err != breaker.ErrBreakerOpen{
+				log.Println("retry in http_sink pre ", url)
+				time.Sleep(h.conf.RetryInterval.Duration)
+			}
 		}
 	}
 }
 
 //retryPost implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
+//Once the errorThreshold is reached breaker is activated
 func (h *HTTPSink) retryPost(msg interface{}, state bool,
 	url string, cirBreaker *breaker.Breaker) {
 	for {
-		if err := cirBreaker.Run(breakerOnPost(msg, url, h, state)); err == nil {
+		err := cirBreaker.Run(func() error{
+			status := h.post(h.hook, msg, state, url)
+			if status{
+				return nil
+			} else{
+				return errors.New("post processing failed")
+			}
+		})
+		if err == nil {
 			break
-		}
-		log.Println("retry in http_sink post ", url)
-		time.Sleep(h.conf.RetryInterval.Duration)
-	}
-
-}
-
-func breakerOnPost(msg interface{}, url string, h *HTTPSink, state bool) func() error {
-	status := h.post(h.hook, msg, state, url)
-	if status {
-		return func() error {
-			return nil
-		}
-	} else{
-		return func() error {
-			return errors.New("error in post")
+		} else{
+			if err != breaker.ErrBreakerOpen{
+				log.Println("retry in http_sink post ", url)
+				time.Sleep(h.conf.RetryInterval.Duration)
+			}
 		}
 	}
+
 }
 
 //retryExecute implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated and closed when successThreshold is reached
+//Once the errorThreshold is reached breaker is activated
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), cirBreaker *breaker.Breaker) bool {
-	var respCode int
+	var outcome bool = false
 	for {
-		if err := cirBreaker.Run(breakerOnExec(method, url, headers, data, h, &respCode)); err == nil {
-			nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
-			err1, outcome := respEval(respCode, nonRetriableHttpStatusCodes)
-			if err1 == nil {
-				return outcome
+		err := cirBreaker.Run(func() error {
+			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
+			if status {
+				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
+				err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
+				outcome = tmp
+				return err
+			} else{
+				return errors.New("execution failed")
 			}
-		}
-		log.Printf("retry in execute %s \t %s ", method, url)
-		time.Sleep(h.conf.RetryInterval.Duration)
-	}
-}
-
-func breakerOnExec(method string, url string, headers map[string]string, data []byte, h *HTTPSink, addrCode *int) func() error {
-	status, code := h.execute(method, url, headers, bytes.NewReader(data))
-	*addrCode = code
-	if status{
-		return func() error {
-			return nil
-		}
-	} else{
-		return func() error {
-			return errors.New("error in exec")
+		})
+		if err == nil{
+			return outcome
+		} else {
+			if err != breaker.ErrBreakerOpen{
+				log.Printf("retry in execute %s \t %s ", method, url)
+				time.Sleep(h.conf.RetryInterval.Duration)
+			}
 		}
 	}
 }

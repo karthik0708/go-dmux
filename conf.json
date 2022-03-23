@@ -10,9 +10,8 @@
           "size": 250,
           "distributor_type": "Hash",
           "batch_size": 1,
-          "error_threshold": 2,
-          "success_threshold": 3,
-          "breaker_timeout": "0.1s"
+          "error_threshold": 3,
+          "breaker_timeout": "10s"
         },
         "source": {
           "name": "source_name",
