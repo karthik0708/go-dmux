@@ -1,52 +1,69 @@
+import json
 import os
 import re
-import time
-from datetime import timedelta
+import sys
 
 import requests
-from timeloop import Timeloop
+import time
 
 endpoint = "http://localhost:9999/metrics"
-tl = Timeloop()
-TIME_BETWEEN_POLLING = 3
+TIME_BETWEEN_POLLING = 5
 metric_prefix = "dmux"
 
 
 def push_metric(metric, current_epoch):
-  result = re.findall(r"(\w+)({(\S+)})? (\S+)", metric)
-  result = result[0]
-  metric_name = result[0]
-  metric_tags = result[2]
-  metric_value = result[3]
+    result = re.findall(r"(\w+)({(\S+)})? (\S+)", metric)
+    result = result[0]
+    metric_name = result[0]
+    metric_tags = result[2]
+    metric_value = result[3]
 
-  metric_tags = metric_tags.replace(",", " ")
-  metric_tags = metric_tags.replace('"', '')
+    metric_tags = metric_tags.replace(",", " ")
+    metric_tags = metric_tags.replace('"', '')
 
-  tsdbMetric = current_epoch + " " + metric_prefix + "." + metric_name + " " + metric_value + " " + metric_tags
-
-  # print(tsdbMetric)
-
-  os.system("echo "+metric_tags+" | /usr/bin/cosmos")
+    tsdbMetric = current_epoch + " " + metric_prefix + "." + metric_name + " " + metric_value + " " + metric_tags
 
 
-def process(metrics):
-  metrics = metrics.splitlines(True)
-  metrics = [x for x in metrics if not x.startswith('#')]
-  metrics = [x for x in metrics if not x.startswith("go_")]
-  for metric in metrics:
-    push_metric(metric, str(int(time.time())))
-  print("++++++++++++++++++++++++++++++++++++++++++++++++++")
+    # print(tsdbMetric)
+
+    os.system("echo " + metric_tags + " | /usr/bin/cosmos")
 
 
-@tl.job(interval=timedelta(seconds=TIME_BETWEEN_POLLING))
-def hit_request():
-  try:
-    response = requests.get(endpoint)
-    process(response.text)
-  except:
-    print("error connecting to end point")
-    return
+def process(metrics, req_type):
+    metrics = metrics.splitlines(True)
+
+    for metric in metrics:
+        if metric.startswith('#'):
+            continue
+
+        if req_type == "Custom" and metric.startswith("go_"):
+            continue
+
+        if req_type == "System" and (not metric.startswith("go_")):
+            continue
+
+        push_metric(metric, str(int(time.time())))
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+
+def hit_request(req_type):
+    try:
+        response = requests.get(endpoint)
+    except requests.ConnectionError:
+        print("error connecting to end point")
+        return
+
+    try:
+        process(response.text, req_type)
+    except:
+        print("error in processing")
+        return
 
 
 if __name__ == "__main__":
-  tl.start(block=True)
+    config = open(os.path.join(os.getcwd(), '..', 'conf.json'))
+    config = json.load(config)
+
+    while True:
+        hit_request(config['metric_req'])
+        time.sleep(TIME_BETWEEN_POLLING)
