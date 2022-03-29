@@ -1,7 +1,6 @@
 import json
 import os
 import re
-import sys
 
 import requests
 import time
@@ -26,7 +25,7 @@ def push_metric(metric, current_epoch):
 
     # print(tsdbMetric)
 
-    os.system("echo " + metric_tags + " | /usr/bin/cosmos")
+    os.system("echo " + tsdbMetric + " | /usr/bin/cosmos")
 
 
 def process(metrics, req_type):
