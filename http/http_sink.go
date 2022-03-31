@@ -1,5 +1,6 @@
 package http
 
+import "C"
 import (
 	"bytes"
 	"errors"
@@ -21,6 +22,7 @@ type HTTPSink struct {
 	client *http.Client
 	hook   HTTPSinkHook
 	conf   HTTPSinkConf
+	cirBreaker *breaker.Breaker
 }
 
 //HTTPSinkConf  holds config to HTTPSink
@@ -31,7 +33,9 @@ type HTTPSinkConf struct {
 	Headers                     []map[string]string `json:"headers"`
 	Method                      string              `json:"method"`                    //GET,POST,PUT,DELETE
 	NonRetriableHttpStatusCodes []int               `json:nonRetriableHttpStatusCodes` //this is for handling customized errorCode thrown by sink
-
+	ErrorThreshold  			int 			    `json:"error_threshold"`
+	SuccessThreshold 			int 			    `json:"success_threshold"`
+	BreakerTimeout  			core.Duration       `json:"breaker_timeout"`
 }
 
 //HTTPSinkHook is added for Clien to attach pre and post porcessing logic
@@ -160,6 +164,17 @@ func (h *HTTPSink) Consume(msg interface{}) {
 
 }
 
+//InitBreaker is for initializing the breaker using HTTPSink config
+func (h *HTTPSink) InitBreaker(){
+	h.cirBreaker = breaker.New(h.conf.ErrorThreshold, h.conf.SuccessThreshold, h.conf.BreakerTimeout.Duration)
+}
+
+//PlaceBreaker puts a breaker on the critical function which returns an error  T
+//The breaker is opened once error threshold is reached
+func (h *HTTPSink) PlaceBreaker(critical func () error) error{
+	return h.cirBreaker.Run(critical)
+}
+
 func (h *HTTPSink) retryPre(msg interface{}, url string) {
 	for {
 		status := h.pre(h.hook, msg, url)
@@ -184,14 +199,13 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 
 }
 
-//retryExecute implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated
+//retryExecute implements a circuit breaker to provide a guardrail
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool)) bool {
 
 	var outcome bool = false
 	for {
-		err := core.CirBreaker.Run(func() error {
+		err := h.PlaceBreaker(func() error {
 			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
 			if status {
 				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes

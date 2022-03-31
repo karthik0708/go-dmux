@@ -9,10 +9,7 @@
         "dmux": {
           "size": 250,
           "distributor_type": "Hash",
-          "batch_size": 1,
-          "error_threshold": 3,
-          "breaker_timeout": "10s",
-          "success_threshold": 2
+          "batch_size": 1
         },
         "source": {
           "name": "source_name",
@@ -37,7 +34,10 @@
               "value": "application/json"
             }
           ],
-          "method": "POST"
+          "method": "POST",
+          "error_threshold": 3,
+          "breaker_timeout": "10s",
+          "success_threshold": 3
         }
       }
     }

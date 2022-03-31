@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/eapache/go-resiliency/breaker"
 	"sync"
 	"time"
 )
@@ -23,10 +22,6 @@ const (
 	Failed uint8 = 2
 )
 
-var (
-	CirBreaker *breaker.Breaker
-)
-
 //DmuxConf holds configuration parameters for Dmux
 type DmuxConf struct {
 	Size            int             `json:"size"`
@@ -35,9 +30,6 @@ type DmuxConf struct {
 	DistributorType DistributorType `json:"distributor_type"`
 	BatchSize       int             `json:"batch_size"`
 	Version         int             `json:"version"`
-	ErrorThreshold  int 			`json:"error_threshold"`
-	SuccessThreshold int 			`json:"success_threshold"`
-	BreakerTimeout  Duration   `json:"breaker_timeout"`
 }
 
 // ControlMsg is the struct passed to Dmux control Channel to enable it
@@ -73,6 +65,13 @@ type Sink interface {
 
 	//BatchConsume method is invoked in batch_size is configured
 	BatchConsume(msg []interface{}, version int)
+
+	//InitBreaker initializes the breaker using the config
+	InitBreaker()
+
+	//PlaceBreaker takes a func which executes a critical block of code and
+	//breaks the circuit if threshold is reached
+	PlaceBreaker(criticalFunc func() error) error
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -106,17 +105,12 @@ type Dmux struct {
 	err                    chan error
 	distribute             Distributor
 	version                int
-	errorThreshold		   int
-	successThreshold	   int
-	breakerTimeout		   time.Duration
 }
 
 const defaultSourceQSize int = 1
 const defaultSinkQSize int = 100
 const defaultBatchSize int = 1
 const defaultVersion int = 1
-const defaultThreshold int = 1
-const defaultTimeout = 1*time.Second
 
 //GetDmux is public method used to Get instance of a Dmux struct
 func GetDmux(conf DmuxConf, d Distributor) *Dmux {
@@ -127,9 +121,6 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 	sinkQSize := defaultSinkQSize
 	batchSize := defaultBatchSize
 	version := defaultVersion
-	errorThreshold := defaultThreshold
-	successThreshold := defaultThreshold
-	breakerTimeout := defaultTimeout
 
 	if conf.SourceQSize > 0 {
 		sourceQSize = conf.SourceQSize
@@ -147,20 +138,7 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 		version = conf.Version
 	}
 
-	if conf.ErrorThreshold > 1 {
-		errorThreshold = conf.ErrorThreshold
-	}
-
-	if conf.SuccessThreshold > 1 {
-		successThreshold = conf.SuccessThreshold
-	}
-
-	if conf.BreakerTimeout.Duration > 1*time.Second {
-		breakerTimeout = conf.BreakerTimeout.Duration
-	}
-
-
-	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, successThreshold, breakerTimeout}
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version}
 	return output
 }
 
@@ -219,8 +197,8 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	//Initialize circuit breaker
-	CirBreaker = breaker.New(d.errorThreshold, d.successThreshold, d.breakerTimeout)
+	//initialize the breaker
+	sink.InitBreaker()
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
