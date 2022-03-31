@@ -1,6 +1,5 @@
 package http
 
-import "C"
 import (
 	"bytes"
 	"errors"
