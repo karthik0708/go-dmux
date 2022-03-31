@@ -114,7 +114,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, cirBreaker *breaker.Breaker) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -126,15 +126,15 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, cirBreaker *bre
 	//TODO introduce batchHookMethods
 	for _, msg := range msgs {
 		//retry Pre till you succede infinitely
-		h.retryPre(msg, url, cirBreaker)
+		h.retryPre(msg, url)
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, cirBreaker)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
-		h.retryPost(msg, status, url, cirBreaker)
+		h.retryPost(msg, status, url)
 	}
 
 }
@@ -142,7 +142,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, cirBreaker *bre
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, cirBreaker *breaker.Breaker) {
+func (h *HTTPSink) Consume(msg interface{}) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -150,60 +150,36 @@ func (h *HTTPSink) Consume(msg interface{}, cirBreaker *breaker.Breaker) {
 	payload := data.GetPayload()
 	headers := data.GetHeaders(h.conf)
 	//retry Pre till you succede infinitely
-	h.retryPre(msg, url, cirBreaker)
+	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, cirBreaker)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation)
 
 	//retry Post till you succede infinitely
-	h.retryPost(msg, status, url, cirBreaker)
+	h.retryPost(msg, status, url)
 
 }
 
-//retryPre implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated
-func (h *HTTPSink) retryPre(msg interface{}, url string, cirBreaker *breaker.Breaker) {
+func (h *HTTPSink) retryPre(msg interface{}, url string) {
 	for {
-		err := cirBreaker.Run(func() error{
-			status := h.pre(h.hook, msg, url)
-			if status {
-				return nil
-			} else{
-				return errors.New("pre processing failed")
-			}
-		})
-		if err == nil {
+		status := h.pre(h.hook, msg, url)
+		if status {
 			break
-		} else{
-			if err != breaker.ErrBreakerOpen{
-				log.Println("retry in http_sink pre ", url)
-				time.Sleep(h.conf.RetryInterval.Duration)
-			}
 		}
+		log.Println("retry in http_sink pre ", url)
+		time.Sleep(h.conf.RetryInterval.Duration)
 	}
 }
 
-//retryPost implements a circuit breaker with parameters taken from config to provide a guardrail
-//Once the errorThreshold is reached breaker is activated
 func (h *HTTPSink) retryPost(msg interface{}, state bool,
-	url string, cirBreaker *breaker.Breaker) {
+	url string) {
 	for {
-		err := cirBreaker.Run(func() error{
-			status := h.post(h.hook, msg, state, url)
-			if status{
-				return nil
-			} else{
-				return errors.New("post processing failed")
-			}
-		})
-		if err == nil {
+		status := h.post(h.hook, msg, state, url)
+		if status {
 			break
-		} else{
-			if err != breaker.ErrBreakerOpen{
-				log.Println("retry in http_sink post ", url)
-				time.Sleep(h.conf.RetryInterval.Duration)
-			}
 		}
+		log.Println("retry in http_sink post ", url)
+		time.Sleep(h.conf.RetryInterval.Duration)
 	}
 
 }
@@ -211,27 +187,26 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 //retryExecute implements a circuit breaker with parameters taken from config to provide a guardrail
 //Once the errorThreshold is reached breaker is activated
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
-	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), cirBreaker *breaker.Breaker) bool {
+	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool)) bool {
+
 	var outcome bool = false
 	for {
-		err := cirBreaker.Run(func() error {
+		err := core.CirBreaker.Run(func() error {
 			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
 			if status {
 				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
 				err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
 				outcome = tmp
 				return err
-			} else{
+			} else {
 				return errors.New("execution failed")
 			}
 		})
-		if err == nil{
+		if err == nil {
 			return outcome
-		} else {
-			if err != breaker.ErrBreakerOpen{
-				log.Printf("retry in execute %s \t %s ", method, url)
-				time.Sleep(h.conf.RetryInterval.Duration)
-			}
+		} else if err != breaker.ErrBreakerOpen {
+			log.Printf("retry in execute %s \t %s ", method, url)
+			time.Sleep(h.conf.RetryInterval.Duration)
 		}
 	}
 }

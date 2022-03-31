@@ -23,6 +23,10 @@ const (
 	Failed uint8 = 2
 )
 
+var (
+	CirBreaker *breaker.Breaker
+)
+
 //DmuxConf holds configuration parameters for Dmux
 type DmuxConf struct {
 	Size            int             `json:"size"`
@@ -30,8 +34,9 @@ type DmuxConf struct {
 	SinkQSize       int             `json:"sink_queue_size"`
 	DistributorType DistributorType `json:"distributor_type"`
 	BatchSize       int             `json:"batch_size"`
-	Version         int 			`json:"version"`
+	Version         int             `json:"version"`
 	ErrorThreshold  int 			`json:"error_threshold"`
+	SuccessThreshold int 			`json:"success_threshold"`
 	BreakerTimeout  Duration   `json:"breaker_timeout"`
 }
 
@@ -64,10 +69,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, cirBreak *breaker.Breaker)
+	Consume(msg interface{})
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, cirBreaker *breaker.Breaker)
+	BatchConsume(msg []interface{}, version int)
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -102,7 +107,8 @@ type Dmux struct {
 	distribute             Distributor
 	version                int
 	errorThreshold		   int
-	breakerTimeout			time.Duration
+	successThreshold	   int
+	breakerTimeout		   time.Duration
 }
 
 const defaultSourceQSize int = 1
@@ -122,6 +128,7 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 	batchSize := defaultBatchSize
 	version := defaultVersion
 	errorThreshold := defaultThreshold
+	successThreshold := defaultThreshold
 	breakerTimeout := defaultTimeout
 
 	if conf.SourceQSize > 0 {
@@ -144,12 +151,16 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 		errorThreshold = conf.ErrorThreshold
 	}
 
+	if conf.SuccessThreshold > 1 {
+		successThreshold = conf.SuccessThreshold
+	}
+
 	if conf.BreakerTimeout.Duration > 1*time.Second {
 		breakerTimeout = conf.BreakerTimeout.Duration
 	}
 
 
-	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, breakerTimeout}
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version, errorThreshold, successThreshold, breakerTimeout}
 	return output
 }
 
@@ -208,11 +219,9 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	//create a circuit Breaker
-	//Success threshold value does not matter because once the message is processed it breaks out of
-	//the retry loop and the breaker will be reset at sink for another message
-	cirBreaker := breaker.New(d.errorThreshold, 1, d.breakerTimeout)
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, cirBreaker)
+	//Initialize circuit breaker
+	CirBreaker = breaker.New(d.errorThreshold, d.successThreshold, d.breakerTimeout)
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
@@ -229,7 +238,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, cirBreaker)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
@@ -252,11 +261,11 @@ func shutdown(ch []chan interface{}, wg *sync.WaitGroup) {
 	wg.Wait()
 }
 
-func setup(size, qsize, batchSize int, sink Sink, version int, cirBreak *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
+func setup(size, qsize, batchSize int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
 	if version == 1 && batchSize == 1 {
-		return simpleSetup(size, qsize, sink, cirBreak)
+		return simpleSetup(size, qsize, sink)
 	} else {
-		return batchSetup(size, qsize, batchSize, sink, version, cirBreak)
+		return batchSetup(size, qsize, batchSize, sink, version)
 	}
 }
 
@@ -272,7 +281,7 @@ func setup(size, qsize, batchSize int, sink Sink, version int, cirBreak *breaker
 // BatchConsumer will update its batch array index from one entry each of respective channel index. (This provides
 // ability for consumer to consume in parallel) and then flush the batch.
 // Close of any channel in a BatchConsumer will stop the BatchConsumer.
-func batchSetup(sz, qsz, batchsz int, sink Sink, version int, cirBreaker *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
+func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
 	size := sz * batchsz // create double nuber of channels
 
 	wg := new(sync.WaitGroup)
@@ -315,7 +324,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int, cirBreaker *breake
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, cirBreaker)
+				sk.BatchConsume(batch, version)
 			}
 
 		}(i)
@@ -323,7 +332,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int, cirBreaker *breake
 	return ch, wg
 }
 
-func simpleSetup(size, qsize int, sink Sink, cirBreaker *breaker.Breaker) ([]chan interface{}, *sync.WaitGroup) {
+func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGroup) {
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
@@ -332,7 +341,7 @@ func simpleSetup(size, qsize int, sink Sink, cirBreaker *breaker.Breaker) ([]cha
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
-				sk.Consume(msg, cirBreaker)
+				sk.Consume(msg)
 			}
 			wg.Done()
 		}(i)
