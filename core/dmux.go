@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"log"
 	"sync"
 	"time"
 )
@@ -319,6 +320,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
+				log.Printf("goroutine #%v processing message %v\n", index, msg)
 				sk.Consume(msg)
 			}
 			wg.Done()

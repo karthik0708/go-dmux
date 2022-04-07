@@ -203,8 +203,11 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool)) bool {
 
 	var outcome bool = false
+	prevState := 0
 	for {
 		err := h.PlaceBreaker(func() error {
+			log.Println()
+			prevState = 0
 			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
 			if status {
 				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
@@ -215,10 +218,16 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 				return errors.New("execution failed")
 			}
 		})
-		if err == nil {
+		switch err {
+		case nil:
 			return outcome
-		} else if err != breaker.ErrBreakerOpen {
-			log.Printf("retry in execute %s \t %s ", method, url)
+		case breaker.ErrBreakerOpen:
+			if prevState != 1 {
+				prevState = 1
+				log.Printf("Breaker is open \t %s \n", url)
+			}
+		default:
+			log.Printf("retry in execute %s \t %s\n", method, url)
 			time.Sleep(h.conf.RetryInterval.Duration)
 		}
 	}
