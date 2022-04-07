@@ -34,7 +34,10 @@
               "value": "application/json"
             }
           ],
-          "method": "POST"
+          "method": "POST",
+          "error_threshold": 3,
+          "breaker_timeout": "10s",
+          "success_threshold": 3
         }
       }
     }
