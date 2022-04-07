@@ -38,6 +38,9 @@ RUN groupadd -g ${GID} ${group} && \
     chown -R ${user}:${group} /var/log/go-dmux ; \
     chmod 777 go-dmux
 
+EXPOSE 9999/udp
+EXPOSE 9999/tcp
+
 USER ${user}
 
 ENTRYPOINT ["./go-dmux"]
