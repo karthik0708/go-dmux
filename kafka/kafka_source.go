@@ -1,12 +1,12 @@
 package kafka
 
 import (
+	"os"
 	"time"
-    "os"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 	"github.com/go-dmux/kafka/consumer-group"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 //KafkaSourceHook to track messages coming out of the source in order
@@ -103,7 +103,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	if err != nil {
 		panic(err)
 	}
-
+	go consumer.PopulateOffset()
 	k.consumer = consumer
 	for message := range k.consumer.Messages() {
 		//TODO handle Create failure

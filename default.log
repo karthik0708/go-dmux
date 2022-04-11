@@ -1,19 +1,45 @@
-2021/01/28 15:09:42 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
-2021/01/28 15:10:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
-2021/01/28 15:20:56 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
-2021/01/28 15:20:56 Starting  kafka_http
-2022/04/01 17:09:21 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/01 17:09:21 Starting  kafka_http
-2022/04/01 17:09:21 Failed to connect to 127.0.0.1:2181: dial tcp 127.0.0.1:2181: connect: connection refused
-2022/04/01 17:09:21 Failed to connect to [::1]:2181: dial tcp [::1]:2181: connect: connection refused
-2022/04/01 17:12:49 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/01 17:12:49 Starting  kafka_http
-2022/04/01 17:12:49 Connected to [::1]:2181
-2022/04/01 17:12:49 Authenticated: id=72112604050030594, timeout=6000
-2022/04/01 17:12:49 Re-submitting `0` credentials after reconnect
-2022/04/01 17:12:49 Recv loop terminated: err=EOF
-2022/04/01 17:39:31 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/01 17:39:31 Starting  kafka_http
-2022/04/01 17:39:31 Connected to 127.0.0.1:2181
-2022/04/01 17:39:31 Authenticated: id=72057621822242818, timeout=6000
-2022/04/01 17:39:31 Re-submitting `0` credentials after reconnect
+2022/04/11 17:34:59 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
+2022/04/11 17:34:59 Starting  kafka_http
+2022/04/11 17:34:59 Connected to 127.0.0.1:2181
+2022/04/11 17:34:59 Authenticated: id=72072091828092953, timeout=6000
+2022/04/11 17:34:59 Re-submitting `0` credentials after reconnect
+2022/04/11 17:35:26 /test-four/1//29576 after kafka source
+2022/04/11 17:35:26 /test-four/1//29576 before http sink
+2022/04/11 17:35:26 /test-four/1//29576 after http sink, status = true
+2022/04/11 17:35:27 /test-four/3//31960 after kafka source
+2022/04/11 17:35:27 /test-four/3//31960 before http sink
+2022/04/11 17:35:27 /test-four/3//31960 after http sink, status = true
+2022/04/11 17:35:28 /test-four/0//34142 after kafka source
+2022/04/11 17:35:28 /test-four/0//34142 before http sink
+2022/04/11 17:35:28 /test-four/0//34142 after http sink, status = true
+2022/04/11 17:35:29 /test-four/3//31961 after kafka source
+2022/04/11 17:35:29 /test-four/3//31961 before http sink
+2022/04/11 17:35:29 /test-four/3//31961 after http sink, status = true
+2022/04/11 17:35:30 /test-four/1//29577 after kafka source
+2022/04/11 17:35:30 /test-four/1//29577 before http sink
+2022/04/11 17:35:30 /test-four/1//29577 after http sink, status = true
+2022/04/11 17:35:31 /test-four/2//35892 after kafka source
+2022/04/11 17:35:31 /test-four/2//35892 before http sink
+2022/04/11 17:35:31 /test-four/2//35892 after http sink, status = true
+2022/04/11 17:35:32 /test-four/0//34143 after kafka source
+2022/04/11 17:35:32 /test-four/0//34143 before http sink
+2022/04/11 17:35:32 /test-four/0//34143 after http sink, status = true
+2022/04/11 17:35:33 /test-four/1//29578 after kafka source
+2022/04/11 17:35:33 /test-four/1//29578 before http sink
+2022/04/11 17:35:33 /test-four/1//29578 after http sink, status = true
+2022/04/11 17:36:38 /test-four/0//34144 after kafka source
+2022/04/11 17:36:38 /test-four/0//34144 before http sink
+2022/04/11 17:36:38 /test-four/0//34144 after http sink, status = true
+2022/04/11 17:36:45 /test-four/2//35893 after kafka source
+2022/04/11 17:36:45 /test-four/2//35893 before http sink
+2022/04/11 17:36:45 /test-four/2//35893 after http sink, status = true
+2022/04/11 17:37:36 /test-four/3//31962 after kafka source
+2022/04/11 17:37:36 /test-four/3//31962 before http sink
+2022/04/11 17:37:36 /test-four/3//31962 after http sink, status = true
+2022/04/11 17:37:48 Recv loop terminated: err=read tcp 127.0.0.1:52490->127.0.0.1:2181: i/o timeout
+2022/04/11 17:37:49 Send loop terminated: err=<nil>
+2022/04/11 17:37:49 Connected to [::1]:2181
+2022/04/11 17:37:49 Authentication failed: zk: session has been expired by the server
+2022/04/11 17:37:50 Connected to 127.0.0.1:2181
+2022/04/11 17:37:50 Authenticated: id=72072091828092954, timeout=6000
+2022/04/11 17:37:50 Re-submitting `0` credentials after reconnect
