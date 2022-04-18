@@ -62,10 +62,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{})
+	Consume(msg interface{}, out chan<- []interface{}, ind int)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int)
+	BatchConsume(msg []interface{}, version int, out chan<- []interface{}, ind int)
 
 	//InitBreaker initializes the breaker using the config
 	InitBreaker()
@@ -271,7 +271,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsz)
 	}
-
+	breakerCh := make(chan []interface{})
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
@@ -303,7 +303,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version)
+				sk.BatchConsume(batch, version, breakerCh, i)
 			}
 
 		}(i)
@@ -315,13 +315,14 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
+	breakerCh := make(chan []interface{})
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsize)
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
 				log.Printf("goroutine #%v processing message %v\n", index, msg)
-				sk.Consume(msg)
+				sk.Consume(msg, breakerCh, i)
 			}
 			wg.Done()
 		}(i)

@@ -1,5 +1,7 @@
 {
   "name": "myDmux",
+  "metric_req": "Custom",
+  "polling_interval": 4,
   "dmuxItems": [
     {
       "name": "sample_name",
@@ -14,7 +16,7 @@
         "source": {
           "name": "source_name",
           "zk_path": "localhost:2181/kafka",
-          "topic": "sample-topic",
+          "topic": "test-four",
           "kafka_version_major": 2,
           "force_restart": true,
           "read_newest": true
