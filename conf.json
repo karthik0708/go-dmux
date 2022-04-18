@@ -1,6 +1,5 @@
 {
   "name": "myDmux",
-  "metric_req" : "Custom",
   "dmuxItems": [
     {
       "name": "sample_name",
