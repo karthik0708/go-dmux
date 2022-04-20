@@ -62,10 +62,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, out []chan interface{}, in chan interface{}, ind int)
+	Consume(msg interface{}, breakerChs []chan interface{}, ind int)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, out []chan interface{}, in chan interface{}, ind int)
+	BatchConsume(msg []interface{}, version int, breakerChs []chan interface{}, ind int)
 
 	//InitBreaker initializes the breaker using the config
 	InitBreaker()
@@ -272,6 +272,9 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 		ch[i] = make(chan interface{}, qsz)
 	}
 	breakerChs := make([]chan interface{}, size)
+	for i := 0; i < size; i++{
+		breakerChs[i] = make(chan interface{},1)
+	}
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
@@ -286,13 +289,20 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				j := index
 				for z := 0; z < batchsz; z++ {
 					// fmt.Printf("Iterating count %d consumer %d j %d channelLen %d \n", z, index, j, len(ch[j]))
-					msg, more := <-ch[j]  // more == false if channel is closed
-					if !failed && !more { // failed = true if any one channel is closed
-						failed = true
-						break
+					select {
+					case msg, more := <-ch[j] :
+						// more == false if channel is closed
+						if !failed && !more { // failed = true if any one channel is closed
+							failed = true
+							break
+						}
+						batch[z] = msg
+						j++
+					default:
+						for len(breakerChs[index])>0 {
+							<- breakerChs[index]
+						}
 					}
-					batch[z] = msg
-					j++
 				}
 				// fmt.Println("Failed ", failed)
 				if failed { //ack all waitGroups and return to break from the infinite for loop
@@ -303,7 +313,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, breakerChs, breakerChs[i], i)
+				sk.BatchConsume(batch, version, breakerChs, index)
 			}
 
 		}(i)
@@ -317,15 +327,22 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	ch := make([]chan interface{}, size)
 	breakerChs := make([]chan interface{}, size)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan interface{})
+		breakerChs[i] = make(chan interface{},1)
 	}
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsize)
 		go func(index int) {
 			sk := sink.Clone()
-			for msg := range ch[index] {
-				log.Printf("goroutine #%v processing message %v\n", index, msg)
-				sk.Consume(msg, breakerChs, breakerChs[index],index)
+			for  {
+				select {
+				case msg := <-ch[index]:
+					log.Printf("goroutine #%v processing message %v\n", index, msg)
+					sk.Consume(msg, breakerChs,index)
+				default:
+					for len(breakerChs[index])>0 {
+						<- breakerChs[index]
+					}
+				}
 			}
 			wg.Done()
 		}(i)

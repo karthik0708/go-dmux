@@ -117,7 +117,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out []chan interface{}, in chan interface{}, ind int) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerChs []chan interface{}, ind int) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -133,7 +133,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out []chan inte
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, in, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerChs, ind)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
@@ -145,7 +145,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out []chan inte
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, out []chan interface{}, in chan interface{}, ind int) {
+func (h *HTTPSink) Consume(msg interface{}, breakerChs  []chan interface{}, ind int) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -156,7 +156,7 @@ func (h *HTTPSink) Consume(msg interface{}, out []chan interface{}, in chan inte
 	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, in, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerChs, ind)
 
 	//retry Post till you succede infinitely
 	h.retryPost(msg, status, url)
@@ -199,16 +199,16 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 }
 
 //retryExecute implements a circuit breaker to provide a guardrail
-func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), out []chan interface{}, in chan interface{}, ind int) bool {
+func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), breakerChs  []chan interface{}, ind int) bool {
 
 	var outcome bool = false
 	prevState := 0
 	for {
 		select {
-		case signal:= <-in:
+		case signal:= <-breakerChs[ind] :
 			log.Printf("breaker open message from # %v suspending %v",signal, ind)
-			for len(in)>0{
-				<-in
+			for len(breakerChs[ind])>0{
+				<-breakerChs[ind]
 			}
 			time.Sleep(time.Second*10)
 
@@ -234,10 +234,10 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, d
 					prevState = 1
 					log.Printf("Breaker is open \t %s \n", url)
 					signal := ind
-					for i:=0;i<len(out);i++ {
+					for i:=0;i<len(breakerChs);i++ {
 						if ind!=i{
 							fmt.Println(i)
-							out[i] <- signal
+							breakerChs[i] <- signal
 							fmt.Printf("sending to %v from %v\n", i, ind)
 						}
 					}
