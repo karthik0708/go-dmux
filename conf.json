@@ -1,7 +1,5 @@
 {
   "name": "myDmux",
-  "metric_req": "Custom",
-  "polling_interval": 4,
   "dmuxItems": [
     {
       "name": "sample_name",

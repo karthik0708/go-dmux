@@ -1,412 +1,113 @@
-2022/04/18 15:54:27 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 15:54:27 Starting  kafka_http
-2022/04/18 15:54:27 Connected to [::1]:2181
-2022/04/18 15:54:27 Authenticated: id=72083347450888224, timeout=6000
-2022/04/18 15:54:27 Re-submitting `0` credentials after reconnect
-2022/04/18 15:54:36 /test-four/2//35999 after kafka source
-2022/04/18 15:54:36 goroutine #0 processing message &{0xc000224140 false false /test-four/2//35999}
-2022/04/18 15:54:36 /test-four/2//35999 before http sink
-2022/04/18 15:54:36 
-2022/04/18 15:54:36 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:54:36 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:54:36 
-2022/04/18 15:54:36 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:54:36 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:54:36 
-2022/04/18 15:54:36 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:54:36 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:54:36 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//35999 
-2022/04/18 15:54:36 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 15:54:46 
-2022/04/18 15:54:46 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:54:46 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:54:46 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//35999 
-2022/04/18 15:54:46 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 15:54:56 
-2022/04/18 15:54:56 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:54:56 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:54:56 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//35999 
-2022/04/18 15:54:56 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 15:55:06 
-2022/04/18 15:55:06 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:55:06 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:55:06 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//35999 
-2022/04/18 15:55:06 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 15:55:16 
-2022/04/18 15:55:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//35999 Post "http://localhost:8888/1.0/api/event/test-four/2//35999": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:55:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//35999
-2022/04/18 15:55:16 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//35999 
-2022/04/18 15:55:16 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 15:59:50 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 15:59:50 Starting  kafka_http
-2022/04/18 15:59:50 0
-2022/04/18 15:59:50 Connected to 127.0.0.1:2181
-2022/04/18 15:59:50 Authenticated: id=72083347450888225, timeout=6000
-2022/04/18 15:59:50 Re-submitting `0` credentials after reconnect
-2022/04/18 15:59:55 /test-four/3//32062 after kafka source
-2022/04/18 15:59:55 goroutine #0 processing message &{0xc0001183c0 false false /test-four/3//32062}
-2022/04/18 15:59:55 /test-four/3//32062 before http sink
-2022/04/18 15:59:55 
-2022/04/18 15:59:55 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32062 Post "http://localhost:8888/1.0/api/event/test-four/3//32062": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:59:55 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32062
-2022/04/18 15:59:55 
-2022/04/18 15:59:55 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32062 Post "http://localhost:8888/1.0/api/event/test-four/3//32062": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:59:55 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32062
-2022/04/18 15:59:55 
-2022/04/18 15:59:55 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32062 Post "http://localhost:8888/1.0/api/event/test-four/3//32062": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 15:59:55 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32062
-2022/04/18 15:59:55 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32062 
-2022/04/18 16:00:00 1
-2022/04/18 16:00:05 
-2022/04/18 16:00:05 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32062 Post "http://localhost:8888/1.0/api/event/test-four/3//32062": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:00:05 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32062
-2022/04/18 16:00:05 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32062 
-2022/04/18 16:00:10 2
-2022/04/18 16:00:20 3
-2022/04/18 16:00:30 4
-2022/04/18 16:00:40 5
-2022/04/18 16:00:50 6
-2022/04/18 16:01:00 7
-2022/04/18 16:01:10 8
-2022/04/18 16:01:22 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:01:22 Starting  kafka_http
-2022/04/18 16:01:22 Connected to 127.0.0.1:2181
-2022/04/18 16:01:22 Authenticated: id=72083347450888226, timeout=6000
-2022/04/18 16:01:22 Re-submitting `0` credentials after reconnect
-2022/04/18 16:01:35 /test-four/2//36000 after kafka source
-2022/04/18 16:01:35 goroutine #0 processing message &{0xc0001ac3c0 false false /test-four/2//36000}
-2022/04/18 16:01:35 /test-four/2//36000 before http sink
-2022/04/18 16:01:35 
-2022/04/18 16:01:35 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:01:35 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:01:35 
-2022/04/18 16:01:35 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:01:35 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:01:35 
-2022/04/18 16:01:35 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:01:35 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:01:35 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36000 
-2022/04/18 16:01:35 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 16:01:45 
-2022/04/18 16:01:45 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:01:45 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:01:45 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36000 
-2022/04/18 16:01:45 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 16:01:55 
-2022/04/18 16:01:55 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:01:55 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:01:55 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36000 
-2022/04/18 16:01:55 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 16:02:05 
-2022/04/18 16:02:05 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36000 Post "http://localhost:8888/1.0/api/event/test-four/2//36000": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:02:05 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36000
-2022/04/18 16:02:05 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36000 
-2022/04/18 16:02:05 recieved breaker open signal.. suspending goroutine:  4 circuit breaker is open
-2022/04/18 16:22:28 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:22:28 Starting  kafka_http
-2022/04/18 16:22:28 0
-2022/04/18 16:22:28 Connected to 127.0.0.1:2181
-2022/04/18 16:22:29 Authenticated: id=72083347450888227, timeout=6000
-2022/04/18 16:22:29 Re-submitting `0` credentials after reconnect
-2022/04/18 16:22:31 1
-2022/04/18 16:22:34 /test-four/1//29689 after kafka source
-2022/04/18 16:22:34 goroutine #0 processing message &{0xc000182280 false false /test-four/1//29689}
-2022/04/18 16:22:34 /test-four/1//29689 before http sink
-2022/04/18 16:22:34 
-2022/04/18 16:22:34 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29689 Post "http://localhost:8888/1.0/api/event/test-four/1//29689": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:22:34 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29689
-2022/04/18 16:22:34 
-2022/04/18 16:22:34 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29689 Post "http://localhost:8888/1.0/api/event/test-four/1//29689": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:22:34 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29689
-2022/04/18 16:22:34 
-2022/04/18 16:22:34 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29689 Post "http://localhost:8888/1.0/api/event/test-four/1//29689": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:22:34 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29689
-2022/04/18 16:22:34 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29689 
-2022/04/18 16:22:34 2
-2022/04/18 16:22:37 3
-2022/04/18 16:22:40 4
-2022/04/18 16:22:43 5
-2022/04/18 16:22:44 
-2022/04/18 16:22:44 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29689 Post "http://localhost:8888/1.0/api/event/test-four/1//29689": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:22:44 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29689
-2022/04/18 16:22:44 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29689 
-2022/04/18 16:22:46 6
-2022/04/18 16:22:49 7
-2022/04/18 16:22:52 8
-2022/04/18 16:22:55 9
-2022/04/18 16:22:58 10
-2022/04/18 16:23:01 11
-2022/04/18 16:23:04 12
-2022/04/18 16:23:07 13
-2022/04/18 16:23:10 14
-2022/04/18 16:23:13 15
-2022/04/18 16:23:16 16
-2022/04/18 16:23:19 17
-2022/04/18 16:23:22 18
-2022/04/18 16:23:25 19
-2022/04/18 16:23:28 20
-2022/04/18 16:23:31 21
-2022/04/18 16:23:34 22
-2022/04/18 16:23:37 23
-2022/04/18 16:23:40 24
-2022/04/18 16:23:43 25
-2022/04/18 16:23:46 26
-2022/04/18 16:23:49 27
-2022/04/18 16:23:52 28
-2022/04/18 16:23:55 29
-2022/04/18 16:23:58 30
-2022/04/18 16:24:01 31
-2022/04/18 16:24:04 32
-2022/04/18 16:24:07 33
-2022/04/18 16:24:10 34
-2022/04/18 16:24:13 35
-2022/04/18 16:24:16 36
-2022/04/18 16:24:19 37
-2022/04/18 16:24:22 38
-2022/04/18 16:24:28 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:24:28 Starting  kafka_http
-2022/04/18 16:24:28 0
-2022/04/18 16:24:28 Connected to [::1]:2181
-2022/04/18 16:24:28 Authenticated: id=72083347450888228, timeout=6000
-2022/04/18 16:24:28 Re-submitting `0` credentials after reconnect
-2022/04/18 16:24:31 1
-2022/04/18 16:24:33 /test-four/2//36001 after kafka source
-2022/04/18 16:24:33 goroutine #0 processing message &{0xc000224140 false false /test-four/2//36001}
-2022/04/18 16:24:33 /test-four/2//36001 before http sink
-2022/04/18 16:24:33 
-2022/04/18 16:24:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:24:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:24:33 
-2022/04/18 16:24:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:24:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:24:33 
-2022/04/18 16:24:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:24:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:24:33 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36001 
-2022/04/18 16:24:34 2
-2022/04/18 16:24:37 3
-2022/04/18 16:24:40 4
-2022/04/18 16:24:43 5
-2022/04/18 16:24:43 
-2022/04/18 16:24:43 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:24:43 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:24:43 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36001 
-2022/04/18 16:24:46 6
-2022/04/18 16:24:49 7
-2022/04/18 16:24:52 8
-2022/04/18 16:24:53 
-2022/04/18 16:24:53 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:24:53 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:24:53 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36001 
-2022/04/18 16:24:55 9
-2022/04/18 16:24:58 10
-2022/04/18 16:25:01 11
-2022/04/18 16:25:03 
-2022/04/18 16:25:03 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:25:03 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:25:03 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36001 
-2022/04/18 16:25:04 12
-2022/04/18 16:25:07 13
-2022/04/18 16:25:10 14
-2022/04/18 16:25:13 15
-2022/04/18 16:25:13 
-2022/04/18 16:25:13 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36001 Post "http://localhost:8888/1.0/api/event/test-four/2//36001": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:25:13 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36001
-2022/04/18 16:25:13 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36001 
-2022/04/18 16:25:16 16
-2022/04/18 16:25:19 17
-2022/04/18 16:25:22 18
-2022/04/18 16:25:25 19
-2022/04/18 16:25:28 20
-2022/04/18 16:25:31 21
-2022/04/18 16:25:34 22
-2022/04/18 16:25:37 23
-2022/04/18 16:25:40 24
-2022/04/18 16:25:43 25
-2022/04/18 16:25:46 26
-2022/04/18 16:25:49 27
-2022/04/18 16:25:52 28
-2022/04/18 16:25:55 29
-2022/04/18 16:25:58 30
-2022/04/18 16:26:01 31
-2022/04/18 16:26:04 32
-2022/04/18 16:26:07 33
-2022/04/18 16:26:10 34
-2022/04/18 16:26:13 35
-2022/04/18 16:27:01 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:27:01 Starting  kafka_http
-2022/04/18 16:27:01 0
-2022/04/18 16:27:01 Connected to 127.0.0.1:2181
-2022/04/18 16:27:01 Authenticated: id=72083347450888229, timeout=6000
-2022/04/18 16:27:01 Re-submitting `0` credentials after reconnect
-2022/04/18 16:27:04 1
-2022/04/18 16:27:05 /test-four/3//32063 after kafka source
-2022/04/18 16:27:05 goroutine #0 processing message &{0xc00013a280 false false /test-four/3//32063}
-2022/04/18 16:27:05 /test-four/3//32063 before http sink
-2022/04/18 16:27:05 
-2022/04/18 16:27:05 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:05 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:05 
-2022/04/18 16:27:05 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:05 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:05 
-2022/04/18 16:27:05 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:05 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:05 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32063 
-2022/04/18 16:27:07 2
-2022/04/18 16:27:10 3
-2022/04/18 16:27:13 4
-2022/04/18 16:27:15 
-2022/04/18 16:27:15 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:15 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:15 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32063 
-2022/04/18 16:27:16 5
-2022/04/18 16:27:19 6
-2022/04/18 16:27:22 7
-2022/04/18 16:27:25 8
-2022/04/18 16:27:25 
-2022/04/18 16:27:25 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:25 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:25 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32063 
-2022/04/18 16:27:28 9
-2022/04/18 16:27:31 10
-2022/04/18 16:27:34 11
-2022/04/18 16:27:35 
-2022/04/18 16:27:35 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32063 Post "http://localhost:8888/1.0/api/event/test-four/3//32063": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:27:35 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32063
-2022/04/18 16:27:35 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32063 
-2022/04/18 16:27:37 12
-2022/04/18 16:27:40 13
-2022/04/18 16:28:45 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:28:45 Starting  kafka_http
-2022/04/18 16:28:45 0
-2022/04/18 16:28:45 Connected to 127.0.0.1:2181
-2022/04/18 16:28:45 Authenticated: id=72083347450888230, timeout=6000
-2022/04/18 16:28:45 Re-submitting `0` credentials after reconnect
-2022/04/18 16:28:48 1
-2022/04/18 16:28:50 /test-four/1//29690 after kafka source
-2022/04/18 16:28:50 goroutine #0 processing message &{0xc0000ce460 false false /test-four/1//29690}
-2022/04/18 16:28:50 /test-four/1//29690 before http sink
-2022/04/18 16:28:50 
-2022/04/18 16:28:50 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:28:50 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:28:50 
-2022/04/18 16:28:50 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:28:50 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:28:50 
-2022/04/18 16:28:50 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:28:50 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:28:50 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29690 
-2022/04/18 16:28:51 2
-2022/04/18 16:28:54 3
-2022/04/18 16:28:57 4
-2022/04/18 16:29:00 
-2022/04/18 16:29:00 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:00 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:29:00 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29690 
-2022/04/18 16:29:00 5
-2022/04/18 16:29:03 6
-2022/04/18 16:29:06 7
-2022/04/18 16:29:09 8
-2022/04/18 16:29:10 
-2022/04/18 16:29:10 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:10 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:29:10 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29690 
-2022/04/18 16:29:12 9
-2022/04/18 16:29:15 10
-2022/04/18 16:29:18 11
-2022/04/18 16:29:20 
-2022/04/18 16:29:20 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29690 Post "http://localhost:8888/1.0/api/event/test-four/1//29690": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:20 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29690
-2022/04/18 16:29:20 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29690 
-2022/04/18 16:29:21 12
-2022/04/18 16:29:24 13
-2022/04/18 16:29:27 14
-2022/04/18 16:29:42 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:29:42 Starting  kafka_http
-2022/04/18 16:29:42 0
-2022/04/18 16:29:42 Connected to 127.0.0.1:2181
-2022/04/18 16:29:42 Authenticated: id=72083347450888231, timeout=6000
-2022/04/18 16:29:42 Re-submitting `0` credentials after reconnect
-2022/04/18 16:29:45 1
-2022/04/18 16:29:48 2
-2022/04/18 16:29:48 /test-four/3//32064 after kafka source
-2022/04/18 16:29:48 goroutine #0 processing message &{0xc000202280 false false /test-four/3//32064}
-2022/04/18 16:29:48 /test-four/3//32064 before http sink
-2022/04/18 16:29:48 
-2022/04/18 16:29:48 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:48 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:29:48 
-2022/04/18 16:29:48 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:48 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:29:48 
-2022/04/18 16:29:48 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:48 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:29:48 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32064 
-2022/04/18 16:29:51 3
-2022/04/18 16:29:54 4
-2022/04/18 16:29:57 5
-2022/04/18 16:29:58 
-2022/04/18 16:29:58 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:29:58 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:29:58 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32064 
-2022/04/18 16:30:00 6
-2022/04/18 16:30:03 7
-2022/04/18 16:30:06 8
-2022/04/18 16:30:08 
-2022/04/18 16:30:08 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:30:08 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:30:08 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32064 
-2022/04/18 16:30:09 9
-2022/04/18 16:30:12 10
-2022/04/18 16:30:15 11
-2022/04/18 16:30:18 12
-2022/04/18 16:30:18 
-2022/04/18 16:30:18 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/3//32064 Post "http://localhost:8888/1.0/api/event/test-four/3//32064": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:30:18 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/3//32064
-2022/04/18 16:30:18 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/3//32064 
-2022/04/18 16:30:21 13
-2022/04/18 16:30:24 14
-2022/04/18 16:33:39 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:33:39 Starting  kafka_http
-2022/04/18 16:33:39 Connected to 127.0.0.1:2181
-2022/04/18 16:33:39 Authenticated: id=72083347450888232, timeout=6000
-2022/04/18 16:33:39 Re-submitting `0` credentials after reconnect
-2022/04/18 16:34:12 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/18 16:34:12 Starting  kafka_http
-2022/04/18 16:34:12 Connected to [::1]:2181
-2022/04/18 16:34:12 Authenticated: id=72083347450888233, timeout=6000
-2022/04/18 16:34:12 Re-submitting `0` credentials after reconnect
-2022/04/18 16:34:19 /test-four/0//34249 after kafka source
-2022/04/18 16:34:19 goroutine #0 processing message &{0xc0000ac1e0 false false /test-four/0//34249}
-2022/04/18 16:34:19 /test-four/0//34249 before http sink
-2022/04/18 16:34:19 
-2022/04/18 16:34:19 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34249 Post "http://localhost:8888/1.0/api/event/test-four/0//34249": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:19 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34249
-2022/04/18 16:34:19 
-2022/04/18 16:34:19 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34249 Post "http://localhost:8888/1.0/api/event/test-four/0//34249": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:19 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34249
-2022/04/18 16:34:19 
-2022/04/18 16:34:19 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34249 Post "http://localhost:8888/1.0/api/event/test-four/0//34249": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:19 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34249
-2022/04/18 16:34:19 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/0//34249 
-2022/04/18 16:34:29 
-2022/04/18 16:34:29 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34249 Post "http://localhost:8888/1.0/api/event/test-four/0//34249": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:29 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34249
-2022/04/18 16:34:29 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/0//34249 
-2022/04/18 16:34:39 /test-four/2//36002 after kafka source
-2022/04/18 16:34:39 goroutine #1 processing message &{0xc0000ac280 false false /test-four/2//36002}
-2022/04/18 16:34:39 /test-four/2//36002 before http sink
-2022/04/18 16:34:39 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36002 
-2022/04/18 16:34:39 
-2022/04/18 16:34:39 
-2022/04/18 16:34:39 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34249 Post "http://localhost:8888/1.0/api/event/test-four/0//34249": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:39 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34249
-2022/04/18 16:34:39 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36002 Post "http://localhost:8888/1.0/api/event/test-four/2//36002": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:39 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36002
-2022/04/18 16:34:39 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36002 
-2022/04/18 16:34:39 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/0//34249 
-2022/04/18 16:34:49 
-2022/04/18 16:34:49 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36002 Post "http://localhost:8888/1.0/api/event/test-four/2//36002": dial tcp [::1]:8888: connect: connection refused 
-2022/04/18 16:34:49 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36002
-2022/04/18 16:34:50 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/2//36002 
+2022/04/19 18:28:04 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:3 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:2 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
+2022/04/19 18:28:04 Starting  kafka_http
+2022/04/19 18:28:04 Connected to 127.0.0.1:2181
+2022/04/19 18:28:04 Authenticated: id=72087012748951609, timeout=6000
+2022/04/19 18:28:04 Re-submitting `0` credentials after reconnect
+2022/04/19 18:28:16 /test-four/1//29706 after kafka source
+2022/04/19 18:28:16 goroutine #0 processing message &{0xc0000ca140 false false /test-four/1//29706}
+2022/04/19 18:28:16 /test-four/1//29706 before http sink
+2022/04/19 18:28:16 
+2022/04/19 18:28:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:16 
+2022/04/19 18:28:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:16 
+2022/04/19 18:28:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:16 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:28:18 /test-four/3//32077 after kafka source
+2022/04/19 18:28:18 goroutine #1 processing message &{0xc0000ca280 false false /test-four/3//32077}
+2022/04/19 18:28:18 /test-four/3//32077 before http sink
+2022/04/19 18:28:18 breaker open message from # 0 suspending 1
+2022/04/19 18:28:20 /test-four/1//29707 after kafka source
+2022/04/19 18:28:20 goroutine #2 processing message &{0xc0002021e0 false false /test-four/1//29707}
+2022/04/19 18:28:20 /test-four/1//29707 before http sink
+2022/04/19 18:28:20 breaker open message from # 0 suspending 2
+2022/04/19 18:28:22 /test-four/0//34269 after kafka source
+2022/04/19 18:28:22 goroutine #3 processing message &{0xc00013a3c0 false false /test-four/0//34269}
+2022/04/19 18:28:22 /test-four/0//34269 before http sink
+2022/04/19 18:28:22 breaker open message from # 0 suspending 3
+2022/04/19 18:28:26 
+2022/04/19 18:28:26 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:26 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:26 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:28:28 breaker open message from # 0 suspending 1
+2022/04/19 18:28:30 breaker open message from # 0 suspending 2
+2022/04/19 18:28:32 breaker open message from # 0 suspending 3
+2022/04/19 18:28:36 
+2022/04/19 18:28:36 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:36 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:36 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:28:38 breaker open message from # 0 suspending 1
+2022/04/19 18:28:40 breaker open message from # 0 suspending 2
+2022/04/19 18:28:42 breaker open message from # 0 suspending 3
+2022/04/19 18:28:46 
+2022/04/19 18:28:46 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:46 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:46 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:28:48 breaker open message from # 0 suspending 1
+2022/04/19 18:28:50 breaker open message from # 0 suspending 2
+2022/04/19 18:28:52 breaker open message from # 0 suspending 3
+2022/04/19 18:28:56 
+2022/04/19 18:28:56 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:28:56 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:28:56 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:28:58 breaker open message from # 0 suspending 1
+2022/04/19 18:29:00 breaker open message from # 0 suspending 2
+2022/04/19 18:29:02 breaker open message from # 0 suspending 3
+2022/04/19 18:29:06 
+2022/04/19 18:29:06 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:06 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:06 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:08 breaker open message from # 0 suspending 1
+2022/04/19 18:29:10 breaker open message from # 0 suspending 2
+2022/04/19 18:29:12 breaker open message from # 0 suspending 3
+2022/04/19 18:29:16 
+2022/04/19 18:29:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:16 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:18 breaker open message from # 0 suspending 1
+2022/04/19 18:29:20 breaker open message from # 0 suspending 2
+2022/04/19 18:29:22 breaker open message from # 0 suspending 3
+2022/04/19 18:29:26 
+2022/04/19 18:29:26 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:26 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:26 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:28 breaker open message from # 0 suspending 1
+2022/04/19 18:29:30 breaker open message from # 0 suspending 2
+2022/04/19 18:29:32 breaker open message from # 0 suspending 3
+2022/04/19 18:29:36 
+2022/04/19 18:29:36 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:36 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:36 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:38 breaker open message from # 0 suspending 1
+2022/04/19 18:29:40 breaker open message from # 0 suspending 2
+2022/04/19 18:29:42 breaker open message from # 0 suspending 3
+2022/04/19 18:29:46 
+2022/04/19 18:29:46 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:46 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:46 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:48 breaker open message from # 0 suspending 1
+2022/04/19 18:29:50 breaker open message from # 0 suspending 2
+2022/04/19 18:29:52 breaker open message from # 0 suspending 3
+2022/04/19 18:29:56 
+2022/04/19 18:29:56 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:29:56 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:29:56 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:29:58 breaker open message from # 0 suspending 1
+2022/04/19 18:30:00 breaker open message from # 0 suspending 2
+2022/04/19 18:30:02 breaker open message from # 0 suspending 3
+2022/04/19 18:30:06 
+2022/04/19 18:30:06 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:30:06 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:30:06 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:30:08 breaker open message from # 0 suspending 1
+2022/04/19 18:30:10 breaker open message from # 0 suspending 2
+2022/04/19 18:30:12 breaker open message from # 0 suspending 3
+2022/04/19 18:30:16 
+2022/04/19 18:30:16 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/1//29706 Post "http://localhost:8888/1.0/api/event/test-four/1//29706": dial tcp [::1]:8888: connect: connection refused 
+2022/04/19 18:30:16 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/1//29706
+2022/04/19 18:30:16 Breaker is open 	 http://localhost:8888/1.0/api/event/test-four/1//29706 
+2022/04/19 18:30:18 breaker open message from # 0 suspending 1
+2022/04/19 18:30:20 breaker open message from # 0 suspending 2

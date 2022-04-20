@@ -117,7 +117,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out chan<- []interface{}, ind int) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out []chan interface{}, in chan interface{}, ind int) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -133,7 +133,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out chan<- []in
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, in, ind)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
@@ -145,7 +145,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, out chan<- []in
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, out chan<- []interface{}, ind int) {
+func (h *HTTPSink) Consume(msg interface{}, out []chan interface{}, in chan interface{}, ind int) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -156,7 +156,7 @@ func (h *HTTPSink) Consume(msg interface{}, out chan<- []interface{}, ind int) {
 	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, out, in, ind)
 
 	//retry Post till you succede infinitely
 	h.retryPost(msg, status, url)
@@ -199,41 +199,53 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 }
 
 //retryExecute implements a circuit breaker to provide a guardrail
-func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
-	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool),
-	out chan<- []interface{}, ind int) bool {
+func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), out []chan interface{}, in chan interface{}, ind int) bool {
 
 	var outcome bool = false
 	prevState := 0
 	for {
-		err := h.PlaceBreaker(func() error {
-			log.Println()
-			prevState = 0
-			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
-			if status {
-				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
-				err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
-				outcome = tmp
-				return err
-			} else {
-				return errors.New("execution failed")
+		select {
+		case signal:= <-in:
+			log.Printf("breaker open message from # %v suspending %v",signal, ind)
+			for len(in)>0{
+				<-in
 			}
-		})
-		switch err {
-		case nil:
-			return outcome
-		case breaker.ErrBreakerOpen:
-			if prevState != 1 {
-				prevState = 1
-				log.Printf("Breaker is open \t %s \n", url)
-				signal := make([]interface{}, 2)
-				signal[0] = ind
-				signal[1] = err
-				out <- signal
-			}
+			time.Sleep(time.Second*10)
+
 		default:
-			log.Printf("retry in execute %s \t %s\n", method, url)
-			time.Sleep(h.conf.RetryInterval.Duration)
+			err := h.PlaceBreaker(func() error {
+				log.Println()
+				prevState = 0
+				status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
+				if status {
+					nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
+					err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
+					outcome = tmp
+					return err
+				} else {
+					return errors.New("execution failed")
+				}
+			})
+			switch err {
+			case nil:
+				return outcome
+			case breaker.ErrBreakerOpen:
+				if prevState != 1 {
+					prevState = 1
+					log.Printf("Breaker is open \t %s \n", url)
+					signal := ind
+					for i:=0;i<len(out);i++ {
+						if ind!=i{
+							fmt.Println(i)
+							out[i] <- signal
+							fmt.Printf("sending to %v from %v\n", i, ind)
+						}
+					}
+				}
+			default:
+				log.Printf("retry in execute %s \t %s\n", method, url)
+				time.Sleep(h.conf.RetryInterval.Duration)
+			}
 		}
 	}
 }
