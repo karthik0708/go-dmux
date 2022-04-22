@@ -2,22 +2,19 @@ package metrics
 
 import (
 	"flag"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 
-func Init() {
-	go send()
+func Init(port int) {
+	go send(port)
 }
 
-func send() {
-	addr := flag.String("listen-address", ":9999", "The address to listen on for HTTP requests.")
-
-	http.Handle("/metrics", promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{}))
-	promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{})
-
+func send(port int) {
+	addr := flag.String("listen-address", ":"+strconv.Itoa(port), "The address to listen on for HTTP requests.")
+	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

@@ -5,6 +5,7 @@
       "name": "sample_name",
       "disabled": false,
       "connectionType": "kafka_http",
+      "metric_port": 9999,
       "connection": {
         "dmux": {
           "size": 250,

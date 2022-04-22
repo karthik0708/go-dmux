@@ -79,6 +79,7 @@ type DmuxItem struct {
 	Disabled   bool           `json:"disabled`
 	ConnType   ConnectionType `json:"connectionType"`
 	Connection interface{}    `json:connection`
+	MetricPort int			  `json:"metric_port"`
 }
 
 //GetDmuxConf parses config file and return DmuxConf
