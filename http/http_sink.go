@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/eapache/go-resiliency/breaker"
+	breaker "github.com/go-dmux/breaker"
 	"io"
 	"io/ioutil"
 	"log"
@@ -117,7 +117,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerChs []chan interface{}, ind int) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerCh <- chan uint32,  monitorCh chan<- uint32) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -133,7 +133,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerChs []ch
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerChs, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerCh, monitorCh)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
@@ -145,7 +145,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerChs []ch
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, breakerChs  []chan interface{}, ind int) {
+func (h *HTTPSink) Consume(msg interface{}, breakerCh <- chan uint32,  monitorCh chan<- uint32) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -156,7 +156,7 @@ func (h *HTTPSink) Consume(msg interface{}, breakerChs  []chan interface{}, ind 
 	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerChs, ind)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerCh, monitorCh)
 
 	//retry Post till you succede infinitely
 	h.retryPost(msg, status, url)
@@ -170,8 +170,8 @@ func (h *HTTPSink) InitBreaker(){
 
 //PlaceBreaker puts a breaker on the critical function which returns an error  T
 //The breaker is opened once error threshold is reached
-func (h *HTTPSink) PlaceBreaker(critical func () error) error{
-	return h.cirBreaker.Run(critical)
+func (h *HTTPSink) PlaceBreaker(critical func () error, monitorCh chan<- uint32) error{
+	return h.cirBreaker.Run(critical, monitorCh)
 }
 
 func (h *HTTPSink) retryPre(msg interface{}, url string) {
@@ -199,52 +199,45 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 }
 
 //retryExecute implements a circuit breaker to provide a guardrail
-func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), breakerChs  []chan interface{}, ind int) bool {
+func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte,
+	respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool),
+	breakerCh <- chan uint32,  monitorCh chan<- uint32) bool {
 
-	var outcome bool = false
-	prevState := 0
+	outcome := false
+	currentStatus := breaker.Closed
 	for {
 		select {
-		case signal:= <-breakerChs[ind] :
-			log.Printf("breaker open message from # %v suspending %v",signal, ind)
-			for len(breakerChs[ind])>0{
-				<-breakerChs[ind]
+		case signal := <-breakerCh:
+			log.Println("recieved from monitor",signal, url)
+			currentStatus = signal
+			for len(breakerCh) > 0 {
+				<-breakerCh
 			}
-			time.Sleep(time.Second*10)
-
 		default:
-			err := h.PlaceBreaker(func() error {
-				log.Println()
-				prevState = 0
-				status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
-				if status {
-					nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
-					err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
-					outcome = tmp
-					return err
-				} else {
-					return errors.New("execution failed")
-				}
-			})
-			switch err {
-			case nil:
-				return outcome
-			case breaker.ErrBreakerOpen:
-				if prevState != 1 {
-					prevState = 1
-					log.Printf("Breaker is open \t %s \n", url)
-					signal := ind
-					for i:=0;i<len(breakerChs);i++ {
-						if ind!=i{
-							fmt.Println(i)
-							breakerChs[i] <- signal
-							fmt.Printf("sending to %v from %v\n", i, ind)
-						}
+			if currentStatus == breaker.HalfOpen || currentStatus == breaker.Closed {
+				err := h.PlaceBreaker(func() error {
+					status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
+					if status {
+						nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
+						err, tmp := respEval(respCode, nonRetriableHttpStatusCodes)
+						outcome = tmp
+						return err
+					} else {
+						return errors.New("execution failed")
 					}
+				}, monitorCh)
+				switch err {
+				case nil:
+					return outcome
+				case breaker.ErrBreakerOpen:
+					if currentStatus!=breaker.Open {
+						currentStatus = breaker.Open
+						log.Printf("Circuit is now open \t %s \n", url)
+					}
+				default:
+					log.Printf("retry in execute %s \t %s\n", method, url)
+					time.Sleep(h.conf.RetryInterval.Duration)
 				}
-			default:
-				log.Printf("retry in execute %s \t %s\n", method, url)
-				time.Sleep(h.conf.RetryInterval.Duration)
 			}
 		}
 	}

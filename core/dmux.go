@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/go-dmux/breaker"
 	"log"
 	"sync"
 	"time"
@@ -62,17 +63,17 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, breakerChs []chan interface{}, ind int)
+	Consume(msg interface{}, breakerCh <- chan uint32, monitorCh chan<- uint32)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, breakerChs []chan interface{}, ind int)
+	BatchConsume(msg []interface{}, version int, breakerCh <- chan uint32,  monitorCh chan<- uint32)
 
 	//InitBreaker initializes the breaker using the config
 	InitBreaker()
 
 	//PlaceBreaker takes a func which executes a critical block of code and
 	//breaks the circuit if threshold is reached
-	PlaceBreaker(criticalFunc func() error) error
+	PlaceBreaker(criticalFunc func() error, monitorCh chan<- uint32) error
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -271,10 +272,11 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsz)
 	}
-	breakerChs := make([]chan interface{}, size)
+	breakerChs := make([]chan uint32, size)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan interface{},1)
+		breakerChs[i] = make(chan uint32,1)
 	}
+	monitorCh := make(chan uint32, 1)
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
@@ -313,7 +315,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, breakerChs, index)
+				sk.BatchConsume(batch, version, breakerChs[i], monitorCh)
 			}
 
 		}(i)
@@ -325,10 +327,12 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
-	breakerChs := make([]chan interface{}, size)
+	breakerChs := make([]chan uint32, size)
+	monitorCh := make(chan uint32, 1)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan interface{},1)
+		breakerChs[i] = make(chan uint32,1)
 	}
+	go monitorBreaker(size, monitorCh, breakerChs)
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsize)
 		go func(index int) {
@@ -337,7 +341,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 				select {
 				case msg := <-ch[index]:
 					log.Printf("goroutine #%v processing message %v\n", index, msg)
-					sk.Consume(msg, breakerChs,index)
+					sk.Consume(msg, breakerChs[index],monitorCh)
 				default:
 					for len(breakerChs[index])>0 {
 						<- breakerChs[index]
@@ -348,4 +352,27 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 		}(i)
 	}
 	return ch, wg
+}
+
+func monitorBreaker(size int, monitorCh <- chan uint32, breakerChs []chan uint32){
+	for{
+		select {
+		case signal := <-monitorCh:
+			log.Println("received message from breaker",signal)
+			if signal == breaker.Open || signal == breaker.Closed{
+				log.Println("sending status to all goroutines from monitor",signal)
+				for i := 0; i < size; i++ {
+					breakerChs[i] <- signal
+				}
+			} else if signal == breaker.HalfOpen{
+				log.Println("sending status to all goroutines from monitor",signal)
+				for i := 0; i < size; i++ {
+					breakerChs[i] <- breaker.HalfOpen
+				}
+			}
+			for len(monitorCh)>0 {
+				<-monitorCh
+			}
+		}
+	}
 }

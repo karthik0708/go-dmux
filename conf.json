@@ -37,7 +37,7 @@
           "method": "POST",
           "error_threshold": 3,
           "breaker_timeout": "10s",
-          "success_threshold": 2
+          "success_threshold": 3
         }
       }
     }
