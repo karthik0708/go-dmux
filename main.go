@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-dmux/metrics"
 	"log"
 	"os"
 
@@ -25,6 +26,7 @@ func main() {
 		FilePath: path,
 	}
 	conf := dconf.GetDmuxConf()
+	metrics.Init(conf.MetricPort)
 
 	dmuxLogging := new(logging.DMuxLogging)
 	dmuxLogging.Start(conf.Logging)
