@@ -139,14 +139,14 @@ func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh 
 
 func (b *Breaker) openBreaker(monitorCh chan<- uint32) {
 	b.changeState(Open)
-	log.Println("sending message to monitorBreaker from breaker.go",Open)
+	log.Println("breaker: sending message to monitorBreaker",Open)
 	monitorCh <- Open
 	go b.timer(monitorCh)
 }
 
 func (b *Breaker) closeBreaker(monitorCh chan<- uint32) {
 	b.changeState(Closed)
-	log.Println("sending message to monitorBreaker from breaker.go",Closed)
+	log.Println("breaker: sending message to monitorBreaker",Closed)
 	monitorCh <- Closed
 }
 
@@ -157,7 +157,7 @@ func (b *Breaker) timer(monitorCh chan<- uint32) {
 	defer b.lock.Unlock()
 
 	b.changeState(HalfOpen)
-	log.Println("sending message to monitorBreaker from breaker.go",HalfOpen)
+	log.Println("breaker: sending message to monitorBreaker",HalfOpen)
 	monitorCh <- HalfOpen
 }
 

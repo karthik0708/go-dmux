@@ -208,11 +208,8 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, d
 	for {
 		select {
 		case signal := <-breakerCh:
-			log.Println("recieved from monitor",signal, url)
+			log.Println("sink: recieved from monitor",signal, url)
 			currentStatus = signal
-			for len(breakerCh) > 0 {
-				<-breakerCh
-			}
 		default:
 			if currentStatus == breaker.HalfOpen || currentStatus == breaker.Closed {
 				err := h.PlaceBreaker(func() error {

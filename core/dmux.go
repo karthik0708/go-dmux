@@ -356,23 +356,26 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 
 func monitorBreaker(size int, monitorCh <- chan uint32, breakerChs []chan uint32){
 	for{
-		select {
-		case signal := <-monitorCh:
-			log.Println("received message from breaker",signal)
-			if signal == breaker.Open || signal == breaker.Closed{
-				log.Println("sending status to all goroutines from monitor",signal)
-				for i := 0; i < size; i++ {
-					breakerChs[i] <- signal
-				}
-			} else if signal == breaker.HalfOpen{
-				log.Println("sending status to all goroutines from monitor",signal)
-				for i := 0; i < size; i++ {
-					breakerChs[i] <- breaker.HalfOpen
-				}
+		signal := <-monitorCh
+		for len(monitorCh)>0 {
+			<-monitorCh
+		}
+		log.Println("monitor: received message from breaker",signal)
+		if signal == breaker.Open || signal == breaker.Closed{
+			log.Println("monitor: sending status to all goroutines",signal)
+			for i := 0; i < size; i++ {
+				breakerChs[i] <- signal
 			}
-			for len(monitorCh)>0 {
-				<-monitorCh
+		} else if signal == breaker.HalfOpen{
+			log.Println("monitor: sending status to all goroutines",signal)
+			//TODO allow a percentage of goroutines to resume
+			for i := 0; i < size; i++ {
+				breakerChs[i] <- breaker.HalfOpen
 			}
 		}
+		for len(monitorCh)>0 {
+			log.Println("monitor: other signals",<-monitorCh)
+		}
 	}
+
 }
