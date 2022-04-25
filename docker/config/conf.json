@@ -5,7 +5,6 @@
       "name": "sample_name",
       "disabled": false,
       "connectionType": "kafka_http",
-      "metric_port": 9999,
       "connection": {
         "dmux": {
           "size": 250,
@@ -40,6 +39,7 @@
       }
     }
   ],
+  "metric_port": 9999,
   "logging": {
     "type": "console",
     "config": {
