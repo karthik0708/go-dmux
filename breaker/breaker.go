@@ -1,25 +1,22 @@
-// Package breaker implements the circuit-breaker resiliency pattern for Go.
 package breaker
 
 import (
-	"errors"
 	"log"
+	"math"
 	"sync"
 	"sync/atomic"
 	"time"
 )
 
-// ErrBreakerOpen is the error returned from Run() when the function is not executed
-// because the breaker is currently open.
-var ErrBreakerOpen = errors.New("circuit breaker is open")
-
 const (
 	Closed uint32 = iota
 	Open
 	HalfOpen
+	Error
+	Success
+	NotProcessed
 )
 
-// Breaker implements the circuit-breaker resiliency pattern
 type Breaker struct {
 	errorThreshold, successThreshold int
 	timeout                          time.Duration
@@ -30,11 +27,6 @@ type Breaker struct {
 	lastError         time.Time
 }
 
-// New constructs a new circuit-breaker that starts closed.
-// From closed, the breaker opens if "errorThreshold" errors are seen
-// without an error-free period of at least "timeout". From open, the
-// breaker half-closes after "timeout". From half-open, the breaker closes
-// after "successThreshold" consecutive successes, or opens on a single error.
 func New(errorThreshold, successThreshold int, timeout time.Duration) *Breaker {
 	return &Breaker{
 		errorThreshold:   errorThreshold,
@@ -43,40 +35,7 @@ func New(errorThreshold, successThreshold int, timeout time.Duration) *Breaker {
 	}
 }
 
-// Run will either return ErrBreakerOpen immediately if the circuit-breaker is
-// already open, or it will run the given function and pass along its return
-// value. It is safe to call Run concurrently on the same Breaker.
-func (b *Breaker) Run(work func() error, monitorCh chan<- uint32) error {
-	state := atomic.LoadUint32(&b.state)
-
-	if state == Open {
-		return ErrBreakerOpen
-	}
-
-	return b.doWork(state, work, monitorCh)
-}
-
-// Go will either return ErrBreakerOpen immediately if the circuit-breaker is
-// already open, or it will run the given function in a separate goroutine.
-// If the function is run, Go will return nil immediately, and will *not* return
-// the return value of the function. It is safe to call Go concurrently on the
-// same Breaker.
-func (b *Breaker) Go(work func() error, monitorCh chan<- uint32) error {
-	state := atomic.LoadUint32(&b.state)
-
-	if state == Open {
-		return ErrBreakerOpen
-	}
-
-	// errcheck complains about ignoring the error return value, but
-	// that's on purpose; if you want an error from a goroutine you have to
-	// get it over a channel or something
-	go b.doWork(state, work, monitorCh)
-
-	return nil
-}
-
-func (b *Breaker) doWork(state uint32, work func() error, monitorCh chan<- uint32) error {
+func (b *Breaker) RunWorker(work func() error, monitorCh chan<- uint32) error {
 	var panicValue interface{}
 
 	result := func() error {
@@ -86,18 +45,13 @@ func (b *Breaker) doWork(state uint32, work func() error, monitorCh chan<- uint3
 		return work()
 	}()
 
-	if result == nil && panicValue == nil && state == Closed {
-		// short-circuit the normal, success path without contending
-		// on the lock
+	if result == nil && panicValue == nil {
 		return nil
 	}
 
-	// oh well, I guess we have to contend on the lock
 	b.processResult(result, panicValue, monitorCh)
 
 	if panicValue != nil {
-		// as close as Go lets us come to a "rethrow" although unfortunately
-		// we lose the original panicing location
 		panic(panicValue)
 	}
 
@@ -105,64 +59,96 @@ func (b *Breaker) doWork(state uint32, work func() error, monitorCh chan<- uint3
 }
 
 func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh chan<- uint32) {
-	//b.lock.Lock()
-	//defer b.lock.Unlock()
 
 	if result == nil && panicValue == nil {
-		if b.state == HalfOpen {
-			b.successes++
-			if b.successes == b.successThreshold {
-				b.closeBreaker(monitorCh)
-			}
-		}
+		log.Println("worker.goroutine: sending signal", Success)
+		monitorCh <- Success
 	} else {
-		if b.errors > 0 {
-			expiry := b.lastError.Add(b.timeout)
-			if time.Now().After(expiry) {
-				b.errors = 0
-			}
+		monitorCh <- Error
+		log.Println("worker.goroutine: sending signal", Error)
+	}
+}
+
+func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor float64, monitorCh <- chan uint32){
+	cnt := 0
+	chosenCnt := int(math.Ceil(factor*float64(size)))
+
+	for{
+		signal := <-monitorCh
+		log.Println("monitor.goroutine: recieved signal", signal)
+		if signal != NotProcessed {
+			cnt = 0
+			chosenCnt = int(math.Ceil(factor*float64(size)))
 		}
 
-		switch b.state {
-		case Closed:
-			b.errors++
-			if b.errors == b.errorThreshold {
-				b.openBreaker(monitorCh)
-			} else {
-				b.lastError = time.Now()
+		switch signal {
+		case Error:
+			if b.errors > 0 {
+				expiry := b.lastError.Add(b.timeout)
+				if time.Now().After(expiry) {
+					b.errors = 0
+				}
 			}
-		case HalfOpen:
-			b.openBreaker(monitorCh)
+			switch b.state {
+			case Closed:
+				b.errors++
+				if b.errors == b.errorThreshold {
+					b.openBreaker(breakerChs, size, chosenCnt)
+				} else {
+					b.lastError = time.Now()
+				}
+			case HalfOpen:
+				b.openBreaker(breakerChs, size, chosenCnt)
+			}
+		case Success:
+			if b.state == HalfOpen {
+				b.successes++
+				if b.successes == b.successThreshold {
+					b.closeBreaker(breakerChs, size)
+				}
+			}
+		case NotProcessed:
+			cnt++
+			if cnt != chosenCnt {
+				continue
+			}
+			if cnt == chosenCnt{
+				chosenCnt = int(math.Min(float64(size), float64(2*chosenCnt)))
+				cnt = 0
+				b.changeState(HalfOpen, breakerChs, chosenCnt)
+			}
 		}
 	}
 }
 
-func (b *Breaker) openBreaker(monitorCh chan<- uint32) {
-	b.changeState(Open)
-	log.Println("breaker: sending message to monitorBreaker",Open)
-	monitorCh <- Open
-	go b.timer(monitorCh)
+func (b *Breaker) openBreaker(breakerChs []chan uint32, size int, chosenCnt int) {
+	b.changeState(Open, breakerChs, size)
+	go b.timer(breakerChs, chosenCnt)
 }
 
-func (b *Breaker) closeBreaker(monitorCh chan<- uint32) {
-	b.changeState(Closed)
-	log.Println("breaker: sending message to monitorBreaker",Closed)
-	monitorCh <- Closed
+func (b *Breaker) closeBreaker(breakerChs []chan uint32, size int) {
+	b.changeState(Closed, breakerChs, size)
 }
 
-func (b *Breaker) timer(monitorCh chan<- uint32) {
+func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
 	time.Sleep(b.timeout)
 
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.changeState(HalfOpen)
-	log.Println("breaker: sending message to monitorBreaker",HalfOpen)
-	monitorCh <- HalfOpen
+	b.changeState(HalfOpen, breakerChs, chosenCnt)
 }
 
-func (b *Breaker) changeState(newState uint32) {
+func (b *Breaker) changeState(newState uint32, breakerChs []chan uint32, finalSize int) {
 	b.errors = 0
 	b.successes = 0
+
 	atomic.StoreUint32(&b.state, newState)
+
+	log.Println("monitor.goroutine: status of breaker is ", newState)
+	log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", newState, finalSize)
+
+	for i :=0;i<finalSize;i++ {
+		breakerChs[i] <- newState
+	}
 }
