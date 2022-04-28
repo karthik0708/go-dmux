@@ -3,13 +3,11 @@ package consumergroup
 import (
 	"errors"
 	"fmt"
-	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
-	"github.com/prometheus/client_golang/prometheus"
-	"reflect"
-	"strconv"
 	"sync"
 	"time"
+
+	"github.com/Shopify/sarama"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 var (
@@ -510,35 +508,5 @@ partitionConsumerLoop:
 	cg.Logf("%s/%d :: Stopping partition consumer at offset %d\n", topic, partition, lastOffset)
 	if err := cg.offsetManager.FinalizePartition(topic, partition, lastOffset, cg.config.Offsets.ProcessingTimeout); err != nil {
 		cg.Logf("%s/%d :: %s\n", topic, partition, err)
-	}
-}
-
-func (cg *ConsumerGroup) GetOffsets() (map[string]map[int32]int64, error) {
-	return cg.group.FetchAllOffsets()
-}
-
-func (cg *ConsumerGroup) PopulateOffset() {
-	currentOffests := prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Name: "current_processing_offset",
-			Help: "Metric to represent the offset being processed by dmux",
-		}, []string{"topic","partition"})
-
-	prometheus.MustRegister(currentOffests)
-
-	prevOffsets := make(map[string]map[int32]int64)
-	for{
-		offsets, err := cg.GetOffsets()
-		if err == nil{
-			isEqual := reflect.DeepEqual(prevOffsets, offsets)
-			if !isEqual {
-				prevOffsets = offsets
-				for topic, partitions := range offsets {
-					for partition, offset := range partitions{
-						currentOffests.WithLabelValues(topic, strconv.Itoa(int(partition))).Set(float64(offset))
-					}
-				}
-			}
-		}
 	}
 }

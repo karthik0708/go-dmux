@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"github.com/go-dmux/metrics"
 	"log"
 	"time"
 )
@@ -8,7 +9,7 @@ import (
 //OffsetTracker is interface which defines methods to track Messages which
 //have been queued for processing
 type OffsetTracker interface {
-	TrackMe(kmsg KafkaMsg)
+	TrackMe(kmsg KafkaMsg, sourceCh chan<- metrics.OffsetInfo)
 }
 
 //KafkaOffsetTracker is implementation of OffsetTracker to track offsets for
@@ -20,10 +21,12 @@ type KafkaOffsetTracker struct {
 }
 
 //TrackMe method ensures messages to track are enqued for tracking
-func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
+func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg, sourceCh chan<- metrics.OffsetInfo) {
 	if len(k.ch) == k.size {
 		log.Printf("warning: pending_acks threshold %d reached, please increase pending_acks size", k.size)
 	}
+	rawMsg := kmsg.GetRawMsg()
+	sourceCh <- metrics.OffsetInfo{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
 	k.ch <- kmsg
 }
 

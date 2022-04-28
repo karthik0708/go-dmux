@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"github.com/go-dmux/metrics"
 	"os"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 //KafkaSourceHook to track messages coming out of the source in order
 type KafkaSourceHook interface {
 	//Pre called before passing the message to DMux
-	Pre(k KafkaMsg)
+	Pre(k KafkaMsg, sourceCh chan<- metrics.OffsetInfo)
 }
 type KafkaMsgFactory interface {
 	//Create call to wrap consumer message inside KafkaMsg
@@ -68,7 +69,7 @@ func (k *KafkaSource) RegisterHook(hook KafkaSourceHook) {
 
 //Generate is Source method implementation, which connect to Kafka and pushes
 //KafkaMessage into the channel
-func (k *KafkaSource) Generate(out chan<- interface{}) {
+func (k *KafkaSource) Generate(out chan<- interface{}, sourceCh chan<- metrics.OffsetInfo) {
 
 	kconf := k.conf
 	//config
@@ -103,7 +104,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	go consumer.PopulateOffset()
+
 	k.consumer = consumer
 	for message := range k.consumer.Messages() {
 		//TODO handle Create failure
@@ -111,7 +112,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 		if k.hook != nil {
 			//TODO handle PreHook failure
-			k.hook.Pre(kafkaMsg)
+			k.hook.Pre(kafkaMsg, sourceCh)
 		}
 		out <- kafkaMsg
 	}

@@ -13,7 +13,6 @@ import (
 // **************** Bootstrap ***********
 
 func main() {
-	metrics.Init()
 	args := os.Args[1:]
 	sz := len(args)
 
@@ -27,6 +26,7 @@ func main() {
 		FilePath: path,
 	}
 	conf := dconf.GetDmuxConf()
+	metrics.Init(conf.MetricPort)
 
 	dmuxLogging := new(logging.DMuxLogging)
 	dmuxLogging.Start(conf.Logging)
