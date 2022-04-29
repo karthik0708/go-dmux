@@ -332,7 +332,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	breakerChs := make([]chan uint32, size)
 	monitorCh := make(chan uint32, size)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan uint32, 1)
+		breakerChs[i] = make(chan uint32)
 	}
 	go sink.GetBreaker().MonitorBreaker(size, breakerChs, 0.25, monitorCh)
 	for i := 0; i < size; i++ {
@@ -345,7 +345,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 					log.Printf("%v.goroutine: processing message %v\n", index, msg)
 					sk.Consume(msg, breakerChs[index], monitorCh)
 				case signal := <-breakerChs[index]:
-					if signal == breaker.HalfOpen {
+					if signal == breaker.Play {
 						log.Printf("goroutine #%v.goroutine:signal not processed\n", index)
 						monitorCh <- breaker.NotProcessed
 					}

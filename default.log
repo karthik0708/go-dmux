@@ -1,68 +1,306 @@
-2022/04/27 19:00:38 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:2 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:3 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/27 19:00:38 Starting  kafka_http
-2022/04/27 19:00:38 Connected to 127.0.0.1:2181
-2022/04/27 19:00:38 Authenticated: id=72069185172865055, timeout=6000
-2022/04/27 19:00:38 Re-submitting `0` credentials after reconnect
-2022/04/27 19:00:52 /test-four/2//36086 after kafka source
-2022/04/27 19:00:52 goroutine #0.: processing message &{0xc0001861e0 false false /test-four/2//36086}
-2022/04/27 19:00:52 /test-four/2//36086 before http sink
-2022/04/27 19:00:52 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36086 Post "http://localhost:8888/1.0/api/event/test-four/2//36086": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:00:52 worker.: sending signal 3
-2022/04/27 19:00:52 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36086
-2022/04/27 19:00:52 monitor.: recieved signal 3
-2022/04/27 19:00:52 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/2//36086 Post "http://localhost:8888/1.0/api/event/test-four/2//36086": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:00:52 worker.: sending signal 3
-2022/04/27 19:00:52 monitor.: recieved signal 3
-2022/04/27 19:00:52 monitor.: status of breaker is  1
-2022/04/27 19:00:52 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/2//36086
-2022/04/27 19:00:52 monitor.: sending signal 1 to 4 goroutines
-2022/04/27 19:00:52 sink: recieved from monitor 1 http://localhost:8888/1.0/api/event/test-four/2//36086
-2022/04/27 19:02:18 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:2 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:3 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/04/27 19:02:18 Starting  kafka_http
-2022/04/27 19:02:18 Connected to 127.0.0.1:2181
-2022/04/27 19:02:18 Authenticated: id=72069185172865056, timeout=6000
-2022/04/27 19:02:18 Re-submitting `0` credentials after reconnect
-2022/04/27 19:02:22 /test-four/0//34319 after kafka source
-2022/04/27 19:02:22 goroutine #0.goroutine: processing message &{0xc0000da140 false false /test-four/0//34319}
-2022/04/27 19:02:22 /test-four/0//34319 before http sink
-2022/04/27 19:02:22 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34319 Post "http://localhost:8888/1.0/api/event/test-four/0//34319": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:02:22 worker.goroutine: sending signal 3
-2022/04/27 19:02:22 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:22 monitor.goroutine: recieved signal 3
-2022/04/27 19:02:23 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34319 Post "http://localhost:8888/1.0/api/event/test-four/0//34319": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:02:23 worker.goroutine: sending signal 3
-2022/04/27 19:02:23 monitor.goroutine: recieved signal 3
-2022/04/27 19:02:23 monitor.goroutine: status of breaker is  1
-2022/04/27 19:02:23 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:23 monitor.goroutine: sending signal 1 to 4 goroutines
-2022/04/27 19:02:23 sink: recieved from monitor 1 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:33 monitor.goroutine: status of breaker is  2
-2022/04/27 19:02:33 monitor.goroutine: sending signal 2 to 1 goroutines
-2022/04/27 19:02:33 sink: recieved from monitor 2 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34319 Post "http://localhost:8888/1.0/api/event/test-four/0//34319": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:02:33 worker.goroutine: sending signal 3
-2022/04/27 19:02:33 monitor.goroutine: recieved signal 3
-2022/04/27 19:02:33 monitor.goroutine: status of breaker is  1
-2022/04/27 19:02:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:33 monitor.goroutine: sending signal 1 to 4 goroutines
-2022/04/27 19:02:33 sink: recieved from monitor 1 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:43 monitor.goroutine: status of breaker is  2
-2022/04/27 19:02:43 monitor.goroutine: sending signal 2 to 1 goroutines
-2022/04/27 19:02:43 sink: recieved from monitor 2 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:43 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34319 Post "http://localhost:8888/1.0/api/event/test-four/0//34319": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:02:43 worker.goroutine: sending signal 3
-2022/04/27 19:02:43 monitor.goroutine: recieved signal 3
-2022/04/27 19:02:43 monitor.goroutine: status of breaker is  1
-2022/04/27 19:02:43 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:43 monitor.goroutine: sending signal 1 to 4 goroutines
-2022/04/27 19:02:43 sink: recieved from monitor 1 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:53 monitor.goroutine: status of breaker is  2
-2022/04/27 19:02:53 monitor.goroutine: sending signal 2 to 1 goroutines
-2022/04/27 19:02:53 sink: recieved from monitor 2 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:53 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34319 Post "http://localhost:8888/1.0/api/event/test-four/0//34319": dial tcp [::1]:8888: connect: connection refused 
-2022/04/27 19:02:53 worker.goroutine: sending signal 3
-2022/04/27 19:02:53 monitor.goroutine: recieved signal 3
-2022/04/27 19:02:53 monitor.goroutine: status of breaker is  1
-2022/04/27 19:02:53 monitor.goroutine: sending signal 1 to 4 goroutines
-2022/04/27 19:02:53 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34319
-2022/04/27 19:02:53 sink: recieved from monitor 1 http://localhost:8888/1.0/api/event/test-four/0//34319
+2022/04/29 09:47:18 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:RoundRobin size:4] pending_acks:1e+06 sink:map[breaker_timeout:10s endpoint:http://localhost:8888/1.0/api/event error_threshold:2 headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms success_threshold:3 timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
+2022/04/29 09:47:18 Starting  kafka_http
+2022/04/29 09:47:18 Connected to 127.0.0.1:2181
+2022/04/29 09:47:18 Authenticated: id=72071252619558946, timeout=6000
+2022/04/29 09:47:18 Re-submitting `0` credentials after reconnect
+2022/04/29 09:48:11 /test-four/1//29806 after kafka source
+2022/04/29 09:48:11 0.goroutine: processing message &{0xc001214140 false false /test-four/1//29806}
+2022/04/29 09:48:11 /test-four/1//29806 before http sink
+2022/04/29 09:48:11 /test-four/1//29806 after http sink, status = true
+2022/04/29 09:48:13 /test-four/2//36119 after kafka source
+2022/04/29 09:48:13 /test-four/2//36120 after kafka source
+2022/04/29 09:48:13 2.goroutine: processing message &{0xc000122500 false false /test-four/2//36120}
+2022/04/29 09:48:13 /test-four/2//36120 before http sink
+2022/04/29 09:48:13 1.goroutine: processing message &{0xc0001223c0 false false /test-four/2//36119}
+2022/04/29 09:48:13 /test-four/2//36119 before http sink
+2022/04/29 09:48:13 /test-four/2//36120 after http sink, status = true
+2022/04/29 09:48:13 /test-four/2//36119 after http sink, status = true
+2022/04/29 09:48:33 /test-four/0//34354 after kafka source
+2022/04/29 09:48:33 3.goroutine: processing message &{0xc000123040 false false /test-four/0//34354}
+2022/04/29 09:48:33 /test-four/0//34354 before http sink
+2022/04/29 09:48:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:48:33 worker.goroutine: sending signal 3
+2022/04/29 09:48:33 monitor.goroutine: recieved signal 3
+2022/04/29 09:48:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:33 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:48:33 worker.goroutine: sending signal 3
+2022/04/29 09:48:33 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:33 monitor.goroutine: recieved signal 3
+2022/04/29 09:48:33 monitor.goroutine: status of breaker is  1
+2022/04/29 09:48:33 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:43 monitor.goroutine: status of breaker is  2
+2022/04/29 09:48:43 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:48:43 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:48:43 goroutine #1.goroutine:signal not processed
+2022/04/29 09:48:43 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:48:43 goroutine #2.goroutine:signal not processed
+2022/04/29 09:48:43 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:43 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:43 goroutine #1.goroutine:signal not processed
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:43 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:48:43 worker.goroutine: sending signal 3
+2022/04/29 09:48:43 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:43 monitor.goroutine: recieved signal 3
+2022/04/29 09:48:43 monitor.goroutine: status of breaker is  1
+2022/04/29 09:48:43 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:53 monitor.goroutine: status of breaker is  2
+2022/04/29 09:48:53 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:48:53 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:48:53 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 goroutine #1.goroutine:signal not processed
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:48:53 goroutine #2.goroutine:signal not processed
+2022/04/29 09:48:53 goroutine #0.goroutine:signal not processed
+2022/04/29 09:48:53 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:53 goroutine #1.goroutine:signal not processed
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 5
+2022/04/29 09:48:53 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:48:53 worker.goroutine: sending signal 3
+2022/04/29 09:48:53 monitor.goroutine: recieved signal 3
+2022/04/29 09:48:53 monitor.goroutine: status of breaker is  1
+2022/04/29 09:48:53 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:48:53 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:03 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:03 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:03 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:03 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:03 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:03 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:03 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:03 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:03 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:03 worker.goroutine: sending signal 3
+2022/04/29 09:49:03 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:03 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:03 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:04 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:14 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:14 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:14 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:14 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:14 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:14 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:14 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:14 worker.goroutine: sending signal 3
+2022/04/29 09:49:14 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:14 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:14 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:14 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:24 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:24 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:24 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:24 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:24 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:24 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:24 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:24 worker.goroutine: sending signal 3
+2022/04/29 09:49:24 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:24 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:24 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:24 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:34 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:34 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:34 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:34 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:34 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:34 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:34 worker.goroutine: sending signal 3
+2022/04/29 09:49:34 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:34 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:34 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:34 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:44 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:44 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:44 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:44 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:44 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:44 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:44 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:44 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:44 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:44 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:44 worker.goroutine: sending signal 3
+2022/04/29 09:49:44 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:44 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:44 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:44 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:54 monitor.goroutine: status of breaker is  2
+2022/04/29 09:49:54 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:49:54 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:49:54 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:49:54 goroutine #2.goroutine:signal not processed
+2022/04/29 09:49:54 goroutine #1.goroutine:signal not processed
+2022/04/29 09:49:54 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:54 goroutine #0.goroutine:signal not processed
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 5
+2022/04/29 09:49:54 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:49:54 worker.goroutine: sending signal 3
+2022/04/29 09:49:54 monitor.goroutine: recieved signal 3
+2022/04/29 09:49:54 monitor.goroutine: status of breaker is  1
+2022/04/29 09:49:54 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:49:54 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:04 monitor.goroutine: status of breaker is  2
+2022/04/29 09:50:04 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:50:04 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:50:04 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:50:04 goroutine #2.goroutine:signal not processed
+2022/04/29 09:50:04 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:04 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:04 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:04 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:50:04 worker.goroutine: sending signal 3
+2022/04/29 09:50:04 monitor.goroutine: recieved signal 3
+2022/04/29 09:50:04 monitor.goroutine: status of breaker is  1
+2022/04/29 09:50:04 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:04 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:14 monitor.goroutine: status of breaker is  2
+2022/04/29 09:50:14 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:50:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:50:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:14 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:50:14 goroutine #2.goroutine:signal not processed
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:14 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:14 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:14 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:50:14 worker.goroutine: sending signal 3
+2022/04/29 09:50:14 monitor.goroutine: recieved signal 3
+2022/04/29 09:50:14 monitor.goroutine: status of breaker is  1
+2022/04/29 09:50:14 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:14 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:24 monitor.goroutine: status of breaker is  2
+2022/04/29 09:50:24 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:50:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:50:24 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:50:24 goroutine #2.goroutine:signal not processed
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:24 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:24 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:24 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:50:24 worker.goroutine: sending signal 3
+2022/04/29 09:50:24 monitor.goroutine: recieved signal 3
+2022/04/29 09:50:24 monitor.goroutine: status of breaker is  1
+2022/04/29 09:50:24 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:24 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:34 monitor.goroutine: status of breaker is  2
+2022/04/29 09:50:34 monitor.goroutine: sending signal 7 to 1 goroutines
+2022/04/29 09:50:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 monitor.goroutine: sending signal 7 to 2 goroutines
+2022/04/29 09:50:34 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 monitor.goroutine: sending signal 7 to 4 goroutines
+2022/04/29 09:50:34 goroutine #2.goroutine:signal not processed
+2022/04/29 09:50:34 sink: recieved from monitor 7 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:34 goroutine #0.goroutine:signal not processed
+2022/04/29 09:50:34 goroutine #1.goroutine:signal not processed
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 5
+2022/04/29 09:50:34 failed in http call invoke http://localhost:8888/1.0/api/event/test-four/0//34354 Post "http://localhost:8888/1.0/api/event/test-four/0//34354": dial tcp [::1]:8888: connect: connection refused 
+2022/04/29 09:50:34 worker.goroutine: sending signal 3
+2022/04/29 09:50:34 monitor.goroutine: recieved signal 3
+2022/04/29 09:50:34 monitor.goroutine: status of breaker is  1
+2022/04/29 09:50:34 retry in execute POST 	 http://localhost:8888/1.0/api/event/test-four/0//34354
+2022/04/29 09:50:34 sink: recieved from monitor 6 http://localhost:8888/1.0/api/event/test-four/0//34354

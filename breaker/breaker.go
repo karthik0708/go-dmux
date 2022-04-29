@@ -15,6 +15,8 @@ const (
 	Error
 	Success
 	NotProcessed
+	Pause
+	Play
 )
 
 type Breaker struct {
@@ -115,19 +117,21 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 			if cnt == chosenCnt{
 				chosenCnt = int(math.Min(float64(size), float64(2*chosenCnt)))
 				cnt = 0
-				b.changeState(HalfOpen, breakerChs, chosenCnt)
+				log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
+				sendSignal(Play, chosenCnt, breakerChs)
 			}
 		}
 	}
 }
 
 func (b *Breaker) openBreaker(breakerChs []chan uint32, size int, chosenCnt int) {
-	b.changeState(Open, breakerChs, size)
+	b.changeState(Open)
+	sendSignal(Pause, size, breakerChs)
 	go b.timer(breakerChs, chosenCnt)
 }
 
 func (b *Breaker) closeBreaker(breakerChs []chan uint32, size int) {
-	b.changeState(Closed, breakerChs, size)
+	b.changeState(Closed)
 }
 
 func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
@@ -136,19 +140,22 @@ func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
 	b.lock.Lock()
 	defer b.lock.Unlock()
 
-	b.changeState(HalfOpen, breakerChs, chosenCnt)
+	b.changeState(HalfOpen)
+	log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
+	sendSignal(Play, chosenCnt, breakerChs)
 }
 
-func (b *Breaker) changeState(newState uint32, breakerChs []chan uint32, finalSize int) {
+func (b *Breaker) changeState(newState uint32) {
 	b.errors = 0
 	b.successes = 0
 
 	atomic.StoreUint32(&b.state, newState)
 
 	log.Println("monitor.goroutine: status of breaker is ", newState)
-	log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", newState, finalSize)
+}
 
-	for i :=0;i<finalSize;i++ {
-		breakerChs[i] <- newState
+func sendSignal(signal uint32, chosenCnt int, breakerChs []chan uint32) {
+	for i := 0; i < chosenCnt; i++ {
+		breakerChs[i] <- signal
 	}
 }
