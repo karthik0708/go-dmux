@@ -37,7 +37,7 @@ type HTTPSinkConf struct {
 //HTTPSinkHook is added for Clien to attach pre and post porcessing logic
 type HTTPSinkHook interface {
 	PreHTTPCall(msg interface{})
-	PostHTTPCall(msg interface{}, sucess bool, sinkCh chan<- metrics.OffsetInfo)
+	PostHTTPCall(msg interface{}, sucess bool, sinkCh chan<- metrics.SinkOffset)
 }
 
 func getHTTPClientTransport(size int, conf HTTPSinkConf) http.RoundTripper {
@@ -114,7 +114,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, sinkCh chan<- metrics.OffsetInfo) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, sinkCh chan<- metrics.SinkOffset) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -142,7 +142,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, sinkCh chan<- m
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, sinkCh chan<- metrics.OffsetInfo) {
+func (h *HTTPSink) Consume(msg interface{}, sinkCh chan<- metrics.SinkOffset) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -172,7 +172,7 @@ func (h *HTTPSink) retryPre(msg interface{}, url string) {
 }
 
 func (h *HTTPSink) retryPost(msg interface{}, state bool,
-	url string, sinkCh chan<- metrics.OffsetInfo) {
+	url string, sinkCh chan<- metrics.SinkOffset) {
 	for {
 		status := h.post(h.hook, msg, state, url, sinkCh)
 		if status {
@@ -218,7 +218,7 @@ func (h *HTTPSink) pre(hook HTTPSinkHook, msg interface{}, url string) bool {
 	return true
 }
 
-func (h *HTTPSink) post(hook HTTPSinkHook, msg interface{}, status bool, url string, sinkCh chan<- metrics.OffsetInfo) bool {
+func (h *HTTPSink) post(hook HTTPSinkHook, msg interface{}, status bool, url string, sinkCh chan<- metrics.SinkOffset) bool {
 	// PostPorcessing
 	defer func() {
 		if r := recover(); r != nil {

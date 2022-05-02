@@ -13,7 +13,7 @@ import (
 //KafkaSourceHook to track messages coming out of the source in order
 type KafkaSourceHook interface {
 	//Pre called before passing the message to DMux
-	Pre(k KafkaMsg, sourceCh chan<- metrics.OffsetInfo)
+	Pre(k KafkaMsg, sourceCh chan<- metrics.SourceOffset)
 }
 type KafkaMsgFactory interface {
 	//Create call to wrap consumer message inside KafkaMsg
@@ -69,7 +69,7 @@ func (k *KafkaSource) RegisterHook(hook KafkaSourceHook) {
 
 //Generate is Source method implementation, which connect to Kafka and pushes
 //KafkaMessage into the channel
-func (k *KafkaSource) Generate(out chan<- interface{}, sourceCh chan<- metrics.OffsetInfo) {
+func (k *KafkaSource) Generate(out chan<- interface{}, sourceCh chan<- metrics.SourceOffset) {
 
 	kconf := k.conf
 	//config

@@ -9,9 +9,19 @@ import (
 	"strconv"
 )
 
+type (
+	SinkOffset OffsetInfo
+	SourceOffset OffsetInfo
+	LagOffset OffsetInfo
+)
 
-func Init(port int) {
-	go send(port)
+type Metrics interface {
+	Init()
+	displayMetrics()
+	createMetrics()
+	registerMetrics()
+	TrackMetrics(sourceCh <- chan SourceOffset, sinkCh <- chan SinkOffset)
+	pushMetric(metrics *PrometheusMetrics)
 }
 
 type OffsetInfo struct {
@@ -19,61 +29,101 @@ type OffsetInfo struct {
 	Partition int32
 	Offset int64
 }
-func send(port int) {
-	addr := flag.String("listen-address", ":"+strconv.Itoa(port), "The address to listen on for HTTP requests.")
+
+type PrometheusMetrics struct {
+	LastSourceDetail map[string]map[int32]int64
+	LastSinkDetail map[string]map[int32]int64
+
+	sourceOffMetric *prometheus.GaugeVec
+	sinkOffMetric *prometheus.GaugeVec
+	lagOffMetric *prometheus.GaugeVec
+}
+
+var MetricPort int
+
+func (metrics *PrometheusMetrics) Init() {
+	go metrics.displayMetrics()
+	metrics.createMetrics()
+	metrics.registerMetrics()
+}
+
+func  (metrics *PrometheusMetrics) displayMetrics() {
+	addr := flag.String("listen-address", ":"+strconv.Itoa(MetricPort), "The address to listen on for HTTP requests.")
 	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
 
-func PopulateMetrics(sourceCh <- chan OffsetInfo, sinkCh <- chan OffsetInfo){
-	sourceOffsets := prometheus.NewGaugeVec(
+func (metrics *PrometheusMetrics) createMetrics(){
+	metrics.sourceOffMetric = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "source_offset",
 			Help: "Metric to represent the offset at source",
 		}, []string{"topic","partition"})
 
-	sinkOffests := prometheus.NewGaugeVec(
+	metrics.sinkOffMetric = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "sink_offset",
 			Help: "Metric to represent the offset at sink",
 		}, []string{"topic","partition"})
 
-	lag := prometheus.NewGaugeVec(
+	metrics.lagOffMetric = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "lag",
 			Help: "Metric to represent the lag between source and sink",
 		}, []string{"topic","partition"})
+}
 
-	prometheus.MustRegister(sinkOffests)
-	prometheus.MustRegister(sourceOffsets)
-	prometheus.MustRegister(lag)
+func (metrics *PrometheusMetrics) registerMetrics() {
+	prometheus.MustRegister(metrics.sourceOffMetric)
+	prometheus.MustRegister(metrics.sinkOffMetric)
+	prometheus.MustRegister(metrics.lagOffMetric)
+}
 
-	lastSourceDetail := make(map[string]map[int32]int64)
-	lastSinkDetail := make(map[string]map[int32]int64)
-
-	lastSourcePartition := make(map[int32]int64)
-	lastSinkPartition := make(map[int32]int64)
-
+func (metrics *PrometheusMetrics)TrackMetrics(sourceCh <- chan SourceOffset, sinkCh <- chan SinkOffset){
 	for{
 		select {
 		case info := <- sourceCh:
-			sourceOffsets.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+			metrics.pushMetric(info)
 
-			lastSourcePartition[info.Partition] = info.Offset
-			lastSourceDetail[info.Topic] = lastSourcePartition
+			if partitionDetail, ok := metrics.LastSourceDetail[info.Topic]; ok == true{
+				partitionDetail[info.Partition] = info.Offset
+				metrics.LastSourceDetail[info.Topic] = partitionDetail
+			} else{
+				partitionDetail = make(map[int32]int64)
+				metrics.LastSourceDetail[info.Topic] = partitionDetail
+			}
 
-			if lastOffset, ok :=lastSinkDetail[info.Topic][info.Partition]; ok == true{
-				lag.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset - lastOffset))
+			if lastOffset, ok := metrics.LastSinkDetail[info.Topic][info.Partition]; ok == true{
+				metrics.pushMetric(LagOffset{Topic: info.Topic, Partition: info.Partition, Offset: info.Offset - lastOffset})
 			}
 		case info := <- sinkCh:
-			sinkOffests.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+			metrics.pushMetric(info)
 
-			lastSinkPartition[info.Partition] = info.Offset
-			lastSinkDetail[info.Topic] = lastSinkPartition
+			if partitionDetail, ok := metrics.LastSinkDetail[info.Topic]; ok == true{
+				partitionDetail[info.Partition] = info.Offset
+				metrics.LastSinkDetail[info.Topic] = partitionDetail
+			} else{
+				partitionDetail = make(map[int32]int64)
+				metrics.LastSinkDetail[info.Topic] = partitionDetail
+			}
 
-			if lastOffset, ok := lastSourceDetail[info.Topic][info.Partition]; ok == true {
-				lag.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(lastOffset - info.Offset))
+			if lastOffset, ok := metrics.LastSourceDetail[info.Topic][info.Partition]; ok == true {
+				metrics.pushMetric(LagOffset{Topic: info.Topic, Partition: info.Partition, Offset: lastOffset - info.Offset})
 			}
 		}
+	}
+}
+
+func (metrics *PrometheusMetrics) pushMetric(metric interface{}){
+	switch metric.(type) {
+	case SourceOffset:
+		info := metric.(SourceOffset)
+		metrics.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	case SinkOffset:
+		info := metric.(SinkOffset)
+		metrics.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	case LagOffset:
+		info := metric.(LagOffset)
+		metrics.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
 	}
 }

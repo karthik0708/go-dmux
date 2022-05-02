@@ -62,10 +62,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, sinkCh chan<- metrics.OffsetInfo)
+	Consume(msg interface{}, sinkCh chan<- metrics.SinkOffset)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, sinkCh chan<- metrics.OffsetInfo)
+	BatchConsume(msg []interface{}, version int, sinkCh chan<- metrics.SinkOffset)
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -73,7 +73,7 @@ type Source interface {
 	//Generate method takes output channel to which it writes data. The
 	//implementation can write to to this using multiple goroutines
 	//This method is not expected to return, its run in a separate goroutine
-	Generate(out chan<- interface{}, sourceCh chan<- metrics.OffsetInfo)
+	Generate(out chan<- interface{}, sourceCh chan<- metrics.SourceOffset)
 	//Method used to trigger GracefulStop of Source
 	Stop()
 }
@@ -191,14 +191,18 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	sinkCh := make(chan metrics.OffsetInfo, 1)
-	sourceCh := make(chan metrics.OffsetInfo, 1)
+	sourceCh := make(chan metrics.SourceOffset, 1)
+	sinkCh := make(chan metrics.SinkOffset, 1)
+
+	metrics := metrics.PrometheusMetrics{LastSourceDetail: make(map[string]map[int32]int64), LastSinkDetail: make(map[string]map[int32]int64)}
+	metrics.Init()
+	go metrics.TrackMetrics(sourceCh, sinkCh)
+
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, sinkCh)
 	in := make(chan interface{}, d.sourceQSize)
 
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go metrics.PopulateMetrics(sourceCh, sinkCh)
 	go source.Generate(in, sourceCh)
 
 	for {
@@ -235,7 +239,7 @@ func shutdown(ch []chan interface{}, wg *sync.WaitGroup) {
 	wg.Wait()
 }
 
-func setup(size, qsize, batchSize int, sink Sink, version int, sinkCh chan<- metrics.OffsetInfo) ([]chan interface{}, *sync.WaitGroup) {
+func setup(size, qsize, batchSize int, sink Sink, version int, sinkCh chan<- metrics.SinkOffset) ([]chan interface{}, *sync.WaitGroup) {
 	if version == 1 && batchSize == 1 {
 		return simpleSetup(size, qsize, sink, sinkCh)
 	} else {
@@ -255,7 +259,7 @@ func setup(size, qsize, batchSize int, sink Sink, version int, sinkCh chan<- met
 // BatchConsumer will update its batch array index from one entry each of respective channel index. (This provides
 // ability for consumer to consume in parallel) and then flush the batch.
 // Close of any channel in a BatchConsumer will stop the BatchConsumer.
-func batchSetup(sz, qsz, batchsz int, sink Sink, version int, sinkCh chan<- metrics.OffsetInfo) ([]chan interface{}, *sync.WaitGroup) {
+func batchSetup(sz, qsz, batchsz int, sink Sink, version int, sinkCh chan<- metrics.SinkOffset) ([]chan interface{}, *sync.WaitGroup) {
 	size := sz * batchsz // create double nuber of channels
 
 	wg := new(sync.WaitGroup)
@@ -306,7 +310,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int, sinkCh chan<- metr
 	return ch, wg
 }
 
-func simpleSetup(size, qsize int, sink Sink, sinkCh chan<- metrics.OffsetInfo) ([]chan interface{}, *sync.WaitGroup) {
+func simpleSetup(size, qsize int, sink Sink, sinkCh chan<- metrics.SinkOffset) ([]chan interface{}, *sync.WaitGroup) {
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
+    "github.com/go-dmux/kafka/kazoo-go"
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 var (
