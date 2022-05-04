@@ -47,10 +47,6 @@ func (b *Breaker) RunWorker(work func() error, monitorCh chan<- uint32) error {
 		return work()
 	}()
 
-	if result == nil && panicValue == nil {
-		return nil
-	}
-
 	b.processResult(result, panicValue, monitorCh)
 
 	if panicValue != nil {
@@ -98,6 +94,7 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 					b.openBreaker(breakerChs, size, chosenCnt)
 				} else {
 					b.lastError = time.Now()
+					sendSignal(Play, size, breakerChs)
 				}
 			case HalfOpen:
 				b.openBreaker(breakerChs, size, chosenCnt)
@@ -108,8 +105,13 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 				if b.successes == b.successThreshold {
 					b.closeBreaker(breakerChs, size)
 				}
+			} else {
+				sendSignal(Play, size, breakerChs)
 			}
 		case NotProcessed:
+			if b.state == Closed{
+				continue
+			}
 			cnt++
 			if cnt != chosenCnt {
 				continue

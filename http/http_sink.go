@@ -217,6 +217,7 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, d
 			status = signal
 		default:
 			if status == breaker.Play {
+				status = breaker.Pause
 				err := h.PlaceBreaker(func() error {
 					status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
 					if status {
