@@ -73,7 +73,7 @@ type Source interface {
 	//Generate method takes output channel to which it writes data. The
 	//implementation can write to to this using multiple goroutines
 	//This method is not expected to return, its run in a separate goroutine
-	Generate(out chan<- interface{}, sourceCh chan<- metrics.SourceOffset)
+	Generate(out chan<- interface{}, sourceCh chan<- metrics.SourceOffset, partitionCh chan<- metrics.PartitionInfo)
 	//Method used to trigger GracefulStop of Source
 	Stop()
 }
@@ -193,17 +193,17 @@ func getStopMsg() ControlMsg {
 func (d *Dmux) run(source Source, sink Sink) {
 	sourceCh := make(chan metrics.SourceOffset, 1)
 	sinkCh := make(chan metrics.SinkOffset, 1)
+	partitionCh := make(chan metrics.PartitionInfo)
 
-	metrics := metrics.PrometheusMetrics{LastSourceDetail: make(map[string]map[int32]int64), LastSinkDetail: make(map[string]map[int32]int64)}
-	metrics.Init()
-	go metrics.TrackMetrics(sourceCh, sinkCh)
+	reg := metrics.Init()
+	go reg.TrackMetrics(sourceCh, sinkCh, partitionCh)
 
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, sinkCh)
 	in := make(chan interface{}, d.sourceQSize)
 
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go source.Generate(in, sourceCh)
+	go source.Generate(in, sourceCh, partitionCh)
 
 	for {
 		select {
