@@ -165,7 +165,7 @@ func (h *HTTPSink) Consume(msg interface{}, breakerCh <-chan uint32, monitorCh c
 
 //InitBreaker is for initializing the breaker using HTTPSink config
 func (h *HTTPSink) InitBreaker(){
-	h.cirBreaker = breaker.New(h.conf.ErrorThreshold, h.conf.SuccessThreshold, h.conf.BreakerTimeout.Duration)
+	h.cirBreaker = breaker.New(0.1, h.conf.BreakerTimeout.Duration, 3)
 }
 
 //PlaceBreaker puts a breaker on the critical function which returns an error  T

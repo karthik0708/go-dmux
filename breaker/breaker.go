@@ -1,6 +1,7 @@
 package breaker
 
 import (
+	"fmt"
 	"log"
 	"math"
 	"sync"
@@ -20,20 +21,28 @@ const (
 )
 
 type Breaker struct {
-	errorThreshold, successThreshold int
-	timeout                          time.Duration
+	failureRateTh float64
+	timeout       time.Duration
 
 	lock              sync.Mutex
 	state             uint32
-	errors, successes int
+	failureRate 	float64
 	lastError         time.Time
+	queue Queue
 }
 
-func New(errorThreshold, successThreshold int, timeout time.Duration) *Breaker {
+type Queue struct{
+	slice []uint32
+	cap int
+	len int
+}
+
+func New(failureRateTh float64, timeout time.Duration, windowSize int) *Breaker {
+	var slice = make([]uint32, 0, windowSize)
 	return &Breaker{
-		errorThreshold:   errorThreshold,
-		successThreshold: successThreshold,
+		failureRateTh:   failureRateTh,
 		timeout:          timeout,
+		queue: 			Queue{slice: slice, cap: windowSize, len: 0},
 	}
 }
 
@@ -70,60 +79,69 @@ func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh 
 func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor float64, monitorCh <- chan uint32){
 	cnt := 0
 	chosenCnt := int(math.Ceil(factor*float64(size)))
+ 	var failureRate float64
 
 	for{
 		signal := <-monitorCh
-		log.Println("monitor.goroutine: recieved signal", signal)
-		if signal != NotProcessed {
-			cnt = 0
-			chosenCnt = int(math.Ceil(factor*float64(size)))
-		}
-
-		switch signal {
-		case Error:
-			if b.errors > 0 {
-				expiry := b.lastError.Add(b.timeout)
-				if time.Now().After(expiry) {
-					b.errors = 0
-				}
-			}
-			switch b.state {
-			case Closed:
-				b.errors++
-				if b.errors == b.errorThreshold {
-					b.openBreaker(breakerChs, size, chosenCnt)
-				} else {
-					b.lastError = time.Now()
-					sendSignal(Play, size, breakerChs)
-				}
-			case HalfOpen:
-				b.openBreaker(breakerChs, size, chosenCnt)
-			}
-		case Success:
-			if b.state == HalfOpen {
-				b.successes++
-				if b.successes == b.successThreshold {
-					b.closeBreaker(breakerChs, size)
-				}
-			} else {
-				sendSignal(Play, size, breakerChs)
-			}
+		switch signal{
 		case NotProcessed:
+
 			if b.state == Closed{
 				continue
 			}
+
 			cnt++
+
 			if cnt != chosenCnt {
 				continue
 			}
+
 			if cnt == chosenCnt{
 				chosenCnt = int(math.Min(float64(size), float64(2*chosenCnt)))
 				cnt = 0
-				log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
+				//log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
 				sendSignal(Play, chosenCnt, breakerChs)
+			}
+
+		case Error, Success:
+			log.Println("monitor.goroutine: recieved signal", signal)
+			if b.queue.len < b.queue.cap {
+				b.queue.enqueue(signal)
+				if b.queue.len != b.queue.cap {
+					sendSignal(Play, size, breakerChs)
+					continue
+				} else{
+					failureRate = b.computeRate()
+				}
+			} else {
+				cnt = 0
+				chosenCnt = int(math.Ceil(factor * float64(size)))
+				b.queue.dequeue()
+				b.queue.enqueue(signal)
+				failureRate = b.computeRate()
+			}
+			fmt.Println(failureRate)
+			if failureRate >= b.failureRateTh {
+				if b.state == Closed || b.state == HalfOpen{
+					b.openBreaker(breakerChs, size, chosenCnt)
+				}
+			} else {
+				if b.state == HalfOpen {
+					b.closeBreaker(breakerChs, size)
+				}
 			}
 		}
 	}
+}
+
+func (b *Breaker) computeRate() float64 {
+	errorCnt := 0
+	for _, s := range b.queue.slice{
+		if Error == s {
+			errorCnt++
+		}
+	}
+	return float64(errorCnt) / float64(b.queue.len)
 }
 
 func (b *Breaker) openBreaker(breakerChs []chan uint32, size int, chosenCnt int) {
@@ -134,6 +152,7 @@ func (b *Breaker) openBreaker(breakerChs []chan uint32, size int, chosenCnt int)
 
 func (b *Breaker) closeBreaker(breakerChs []chan uint32, size int) {
 	b.changeState(Closed)
+	sendSignal(Play, size, breakerChs)
 }
 
 func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
@@ -148,8 +167,6 @@ func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
 }
 
 func (b *Breaker) changeState(newState uint32) {
-	b.errors = 0
-	b.successes = 0
 
 	atomic.StoreUint32(&b.state, newState)
 
@@ -160,4 +177,16 @@ func sendSignal(signal uint32, chosenCnt int, breakerChs []chan uint32) {
 	for i := 0; i < chosenCnt; i++ {
 		breakerChs[i] <- signal
 	}
+}
+
+func (q *Queue)enqueue(element uint32){
+	q.slice = append(q.slice, element) // Simply append to enqueue.
+	q.len++
+	fmt.Println("Enqueued:", element)
+}
+
+func (q *Queue)dequeue() {
+	q.slice = q.slice[1:]
+	q.len--
+	fmt.Println("Dequeued")
 }

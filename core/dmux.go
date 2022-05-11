@@ -346,7 +346,6 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 					sk.Consume(msg, breakerChs[index], monitorCh)
 				case signal := <-breakerChs[index]:
 					if signal == breaker.Play {
-						log.Printf("goroutine #%v.goroutine:signal not processed\n", index)
 						monitorCh <- breaker.NotProcessed
 					}
 				}
