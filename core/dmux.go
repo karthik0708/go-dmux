@@ -50,7 +50,7 @@ type ResizeMeta struct {
 //ResponseMsg is used for running Dmux instnace to response to client
 type ResponseMsg struct {
 	signal ControlSignal
-	status uint8
+	currentStatus uint8
 }
 
 //Sink is interface that implements OutputSink of Dmux operation
@@ -63,10 +63,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, breakerCh <-chan uint32, monitorCh chan <- uint32)
+	Consume(msg interface{}, breakerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, breakerCh <-chan uint32, monitorCh chan <- uint32)
+	BatchConsume(msg []interface{}, version int, breakerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
 
 	//InitBreaker initializes the breaker using the config
 	InitBreaker()
@@ -283,6 +283,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
 		go func(index int) {
+			currentStatus := breaker.Play
 			sk := sink.Clone()
 			batch := make([]interface{}, batchsz) //reuse one time created array
 
@@ -302,9 +303,11 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 						}
 						batch[z] = msg
 						j++
-					default:
-						for len(breakerChs[index])>0 {
-							<- breakerChs[index]
+					case signal := <-breakerChs[index]:
+						if signal == breaker.Play {
+							monitorCh <- breaker.NotProcessed
+						} else{
+							currentStatus = signal
 						}
 					}
 				}
@@ -317,7 +320,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, breakerChs[i], monitorCh)
+				sk.BatchConsume(batch, version, breakerChs[i], monitorCh, currentStatus)
 			}
 
 		}(i)
@@ -339,14 +342,17 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 		ch[i] = make(chan interface{}, qsize)
 		go func(index int) {
 			sk := sink.Clone()
+			currentStatus := breaker.Play
 			for {
 				select {
 				case msg := <-ch[index]:
 					log.Printf("%v.goroutine: processing message %v\n", index, msg)
-					sk.Consume(msg, breakerChs[index], monitorCh)
+					sk.Consume(msg, breakerChs[index], monitorCh, currentStatus)
 				case signal := <-breakerChs[index]:
 					if signal == breaker.Play {
 						monitorCh <- breaker.NotProcessed
+					} else{
+						currentStatus = signal
 					}
 				}
 			}
