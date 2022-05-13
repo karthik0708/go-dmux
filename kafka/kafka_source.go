@@ -1,12 +1,13 @@
 package kafka
 
 import (
+	"github.com/go-dmux/metrics"
+	"os"
 	"time"
-    "os"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 	"github.com/go-dmux/kafka/consumer-group"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 //KafkaSourceHook to track messages coming out of the source in order
@@ -68,7 +69,7 @@ func (k *KafkaSource) RegisterHook(hook KafkaSourceHook) {
 
 //Generate is Source method implementation, which connect to Kafka and pushes
 //KafkaMessage into the channel
-func (k *KafkaSource) Generate(out chan<- interface{}) {
+func (k *KafkaSource) Generate(out chan<- interface{}, partitionCh chan<-metrics.PartitionInfo) {
 
 	kconf := k.conf
 	//config
@@ -99,7 +100,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	kafkaTopics := []string{kconf.Topic}
 
 	// create consumer
-	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config)
+	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config, partitionCh)
 	if err != nil {
 		panic(err)
 	}
