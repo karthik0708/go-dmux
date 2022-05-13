@@ -63,10 +63,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, breakerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
+	Consume(msg interface{}, workerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, breakerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
+	BatchConsume(msg []interface{}, version int, workerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32)
 
 	//InitBreaker initializes the breaker using the config
 	InitBreaker()
@@ -274,10 +274,10 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsz)
 	}
-	breakerChs := make([]chan uint32, size)
+	workerChs := make([]chan uint32, size)
 	monitorCh := make(chan uint32, size)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan uint32,1)
+		workerChs[i] = make(chan uint32,1)
 	}
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
@@ -303,7 +303,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 						}
 						batch[z] = msg
 						j++
-					case signal := <-breakerChs[index]:
+					case signal := <-workerChs[index]:
 						if signal == breaker.Play {
 							monitorCh <- breaker.NotProcessed
 						} else{
@@ -320,7 +320,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, breakerChs[i], monitorCh, currentStatus)
+				sk.BatchConsume(batch, version, workerChs[i], monitorCh, currentStatus)
 			}
 
 		}(i)
@@ -332,12 +332,12 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
-	breakerChs := make([]chan uint32, size)
+	workerChs := make([]chan uint32, size)
 	monitorCh := make(chan uint32, size)
 	for i := 0; i < size; i++{
-		breakerChs[i] = make(chan uint32)
+		workerChs[i] = make(chan uint32)
 	}
-	go sink.GetBreaker().MonitorBreaker(size, breakerChs, 0.25, monitorCh)
+	go sink.GetBreaker().MonitorBreaker(size, workerChs, monitorCh)
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsize)
 		go func(index int) {
@@ -347,8 +347,8 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 				select {
 				case msg := <-ch[index]:
 					log.Printf("%v.goroutine: processing message %v\n", index, msg)
-					sk.Consume(msg, breakerChs[index], monitorCh, currentStatus)
-				case signal := <-breakerChs[index]:
+					sk.Consume(msg, workerChs[index], monitorCh, currentStatus)
+				case signal := <-workerChs[index]:
 					if signal == breaker.Play {
 						monitorCh <- breaker.NotProcessed
 					} else{

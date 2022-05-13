@@ -21,14 +21,12 @@ const (
 )
 
 type Breaker struct {
-	failureRateTh float64
-	timeout       time.Duration
-
-	lock              sync.Mutex
-	state             uint32
-	failureRate 	float64
-	lastError         time.Time
-	queue Queue
+	failureRateTh 	float64
+	retryFactor 	float64
+	timeout       	time.Duration
+	lock            sync.Mutex
+	state           uint32
+	queue 			Queue
 }
 
 type Queue struct{
@@ -37,12 +35,13 @@ type Queue struct{
 	len int
 }
 
-func New(failureRateTh float64, timeout time.Duration, windowSize int) *Breaker {
+func New(failureRateTh float64, timeout time.Duration, windowSize int, retryFactor float64) *Breaker {
 	var slice = make([]uint32, 0, windowSize)
 	return &Breaker{
 		failureRateTh:   failureRateTh,
 		timeout:          timeout,
 		queue: 			Queue{slice: slice, cap: windowSize, len: 0},
+		retryFactor: retryFactor,
 	}
 }
 
@@ -76,9 +75,9 @@ func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh 
 	}
 }
 
-func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor float64, monitorCh <- chan uint32){
+func (b *Breaker) MonitorBreaker(size int, workerChs []chan uint32, monitorCh <- chan uint32){
 	cnt := 0
-	chosenCnt := int(math.Ceil(factor*float64(size)))
+	chosenCnt := int(math.Ceil(b.retryFactor*float64(size)))
  	var failureRate float64
 
 	for{
@@ -100,7 +99,7 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 				chosenCnt = int(math.Min(float64(size), float64(2*chosenCnt)))
 				cnt = 0
 				//log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
-				sendSignal(Play, chosenCnt, breakerChs)
+				sendSignal(Play, chosenCnt, workerChs)
 			}
 
 		case Error, Success:
@@ -108,14 +107,14 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 			if b.queue.len < b.queue.cap {
 				b.queue.enqueue(signal)
 				if b.queue.len != b.queue.cap {
-					sendSignal(Play, size, breakerChs)
+					sendSignal(Play, size, workerChs)
 					continue
 				} else{
 					failureRate = b.computeRate()
 				}
 			} else {
 				cnt = 0
-				chosenCnt = int(math.Ceil(factor * float64(size)))
+				chosenCnt = int(math.Ceil(b.retryFactor * float64(size)))
 				b.queue.dequeue()
 				b.queue.enqueue(signal)
 				failureRate = b.computeRate()
@@ -123,11 +122,11 @@ func (b *Breaker) MonitorBreaker(size int, breakerChs []chan uint32, factor floa
 			fmt.Println(failureRate)
 			if failureRate >= b.failureRateTh {
 				if b.state == Closed || b.state == HalfOpen{
-					b.openBreaker(breakerChs, size, chosenCnt)
+					b.openBreaker(workerChs, size, chosenCnt)
 				}
 			} else {
 				if b.state == HalfOpen {
-					b.closeBreaker(breakerChs, size)
+					b.closeBreaker(workerChs, size)
 				}
 			}
 		}
@@ -144,18 +143,18 @@ func (b *Breaker) computeRate() float64 {
 	return float64(errorCnt) / float64(b.queue.len)
 }
 
-func (b *Breaker) openBreaker(breakerChs []chan uint32, size int, chosenCnt int) {
+func (b *Breaker) openBreaker(workerChs []chan uint32, size int, chosenCnt int) {
 	b.changeState(Open)
-	sendSignal(Pause, size, breakerChs)
-	go b.timer(breakerChs, chosenCnt)
+	sendSignal(Pause, size, workerChs)
+	go b.timer(workerChs, chosenCnt)
 }
 
-func (b *Breaker) closeBreaker(breakerChs []chan uint32, size int) {
+func (b *Breaker) closeBreaker(workerChs []chan uint32, size int) {
 	b.changeState(Closed)
-	sendSignal(Play, size, breakerChs)
+	sendSignal(Play, size, workerChs)
 }
 
-func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
+func (b *Breaker) timer(workerChs []chan uint32, chosenCnt int) {
 	time.Sleep(b.timeout)
 
 	b.lock.Lock()
@@ -163,7 +162,7 @@ func (b *Breaker) timer(breakerChs []chan uint32, chosenCnt int) {
 
 	b.changeState(HalfOpen)
 	log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
-	sendSignal(Play, chosenCnt, breakerChs)
+	sendSignal(Play, chosenCnt, workerChs)
 }
 
 func (b *Breaker) changeState(newState uint32) {
@@ -173,9 +172,9 @@ func (b *Breaker) changeState(newState uint32) {
 	log.Println("monitor.goroutine: status of breaker is ", newState)
 }
 
-func sendSignal(signal uint32, chosenCnt int, breakerChs []chan uint32) {
+func sendSignal(signal uint32, chosenCnt int, workerChs []chan uint32) {
 	for i := 0; i < chosenCnt; i++ {
-		breakerChs[i] <- signal
+		workerChs[i] <- signal
 	}
 }
 

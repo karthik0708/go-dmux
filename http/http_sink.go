@@ -32,9 +32,10 @@ type HTTPSinkConf struct {
 	Headers                     []map[string]string `json:"headers"`
 	Method                      string              `json:"method"`                    //GET,POST,PUT,DELETE
 	NonRetriableHttpStatusCodes []int               `json:nonRetriableHttpStatusCodes` //this is for handling customized errorCode thrown by sink
-	ErrorThreshold  			int 			    `json:"error_threshold"`
-	SuccessThreshold 			int 			    `json:"success_threshold"`
+	FailureRateTh  				float64 			`json:"failure_rate_th"`
+	retryFactor 				float64 			    `json:"retry_factor"`
 	BreakerTimeout  			core.Duration       `json:"breaker_timeout"`
+	WindowSize					int					`json:"window_size"`
 }
 
 //HTTPSinkHook is added for Clien to attach pre and post porcessing logic
@@ -117,7 +118,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerCh <-chan uint32, monitorCh chan <- uint32, CurrentStatus uint32) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, workerCh <-chan uint32, monitorCh chan <- uint32, CurrentStatus uint32) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -133,7 +134,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerCh <-cha
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerCh, monitorCh, CurrentStatus)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, workerCh, monitorCh, CurrentStatus)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
@@ -145,7 +146,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, breakerCh <-cha
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}, breakerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32) {
+func (h *HTTPSink) Consume(msg interface{}, workerCh <-chan uint32, monitorCh chan <- uint32, currentStatus uint32) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -156,7 +157,7 @@ func (h *HTTPSink) Consume(msg interface{}, breakerCh <-chan uint32, monitorCh c
 	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, breakerCh, monitorCh, currentStatus)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, workerCh, monitorCh, currentStatus)
 
 	//retry Post till you succede infinitely
 	h.retryPost(msg, status, url)
@@ -165,7 +166,7 @@ func (h *HTTPSink) Consume(msg interface{}, breakerCh <-chan uint32, monitorCh c
 
 //InitBreaker is for initializing the breaker using HTTPSink config
 func (h *HTTPSink) InitBreaker(){
-	h.cirBreaker = breaker.New(0.1, h.conf.BreakerTimeout.Duration, 3)
+	h.cirBreaker = breaker.New(h.conf.FailureRateTh, h.conf.BreakerTimeout.Duration, h.conf.WindowSize, h.conf.retryFactor)
 }
 
 //PlaceBreaker puts a breaker on the critical function which returns an error  T
@@ -204,14 +205,14 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 
 //retryExecute implements a circuit breaker to provide a guardrail
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte,
-	respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), breakerCh <- chan uint32,
+	respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), workerCh <- chan uint32,
 	monitorCh chan <- uint32, currentStatus uint32) bool {
 
 	outcome := false
 
 	for {
 		select {
-		case signal := <-breakerCh:
+		case signal := <-workerCh:
 			log.Println("sink: recieved from monitor",signal, url)
 			currentStatus = signal
 		default:
