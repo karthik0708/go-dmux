@@ -2,13 +2,3 @@
 2021/01/28 15:10:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
 2021/01/28 15:20:56 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
 2021/01/28 15:20:56 Starting  kafka_http
-2022/05/13 18:38:14 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:localhost:2181/kafka]]}] 9999 {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/05/13 18:38:14 Starting  kafka_http
-2022/05/13 18:38:14 Connected to [::1]:2181
-2022/05/13 18:38:14 Authenticated: id=72078516766244944, timeout=6000
-2022/05/13 18:38:14 Re-submitting `0` credentials after reconnect
-2022/05/13 18:38:52 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://localhost:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:test-four zk_path:localhost:2181/kafka]]}] 9999 {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]}}
-2022/05/13 18:38:52 Starting  kafka_http
-2022/05/13 18:38:52 Connected to 127.0.0.1:2181
-2022/05/13 18:38:52 Authenticated: id=72078516766244945, timeout=6000
-2022/05/13 18:38:52 Re-submitting `0` credentials after reconnect
