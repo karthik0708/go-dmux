@@ -274,11 +274,15 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsz)
 	}
+	//Create workerChs each corresponding to one worker go-routine
 	workerChs := make([]chan uint32, size)
+
+	//Create one monitorCh to which all the workers will be sending signals
 	monitorCh := make(chan uint32, size)
 	for i := 0; i < size; i++{
 		workerChs[i] = make(chan uint32,1)
 	}
+
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
@@ -292,22 +296,28 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				//batch
 				failed := false
 				j := index
-				for z := 0; z < batchsz; z++ {
-					// fmt.Printf("Iterating count %d consumer %d j %d channelLen %d \n", z, index, j, len(ch[j]))
-					select {
-					case msg, more := <-ch[j] :
-						// more == false if channel is closed
-						if !failed && !more { // failed = true if any one channel is closed
-							failed = true
-							break
-						}
-						batch[z] = msg
-						j++
-					case signal := <-workerChs[index]:
-						if signal == breaker.Play {
-							monitorCh <- breaker.NotProcessed
-						} else{
-							currentStatus = signal
+				z:=0
+				for{
+					if z == batchsz {
+						break
+					} else {
+						// fmt.Printf("Iterating count %d consumer %d j %d channelLen %d \n", z, index, j, len(ch[j]))
+						select {
+						case msg, more := <-ch[j] :
+							// more == false if channel is closed
+							if !failed && !more { // failed = true if any one channel is closed
+								failed = true
+								break
+							}
+							batch[z] = msg
+							j++
+							z++
+						case signal := <-workerChs[index]:
+							if signal == breaker.Play {
+								monitorCh <- breaker.NotProcessed
+							} else{
+								currentStatus = signal
+							}
 						}
 					}
 				}
@@ -320,7 +330,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, workerChs[i], monitorCh, currentStatus)
+				sk.BatchConsume(batch, version, workerChs[index], monitorCh, currentStatus)
 			}
 
 		}(i)
@@ -332,11 +342,17 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
+
+	//Create workerChs each corresponding to one worker go-routine
 	workerChs := make([]chan uint32, size)
+
+	//Create one monitorCh to which all the workers will be sending signals
 	monitorCh := make(chan uint32, size)
 	for i := 0; i < size; i++{
 		workerChs[i] = make(chan uint32)
 	}
+
+	//start monitoring the breaker
 	go sink.GetBreaker().MonitorBreaker(size, workerChs, monitorCh)
 	for i := 0; i < size; i++ {
 		ch[i] = make(chan interface{}, qsize)
@@ -350,8 +366,10 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 					sk.Consume(msg, workerChs[index], monitorCh, currentStatus)
 				case signal := <-workerChs[index]:
 					if signal == breaker.Play {
+						//send a not processed signal to monitor
 						monitorCh <- breaker.NotProcessed
 					} else{
+						//update the current state of the worker
 						currentStatus = signal
 					}
 				}

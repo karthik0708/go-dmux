@@ -9,7 +9,7 @@
         "dmux": {
           "size": 4,
           "distributor_type": "RoundRobin",
-          "batch_size": 1
+          "batch_size": 3
         },
         "source": {
           "name": "source_name",
@@ -35,7 +35,7 @@
             }
           ],
           "method": "POST",
-          "failure_rate_th": 0.3,
+          "failure_rate_th": 0.5,
           "breaker_timeout": "10s",
           "retry_factor": 0.5,
           "window_size": 10

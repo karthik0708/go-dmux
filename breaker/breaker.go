@@ -65,7 +65,7 @@ func (b *Breaker) RunWorker(work func() error, monitorCh chan<- uint32) error {
 }
 
 func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh chan<- uint32) {
-
+	//send error or success signal to monitor accordingly
 	if result == nil && panicValue == nil {
 		log.Println("worker.goroutine: sending signal", Success)
 		monitorCh <- Success
@@ -76,15 +76,18 @@ func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh 
 }
 
 func (b *Breaker) MonitorBreaker(size int, workerChs []chan uint32, monitorCh <- chan uint32){
+	//To indicate current number of not Processed signals
 	cnt := 0
+
+	//Indicates the number of workers to Resume when changing from a half open state
 	chosenCnt := int(math.Ceil(b.retryFactor*float64(size)))
+
  	var failureRate float64
 
 	for{
 		signal := <-monitorCh
 		switch signal{
 		case NotProcessed:
-
 			if b.state == Closed{
 				continue
 			}
@@ -95,15 +98,17 @@ func (b *Breaker) MonitorBreaker(size int, workerChs []chan uint32, monitorCh <-
 				continue
 			}
 
+			//Send Resume signals twice the number of already chosen workers if none of those are processing events
 			if cnt == chosenCnt{
 				chosenCnt = int(math.Min(float64(size), float64(2*chosenCnt)))
 				cnt = 0
-				//log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
 				sendSignal(Play, chosenCnt, workerChs)
 			}
 
 		case Error, Success:
 			log.Println("monitor.goroutine: recieved signal", signal)
+
+			//populate the queue until its full post which new signals are enqueued and older ones dequeued
 			if b.queue.len < b.queue.cap {
 				b.queue.enqueue(signal)
 				if b.queue.len != b.queue.cap {
@@ -120,6 +125,8 @@ func (b *Breaker) MonitorBreaker(size int, workerChs []chan uint32, monitorCh <-
 				failureRate = b.computeRate()
 			}
 			fmt.Println(failureRate)
+
+			//If current failure rate exceeds threshold then open the breaker
 			if failureRate >= b.failureRateTh {
 				if b.state == Closed || b.state == HalfOpen{
 					b.openBreaker(workerChs, size, chosenCnt)
@@ -146,6 +153,7 @@ func (b *Breaker) computeRate() float64 {
 func (b *Breaker) openBreaker(workerChs []chan uint32, size int, chosenCnt int) {
 	b.changeState(Open)
 	sendSignal(Pause, size, workerChs)
+	//start a timer once timeout duration is up resume selected workers
 	go b.timer(workerChs, chosenCnt)
 }
 

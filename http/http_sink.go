@@ -213,11 +213,13 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, d
 	for {
 		select {
 		case signal := <-workerCh:
+			//update the status of the worker
 			log.Println("sink: recieved from monitor",signal, url)
 			currentStatus = signal
 		default:
 			if currentStatus == breaker.Play {
 				currentStatus = breaker.Pause
+				//place the critical section inside the breaker
 				err := h.PlaceBreaker(func() error {
 					status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
 					if status {
