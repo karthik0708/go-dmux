@@ -7,14 +7,14 @@
       "connectionType": "kafka_http",
       "connection": {
         "dmux": {
-          "size": 4,
-          "distributor_type": "RoundRobin",
-          "batch_size": 3
+          "size": 250,
+          "distributor_type": "Hash",
+          "batch_size": 1
         },
         "source": {
           "name": "source_name",
           "zk_path": "localhost:2181/kafka",
-          "topic": "test-four",
+          "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
           "read_newest": true

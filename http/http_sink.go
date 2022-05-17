@@ -33,7 +33,7 @@ type HTTPSinkConf struct {
 	Method                      string              `json:"method"`                    //GET,POST,PUT,DELETE
 	NonRetriableHttpStatusCodes []int               `json:nonRetriableHttpStatusCodes` //this is for handling customized errorCode thrown by sink
 	FailureRateTh  				float64 			`json:"failure_rate_th"`
-	retryFactor 				float64 			    `json:"retry_factor"`
+	RetryFactor 				float64 			`json:"retry_factor"`
 	BreakerTimeout  			core.Duration       `json:"breaker_timeout"`
 	WindowSize					int					`json:"window_size"`
 }
@@ -166,7 +166,7 @@ func (h *HTTPSink) Consume(msg interface{}, workerCh <-chan uint32, monitorCh ch
 
 //InitBreaker is for initializing the breaker using HTTPSink config
 func (h *HTTPSink) InitBreaker(){
-	h.cirBreaker = breaker.New(h.conf.FailureRateTh, h.conf.BreakerTimeout.Duration, h.conf.WindowSize, h.conf.retryFactor)
+	h.cirBreaker = breaker.New(h.conf.FailureRateTh, h.conf.BreakerTimeout.Duration, h.conf.WindowSize, h.conf.RetryFactor)
 }
 
 //PlaceBreaker puts a breaker on the critical function which returns an error  T
@@ -214,8 +214,8 @@ func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, d
 		select {
 		case signal := <-workerCh:
 			//update the status of the worker
-			log.Println("sink: recieved from monitor",signal, url)
 			currentStatus = signal
+			//log.Println("sink: recieved from monitor",signal, url)
 		default:
 			if currentStatus == breaker.Play {
 				currentStatus = breaker.Pause

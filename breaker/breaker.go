@@ -67,11 +67,11 @@ func (b *Breaker) RunWorker(work func() error, monitorCh chan<- uint32) error {
 func (b *Breaker) processResult(result error, panicValue interface{}, monitorCh chan<- uint32) {
 	//send error or success signal to monitor accordingly
 	if result == nil && panicValue == nil {
-		log.Println("worker.goroutine: sending signal", Success)
+		//log.Println("worker.goroutine: sending signal", Success)
 		monitorCh <- Success
 	} else {
 		monitorCh <- Error
-		log.Println("worker.goroutine: sending signal", Error)
+		//log.Println("worker.goroutine: sending signal", Error)
 	}
 }
 
@@ -106,7 +106,7 @@ func (b *Breaker) MonitorBreaker(size int, workerChs []chan uint32, monitorCh <-
 			}
 
 		case Error, Success:
-			log.Println("monitor.goroutine: recieved signal", signal)
+			//log.Println("monitor.goroutine: recieved signal", signal)
 
 			//populate the queue until its full post which new signals are enqueued and older ones dequeued
 			if b.queue.len < b.queue.cap {
@@ -169,7 +169,7 @@ func (b *Breaker) timer(workerChs []chan uint32, chosenCnt int) {
 	defer b.lock.Unlock()
 
 	b.changeState(HalfOpen)
-	log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
+	//log.Printf("monitor.goroutine: sending signal %v to %v goroutines\n", Play, chosenCnt)
 	sendSignal(Play, chosenCnt, workerChs)
 }
 
@@ -177,7 +177,7 @@ func (b *Breaker) changeState(newState uint32) {
 
 	atomic.StoreUint32(&b.state, newState)
 
-	log.Println("monitor.goroutine: status of breaker is ", newState)
+	log.Println("status of circuit is ", newState)
 }
 
 func sendSignal(signal uint32, chosenCnt int, workerChs []chan uint32) {
@@ -189,11 +189,9 @@ func sendSignal(signal uint32, chosenCnt int, workerChs []chan uint32) {
 func (q *Queue)enqueue(element uint32){
 	q.slice = append(q.slice, element) // Simply append to enqueue.
 	q.len++
-	fmt.Println("Enqueued:", element)
 }
 
 func (q *Queue)dequeue() {
 	q.slice = q.slice[1:]
 	q.len--
-	fmt.Println("Dequeued")
 }

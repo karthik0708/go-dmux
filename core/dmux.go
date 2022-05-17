@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"github.com/go-dmux/breaker"
-	"log"
 	"sync"
 	"time"
 )
@@ -50,7 +49,7 @@ type ResizeMeta struct {
 //ResponseMsg is used for running Dmux instnace to response to client
 type ResponseMsg struct {
 	signal ControlSignal
-	currentStatus uint8
+	status uint8
 }
 
 //Sink is interface that implements OutputSink of Dmux operation
@@ -275,18 +274,22 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 		ch[i] = make(chan interface{}, qsz)
 	}
 	//Create workerChs each corresponding to one worker go-routine
-	workerChs := make([]chan uint32, size)
+	workerChs := make([]chan uint32, sz)
 
 	//Create one monitorCh to which all the workers will be sending signals
-	monitorCh := make(chan uint32, size)
-	for i := 0; i < size; i++{
+	monitorCh := make(chan uint32, sz)
+	for i := 0; i < sz; i++{
 		workerChs[i] = make(chan uint32,1)
 	}
+	//start monitoring the breaker
+	go sink.GetBreaker().MonitorBreaker(sz, workerChs, monitorCh)
 
+	//keep track of the goroutine index
+	workerCnt := 0
 	//assign batch of channels per batch consumer
 	for i := 0; i < size; i += batchsz {
 		//async runner does batching and call to sink.BatchConsume
-		go func(index int) {
+		go func(index int, workerInd int) {
 			currentStatus := breaker.Play
 			sk := sink.Clone()
 			batch := make([]interface{}, batchsz) //reuse one time created array
@@ -304,6 +307,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 						// fmt.Printf("Iterating count %d consumer %d j %d channelLen %d \n", z, index, j, len(ch[j]))
 						select {
 						case msg, more := <-ch[j] :
+							//log.Printf("%v.goroutine: processing message %v\n", index, msg)
 							// more == false if channel is closed
 							if !failed && !more { // failed = true if any one channel is closed
 								failed = true
@@ -312,7 +316,8 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 							batch[z] = msg
 							j++
 							z++
-						case signal := <-workerChs[index]:
+						case signal := <-workerChs[workerInd]:
+							//log.Printf("%v signal is %v",index,signal)
 							if signal == breaker.Play {
 								monitorCh <- breaker.NotProcessed
 							} else{
@@ -330,10 +335,11 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, workerChs[index], monitorCh, currentStatus)
+				sk.BatchConsume(batch, version, workerChs[workerInd], monitorCh, currentStatus)
 			}
 
-		}(i)
+		}(i, workerCnt)
+		workerCnt++
 	}
 	return ch, wg
 }
@@ -362,7 +368,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 			for {
 				select {
 				case msg := <-ch[index]:
-					log.Printf("%v.goroutine: processing message %v\n", index, msg)
+					//log.Printf("%v.goroutine: processing message %v\n", index, msg)
 					sk.Consume(msg, workerChs[index], monitorCh, currentStatus)
 				case signal := <-workerChs[index]:
 					if signal == breaker.Play {
