@@ -191,19 +191,12 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	sourceCh := make(chan metrics.SourceOffset, 1)
-	sinkCh := make(chan metrics.SinkOffset, 1)
-	partitionCh := make(chan metrics.PartitionInfo)
-
-	reg := metrics.Init()
-	go reg.TrackMetrics(sourceCh, sinkCh, partitionCh)
-
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, sinkCh)
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, metrics.Registry.SinkCh)
 	in := make(chan interface{}, d.sourceQSize)
 
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go source.Generate(in, sourceCh, partitionCh)
+	go source.Generate(in, metrics.Registry.SourceCh, metrics.Registry.PartitionCh)
 
 	for {
 		select {
@@ -216,7 +209,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, sinkCh)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, metrics.Registry.SinkCh)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
