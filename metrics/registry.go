@@ -2,6 +2,7 @@ package metrics
 
 type registry struct {
 	provider Provider
+	PartitionCh chan PartitionInfo
 }
 
 type PartitionInfo struct {
@@ -15,18 +16,20 @@ type Provider interface {
 	Ingest(interface{})
 }
 
+var Registry registry
+
 func Init() registry{
 	pm := PrometheusMetrics{}
 
-	reg := registry{provider: &pm}
+	reg := registry{provider: &pm, PartitionCh: make(chan PartitionInfo)}
 	reg.provider.Init()
 	return reg
 }
 
-func (reg *registry) TrackMetrics(partitionCh <- chan PartitionInfo){
+func (reg *registry) TrackMetrics(){
 	for{
 		select {
-		case info := <- partitionCh:
+		case info := <- reg.PartitionCh:
 			reg.ingest(info)
 		}
 	}

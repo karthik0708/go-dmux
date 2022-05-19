@@ -191,16 +191,12 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	partitionCh := make(chan metrics.PartitionInfo)
-
-	reg := metrics.Init()
-	go reg.TrackMetrics(partitionCh)
-
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
 	in := make(chan interface{}, d.sourceQSize)
+
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go source.Generate(in, partitionCh)
+	go source.Generate(in, metrics.Registry.PartitionCh)
 
 	for {
 		select {

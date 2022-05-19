@@ -35,6 +35,9 @@ func main() {
 
 	log.Printf("config: %v", conf)
 
+	metrics.Registry = metrics.Init()
+	go metrics.Registry.TrackMetrics()
+
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool) {
 			connType.Start(connConf, logDebug)
