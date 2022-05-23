@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-    "github.com/go-dmux/kafka/kazoo-go"
 	"github.com/Shopify/sarama"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 var (
@@ -341,6 +341,8 @@ func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.Con
 	// Consume all the assigned partitions
 	var wg sync.WaitGroup
 	for _, pid := range myPartitions {
+		//Create PartitionInfo and send it for ingestion through the partition channel
+		//In case of re-balancing this function will be triggered again and the latest information will be sent
 		partitionCh <- metrics.PartitionInfo{PartitionId: pid.ID, ConsumerId: cg.instance.ID, Topic: topic}
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)

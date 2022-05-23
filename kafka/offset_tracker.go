@@ -26,6 +26,7 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg, sourceCh chan<- metrics.Sour
 		log.Printf("warning: pending_acks threshold %d reached, please increase pending_acks size", k.size)
 	}
 	rawMsg := kmsg.GetRawMsg()
+	//Create Source offset and send it for ingestion through source channel
 	sourceCh <- metrics.SourceOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
 	k.ch <- kmsg
 }
