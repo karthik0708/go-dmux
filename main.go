@@ -35,7 +35,10 @@ func main() {
 
 	log.Printf("config: %v", conf)
 
+	//Initialize metrics before reading conf to avoid registering collectors multiple times in case of multiple dmux connections
 	metrics.Registry = metrics.Init()
+
+	//Track metrics
 	go metrics.Registry.TrackMetrics()
 
 	for _, item := range conf.DMuxItems {
