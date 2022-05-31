@@ -36,7 +36,7 @@ func (c *KafkaFoxtrotConn) getConfiguration() *KafkaFoxtrotConnConfig {
 }
 
 //Run method to start this Connection from source to sink
-func (c *KafkaFoxtrotConn) Run() {
+func (c *KafkaFoxtrotConn) Run() *core.Dmux{
 	conf := c.getConfiguration()
 	log.Println("starting kafka_foxtrot with conf", conf)
 	kafkaMsgFactory := getKafkaFoxtrotFactory()
@@ -54,7 +54,8 @@ func (c *KafkaFoxtrotConn) Run() {
 
 	dmux := core.GetDmux(conf.Dmux, d)
 	dmux.Connect(src, sk)
-	dmux.Join()
+	go dmux.Join()
+	return dmux
 }
 
 //******************KafkaSource Interface implementation ******

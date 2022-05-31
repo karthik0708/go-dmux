@@ -38,7 +38,7 @@ func (c *KafkaHTTPConn) getConfiguration() *KafkaHTTPConnConfig {
 }
 
 //Run method to start this Connection from source to sink
-func (c *KafkaHTTPConn) Run() {
+func (c *KafkaHTTPConn) Run() *core.Dmux{
 	conf := c.getConfiguration()
 	fmt.Println("starting go-dmux with conf", conf)
 	kafkaMsgFactory := getKafkaHTTPFactory()
@@ -56,7 +56,8 @@ func (c *KafkaHTTPConn) Run() {
 
 	dmux := core.GetDmux(conf.Dmux, d)
 	dmux.Connect(src, sk)
-	dmux.Join()
+	go dmux.Join()
+	return dmux
 }
 
 /*

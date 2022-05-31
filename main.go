@@ -1,10 +1,7 @@
 package main
 
 import (
-	"log"
 	"os"
-
-	"github.com/go-dmux/logging"
 )
 
 //
@@ -24,22 +21,17 @@ func main() {
 	dconf := DMuxConfigSetting{
 		FilePath: path,
 	}
+	//get configuration
 	conf := dconf.GetDmuxConf()
 
-	dmuxLogging := new(logging.DMuxLogging)
-	dmuxLogging.Start(conf.Logging)
+	//start dmux for the first time
+	conf.loadDmux(false)
 
-	c := Controller{config: conf}
-	go c.start()
+	watcherCh := make(chan interface{})
+	//start the file watcher
+	go dconf.watchFile(watcherCh)
 
-	log.Printf("config: %v", conf)
-
-	for _, item := range conf.DMuxItems {
-		go func(connType ConnectionType, connConf interface{}, logDebug bool) {
-			connType.Start(connConf, logDebug)
-		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug)
-	}
-
-	//main thread halts. TODO make changes to listen to kill and reboot
-	select {}
+	//run the reloader in the background
+	dconf.startReloader(watcherCh)
+	//TODO make changes to listen to kill and reboot
 }

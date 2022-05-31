@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/go-dmux/core"
 	"io/ioutil"
 	"log"
 	"os"
@@ -37,7 +38,8 @@ func (c ConnectionType) getConfig(data []byte) interface{} {
 }
 
 //Start invokes Run of the respective connection in a go routine
-func (c ConnectionType) Start(conf interface{}, enableDebug bool) {
+func (c ConnectionType) Start(conf interface{}, enableDebug bool) *core.Dmux {
+	var dmux *core.Dmux
 	switch c {
 	case KafkaHTTP:
 		connObj := &connection.KafkaHTTPConn{
@@ -45,19 +47,19 @@ func (c ConnectionType) Start(conf interface{}, enableDebug bool) {
 			Conf:           conf,
 		}
 		log.Println("Starting ", KafkaHTTP)
-		connObj.Run()
+		dmux = connObj.Run()
 	case KafkaFoxtrot:
 		connObj := &connection.KafkaFoxtrotConn{
 			EnableDebugLog: enableDebug,
 			Conf:           conf,
 		}
 		log.Println("Starting ", KafkaFoxtrot)
-		connObj.Run()
+		dmux = connObj.Run()
 	default:
 		panic("Invalid Connection Type")
 
 	}
-
+	return dmux
 }
 
 //DMuxConfigSetting dumx obj
