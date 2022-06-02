@@ -57,5 +57,12 @@ func (reg *registry) TrackMetrics(){
 
 //Ingest calls the ingest method of the provider which is implementation by a metric registry type and forwards the metric
 func (reg *registry) ingest(metric interface{}){
-	reg.provider.Ingest(metric)
+	switch metric.(type) {
+	case SourceOffset:
+		reg.provider.Ingest(metric.(SourceOffset))
+	case SinkOffset:
+		reg.provider.Ingest(metric.(SinkOffset))
+	case PartitionInfo:
+		reg.provider.Ingest(metric.(PartitionInfo))
+	}
 }
