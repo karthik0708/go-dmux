@@ -9,15 +9,23 @@ import (
 	"strconv"
 )
 
+//pusher is an interface where the methods are implemented by the metric type
 type pusher interface {
 	push(p *PrometheusMetrics)
 }
-var MetricPort int
+
+//lagUpdater is an interface where the methods are implemented by source and sink offset metric for
+//keeping track of the lag
+type lagUpdater interface {
+	updateLag(p *PrometheusMetrics)
+}
 
 type PrometheusMetrics struct {
+	//keep track of last source and sink details for lag calculation
 	LastSourceDetail map[string]map[int32]int64
 	LastSinkDetail map[string]map[int32]int64
 
+	//metric collectors
 	sourceOffMetric *prometheus.GaugeVec
 	sinkOffMetric *prometheus.GaugeVec
 	lagOffMetric *prometheus.GaugeVec
@@ -26,8 +34,10 @@ type PrometheusMetrics struct {
 
 func (p *PrometheusMetrics) Init(){
 	go p.displayMetrics()
+
 	p.LastSinkDetail = make(map[string]map[int32]int64)
 	p.LastSourceDetail = make(map[string]map[int32]int64)
+
 	p.createMetrics()
 	p.registerMetrics()
 }
@@ -56,7 +66,6 @@ func  (p *PrometheusMetrics) displayMetrics() {
 
 //Initialize all the metric collectors
 func (p *PrometheusMetrics) createMetrics(){
-
 	p.sourceOffMetric = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "source_offset",
@@ -93,7 +102,21 @@ func (p *PrometheusMetrics) registerMetrics() {
 func (info *SourceOffset) push(p *PrometheusMetrics){
 	//Push the latest source offset for the corresponding topic and partition
 	p.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	info.updateLag(p)
+}
 
+func (info *SinkOffset) push(p *PrometheusMetrics){
+	//Push the latest sink offset for the corresponding topic and partition
+	p.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	info.updateLag(p)
+}
+
+func (info *PartitionInfo) push(p *PrometheusMetrics){
+	//Push the time stamp at which the partition joined dmux
+	p.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
+}
+
+func (info *SourceOffset) updateLag(p *PrometheusMetrics){
 	//Update the previous offset details at source
 	if partitionDetail, ok := p.LastSourceDetail[info.Topic]; ok == true {
 		partitionDetail[info.Partition] = info.Offset
@@ -105,16 +128,15 @@ func (info *SourceOffset) push(p *PrometheusMetrics){
 
 	//Push lag metric based on the stored sink offset
 	if lastOffset, ok := p.LastSinkDetail[info.Topic][info.Partition]; ok == true{
-		//Push the lag which is source offset minus the last sink offset for the corresponding topic and partition
-		p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset - lastOffset))
-	}
+		//calculate lag
+		lag := info.Offset - lastOffset
 
+		//Push the lag which is source offset minus the last sink offset for the corresponding topic and partition
+		p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(lag))
+	}
 }
 
-func (info *SinkOffset) push(p *PrometheusMetrics){
-	//Push the latest sink offset for the corresponding topic and partition
-	p.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
-
+func (info *SinkOffset) updateLag(p *PrometheusMetrics) {
 	//Update the previous offset details at sink
 	if partitionDetail, ok := p.LastSinkDetail[info.Topic]; ok == true{
 		partitionDetail[info.Partition] = info.Offset
@@ -126,12 +148,10 @@ func (info *SinkOffset) push(p *PrometheusMetrics){
 
 	//Push lag metric based on the stored source offset
 	if lastOffset, ok := p.LastSourceDetail[info.Topic][info.Partition]; ok == true {
-		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
-		p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(lastOffset - info.Offset))
-	}
-}
+		//calculate lag
+		lag := lastOffset - info.Offset
 
-func (info *PartitionInfo) push(p *PrometheusMetrics){
-	//Push the time stamp at which the partition joined dmux
-	p.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
+		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
+		p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(lag))
+	}
 }

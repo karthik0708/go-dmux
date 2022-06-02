@@ -7,11 +7,6 @@ type registry struct {
 	PartitionCh chan PartitionInfo
 }
 
-type (
-	SinkOffset OffsetInfo
-	SourceOffset OffsetInfo
-)
-
 type OffsetInfo struct {
 	Topic string
 	Partition int32
@@ -24,13 +19,21 @@ type PartitionInfo struct {
 	Topic string
 }
 
+type (
+	SinkOffset OffsetInfo
+	SourceOffset OffsetInfo
+)
+
 //Provider interface that implements metric registry types
 type Provider interface {
 	Init()
 	Ingest(interface{})
 }
 
-var Registry registry
+var (
+	Registry registry
+	MetricPort int
+)
 
 //Init creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
 func Init() registry{
