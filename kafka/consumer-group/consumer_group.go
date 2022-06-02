@@ -3,12 +3,11 @@ package consumergroup
 import (
 	"errors"
 	"fmt"
-	"github.com/go-dmux/metrics"
 	"sync"
 	"time"
 
+    "github.com/go-dmux/kafka/kazoo-go"
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 var (
@@ -84,7 +83,7 @@ type ConsumerGroup struct {
 }
 
 // Connects to a consumer group, using Zookeeper for auto-discovery
-func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config, partitionCh chan<-metrics.PartitionInfo) (cg *ConsumerGroup, err error) {
+func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config) (cg *ConsumerGroup, err error) {
 
 	if name == "" {
 		return nil, sarama.ConfigurationError("Empty consumergroup name")
@@ -177,7 +176,7 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	offsetConfig := OffsetManagerConfig{CommitInterval: config.Offsets.CommitInterval}
 	cg.offsetManager = NewZookeeperOffsetManager(cg, &offsetConfig)
 
-	go cg.topicListConsumer(topics, partitionCh)
+	go cg.topicListConsumer(topics)
 
 	return
 }
@@ -251,7 +250,7 @@ func (cg *ConsumerGroup) FlushOffsets() error {
 	return cg.offsetManager.Flush()
 }
 
-func (cg *ConsumerGroup) topicListConsumer(topics []string, partitionCh chan<-metrics.PartitionInfo) {
+func (cg *ConsumerGroup) topicListConsumer(topics []string) {
 	for {
 		select {
 		case <-cg.stopper:
@@ -272,7 +271,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string, partitionCh chan<-me
 
 		for _, topic := range topics {
 			cg.wg.Add(1)
-			go cg.topicConsumer(topic, cg.messages, cg.errors, stopper, partitionCh)
+			go cg.topicConsumer(topic, cg.messages, cg.errors, stopper)
 		}
 
 		select {
@@ -300,7 +299,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string, partitionCh chan<-me
 	}
 }
 
-func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}, partitionCh chan<-metrics.PartitionInfo) {
+func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
 	defer cg.wg.Done()
 
 	select {
@@ -341,7 +340,7 @@ func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.Con
 	// Consume all the assigned partitions
 	var wg sync.WaitGroup
 	for _, pid := range myPartitions {
-		partitionCh <- metrics.PartitionInfo{PartitionId: pid.ID, ConsumerId: cg.instance.ID, Topic: topic}
+
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}

@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"github.com/go-dmux/metrics"
 	"sync"
 	"time"
 )
@@ -73,7 +72,7 @@ type Source interface {
 	//Generate method takes output channel to which it writes data. The
 	//implementation can write to to this using multiple goroutines
 	//This method is not expected to return, its run in a separate goroutine
-	Generate(out chan<- interface{}, partitionCh chan<- metrics.PartitionInfo)
+	Generate(out chan<- interface{})
 	//Method used to trigger GracefulStop of Source
 	Stop()
 }
@@ -191,12 +190,12 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
+
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
 	in := make(chan interface{}, d.sourceQSize)
-
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go source.Generate(in, metrics.Registry.PartitionCh)
+	go source.Generate(in)
 
 	for {
 		select {
