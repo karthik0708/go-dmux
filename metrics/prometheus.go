@@ -123,6 +123,7 @@ func (info *SourceOffset) updateLag(p *PrometheusMetrics){
 		p.LastSourceDetail[info.Topic] = partitionDetail
 	} else {
 		partitionDetail = make(map[int32]int64)
+		partitionDetail[info.Partition] = info.Offset
 		p.LastSourceDetail[info.Topic] = partitionDetail
 	}
 
@@ -143,6 +144,7 @@ func (info *SinkOffset) updateLag(p *PrometheusMetrics) {
 		p.LastSinkDetail[info.Topic] = partitionDetail
 	} else{
 		partitionDetail = make(map[int32]int64)
+		partitionDetail[info.Partition] = info.Offset
 		p.LastSinkDetail[info.Topic] = partitionDetail
 	}
 
