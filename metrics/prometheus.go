@@ -58,7 +58,7 @@ func (p *PrometheusMetrics) Ingest(metric interface{}){
 		}
 }
 
-//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
+//The metrics are exposed to the http://localhost:<port>/metrics end point
 func  (p *PrometheusMetrics) displayMetrics() {
 	addr := flag.String("listen-address", ":"+strconv.Itoa(MetricPort), "The address to listen on for HTTP requests.")
 	http.Handle("/metrics", promhttp.Handler())
