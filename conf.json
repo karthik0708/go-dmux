@@ -1,5 +1,7 @@
 {
   "name": "myDmux",
+  "topic_limit": 1,
+  "partition_limit": 4,
   "dmuxItems": [
     {
       "name": "sample_name",

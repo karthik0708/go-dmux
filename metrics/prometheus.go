@@ -4,6 +4,7 @@ import (
 	"flag"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	dto "github.com/prometheus/client_model/go"
 	"log"
 	"math"
 	"net/http"
@@ -36,8 +37,8 @@ type PrometheusMetrics struct {
 func (p *PrometheusMetrics) Init(){
 	go p.displayMetrics()
 
-	p.LastSinkDetail = make(map[string]map[int32]int64)
-	p.LastSourceDetail = make(map[string]map[int32]int64)
+	p.LastSinkDetail = make(map[string]map[int32]int64, MaxTopics)
+	p.LastSourceDetail = make(map[string]map[int32]int64, MaxTopics)
 
 	p.createMetrics()
 	p.registerMetrics()
@@ -120,22 +121,41 @@ func (info *PartitionInfo) push(p *PrometheusMetrics){
 func (info *SourceOffset) updateLag(p *PrometheusMetrics){
 	//Update the previous offset details at source
 	partitionDetail, ok := p.LastSourceDetail[info.Topic]
-	p.LastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	if len(p.LastSourceDetail) <= MaxTopics {
+		p.LastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	}
 
 	//Push lag metric based on the stored sink offset
-	if lastOffset, ok := p.LastSinkDetail[info.Topic][info.Partition]; ok == true{
+	if lastOffset, ok := p.LastSinkDetail[info.Topic][info.Partition]; ok {
 		p.pushLag((*OffsetInfo)(info), lastOffset)
+	} else {
+		//If offset detail is not found thn check if the overall map or the partition map is full and
+		//fetch details from collector(this is computationally expensive and slow and is used only if
+		//maps are full)
+		if len(p.LastSinkDetail) >= MaxTopics || len(p.LastSinkDetail[info.Topic]) >= MaxPartitions{
+			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
+		}
 	}
 }
 
 func (info *SinkOffset) updateLag(p *PrometheusMetrics) {
 	//Update the previous offset details at sink
 	partitionDetail, ok := p.LastSinkDetail[info.Topic]
-	p.LastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	//Check if the overall map is full
+	if len(p.LastSinkDetail) <= MaxTopics {
+		p.LastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	}
 
 	//Push lag metric based on the stored source offset
-	if lastOffset, ok := p.LastSourceDetail[info.Topic][info.Partition]; ok == true {
+	if lastOffset, ok := p.LastSourceDetail[info.Topic][info.Partition]; ok {
 		p.pushLag((*OffsetInfo)(info), lastOffset)
+	} else {
+		//If offset detail is not found thn check if the overall map or the partition map is full and
+		//fetch details from collector(this is computationally expensive and slow and is used only if
+		//maps are full)
+		if len(p.LastSourceDetail) >= MaxTopics || len(p.LastSourceDetail[info.Topic]) >= MaxPartitions{
+			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
+		}
 	}
 }
 
@@ -148,11 +168,41 @@ func (p *PrometheusMetrics) pushLag(info *OffsetInfo, offset int64) {
 }
 
 func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64) map[int32]int64 {
-	if ok {
-		detail[info.Partition] = info.Offset
-	} else{
-		detail = make(map[int32]int64)
-		detail[info.Partition] = info.Offset
+	//Add partitions only if the partition map is not full
+	if len(detail) < MaxPartitions {
+		if ok {
+			detail[info.Partition] = info.Offset
+		} else{
+			detail = make(map[int32]int64, MaxPartitions)
+			detail[info.Partition] = info.Offset
+		}
+	} else {
+		//The value corresponding to existing key can be updated
+		if _, ok1 := detail[info.Partition]; ok1 {
+			detail[info.Partition] = info.Offset
+		}
 	}
 	return detail
+}
+
+func (p* PrometheusMetrics) fromCollector(newInfo interface{}) int64 {
+	switch newInfo.(type) {
+	case SourceOffset:
+		info := newInfo.(SourceOffset)
+		if lastSinkOffset, err := p.sinkOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+			var lastOffset = &dto.Metric{}
+			lastSinkOffset.Write(lastOffset)
+			lastOffsetValue := *lastOffset.Gauge.Value
+			return int64(lastOffsetValue)
+		}
+	case SinkOffset:
+		info := newInfo.(SinkOffset)
+		if lastSourceOffset, err := p.sourceOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+			var lastOffset = &dto.Metric{}
+			lastSourceOffset.Write(lastOffset)
+			lastOffsetValue := *lastOffset.Gauge.Value
+			return int64(lastOffsetValue)
+		}
+	}
+	return 0
 }

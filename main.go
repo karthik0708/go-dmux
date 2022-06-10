@@ -29,6 +29,10 @@ func main() {
 
 	//update metric port
 	metrics.MetricPort = conf.MetricPort
+	//update max number of topics and max partitions per topic
+	metrics.MaxTopics = conf.MaxTopics
+	metrics.MaxPartitions = conf.MaxPart
+
 	dmuxLogging := new(logging.DMuxLogging)
 	dmuxLogging.Start(conf.Logging)
 

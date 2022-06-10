@@ -33,6 +33,8 @@ type Provider interface {
 var (
 	Registry registry
 	MetricPort int
+	MaxTopics int
+	MaxPartitions int
 )
 
 //Init creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
