@@ -8,34 +8,27 @@ import (
 	"strconv"
 )
 
-type pusher interface {
-	push(p *PrometheusMetrics)
-}
-var MetricPort int
-
-type PrometheusMetrics struct {
-
+type PrometheusConfig struct {
+	metricPort int
 }
 
-func (p *PrometheusMetrics) Init(){
-	go p.displayMetrics()
+func (p *PrometheusConfig) init(){
+	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
+	go func(config *PrometheusConfig) {
+		addr := flag.String("listen-address", ":"+strconv.Itoa(config.metricPort), "The address to listen on for HTTP requests.")
+		http.Handle("/metrics", promhttp.Handler())
+		log.Fatal(http.ListenAndServe(*addr, nil))
+	}(p)
 }
 
 //Ingest metrics as and when events are received from the channels
-func (p *PrometheusMetrics) Ingest(metric interface{}){
-}
-
-//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
-func  (p *PrometheusMetrics) displayMetrics() {
-	addr := flag.String("listen-address", ":"+strconv.Itoa(MetricPort), "The address to listen on for HTTP requests.")
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(*addr, nil))
+func (p *PrometheusConfig) ingest(metric interface{}){
 }
 
 //Initialize all the metric collectors
-func (p *PrometheusMetrics) createMetrics(){
+func (p *PrometheusConfig) createMetrics(){
 }
 
 //Register the metric collectors
-func (p *PrometheusMetrics) registerMetrics() {
+func (p *PrometheusConfig) registerMetrics() {
 }
