@@ -26,6 +26,7 @@ type KafkaHTTPConnConfig struct {
 
 //KafkaHTTPConn struct to abstract this connections Run
 type KafkaHTTPConn struct {
+	Name 			string
 	EnableDebugLog bool
 	Conf           interface{}
 }
@@ -54,7 +55,7 @@ func (c *KafkaHTTPConn) Run() {
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d)
+	dmux := core.GetDmux(conf.Dmux, d, c.Name)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }

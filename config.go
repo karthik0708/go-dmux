@@ -37,10 +37,11 @@ func (c ConnectionType) getConfig(data []byte) interface{} {
 }
 
 //Start invokes Run of the respective connection in a go routine
-func (c ConnectionType) Start(conf interface{}, enableDebug bool) {
+func (c ConnectionType) Start(conf interface{}, enableDebug bool, name string) {
 	switch c {
 	case KafkaHTTP:
 		connObj := &connection.KafkaHTTPConn{
+			Name: name,
 			EnableDebugLog: enableDebug,
 			Conf:           conf,
 		}
@@ -48,6 +49,7 @@ func (c ConnectionType) Start(conf interface{}, enableDebug bool) {
 		connObj.Run()
 	case KafkaFoxtrot:
 		connObj := &connection.KafkaFoxtrotConn{
+			Name: name,
 			EnableDebugLog: enableDebug,
 			Conf:           conf,
 		}

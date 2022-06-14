@@ -8,8 +8,11 @@
       "connection": {
         "dmux": {
           "size": 250,
-          "distributor_type": "Hash",
-          "batch_size": 1
+          "distributor_type": "RoundRobin",
+          "batch_size": 1,
+          "request_volume_threshold": 10,
+          "sleep_window": 10000,
+          "error_percent_threshold": 50
         },
         "source": {
           "name": "source_name",

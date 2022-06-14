@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/afex/hystrix-go/hystrix"
 	"io"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	core "github.com/go-dmux/core"
@@ -113,7 +115,7 @@ func (h *HTTPSink) Clone() core.Sink {
 }
 
 //BatchConsume is implementation of Sink interface Consume.
-func (h *HTTPSink) BatchConsume(msgs []interface{}, version int) {
+func (h *HTTPSink) BatchConsume(msgs []interface{}, version int, name string) {
 	// fmt.Println(msgs)
 	batchHelper := msgs[0].(HTTPMsg) // empty refrence to help call static methods
 	// data := msg.(HTTPMsg)
@@ -129,7 +131,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int) {
 	}
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, name)
 
 	for _, msg := range msgs {
 		//retry Post till you succede infinitely
@@ -141,7 +143,7 @@ func (h *HTTPSink) BatchConsume(msgs []interface{}, version int) {
 //Consume is implementation for Single message Consumption.
 //This infinitely retries pre and post hooks, but finetly retries HTTPCall
 //for status. status == true is determined by responseCode 2xx
-func (h *HTTPSink) Consume(msg interface{}) {
+func (h *HTTPSink) Consume(msg interface{}, name string) {
 
 	data := msg.(HTTPMsg)
 	url := data.GetURL(h.conf.Endpoint)
@@ -152,7 +154,7 @@ func (h *HTTPSink) Consume(msg interface{}) {
 	h.retryPre(msg, url)
 
 	//retry Execute till you succede based on retry config
-	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation)
+	status := h.retryExecute(h.conf.Method, url, headers, payload, responseCodeEvaluation, name)
 
 	//retry Post till you succede infinitely
 	h.retryPost(msg, status, url)
@@ -183,22 +185,43 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 
 }
 
-func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
-	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool)) bool {
-
+func (h *HTTPSink) retryExecute(method, url string, headers map[string]string, data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool), name string) bool {
+	var outcome bool
+	var err error
+	//wait group for ensuring that the retur check is done after running critical function
+	wg := new(sync.WaitGroup)
 	for {
+		wg.Add(1)
 
-		status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
-
-		if status {
-			nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
-			err, outcome := respEval(respCode, nonRetriableHttpStatusCodes)
-			if err == nil {
-				return outcome
+		//Run the circuit breaker on the critical block of code
+		hystrix.Go(name, func() error {
+			status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
+			defer wg.Done()
+			if status {
+				nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
+				err, outcome = respEval(respCode, nonRetriableHttpStatusCodes)
+			} else{
+				err = errors.New("execution failed")
 			}
+
+			if err !=nil {
+				log.Printf("retry in execute %s \t %s ", method, url)
+				time.Sleep(h.conf.RetryInterval.Duration)
+			}
+			return err
+		}, func(err1 error) error {
+			//update the error and mark the wg done when the circuit is open
+			if err1 == hystrix.ErrCircuitOpen{
+				err = err1
+				wg.Done()
+			}
+			return err1
+		})
+		wg.Wait()
+
+		if err == nil {
+			return outcome
 		}
-		log.Printf("retry in execute %s \t %s ", method, url)
-		time.Sleep(h.conf.RetryInterval.Duration)
 	}
 
 }

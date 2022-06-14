@@ -21,6 +21,7 @@ type KafkaFoxtrotConnConfig struct {
 
 //KafkaFoxtrotConn struct to abstract this connections Run
 type KafkaFoxtrotConn struct {
+	Name 			string
 	EnableDebugLog bool
 	Conf           interface{}
 }
@@ -52,7 +53,7 @@ func (c *KafkaFoxtrotConn) Run() {
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d)
+	dmux := core.GetDmux(conf.Dmux, d, c.Name)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }

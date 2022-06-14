@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/afex/hystrix-go/hystrix"
 	"sync"
 	"time"
 )
@@ -24,12 +25,15 @@ const (
 
 //DmuxConf holds configuration parameters for Dmux
 type DmuxConf struct {
-	Size            int             `json:"size"`
-	SourceQSize     int             `json:"source_queue_size"`
-	SinkQSize       int             `json:"sink_queue_size"`
-	DistributorType DistributorType `json:"distributor_type"`
-	BatchSize       int             `json:"batch_size"`
-	Version         int             `json:"version"`
+	Size                   int             `json:"size"`
+	SourceQSize            int             `json:"source_queue_size"`
+	SinkQSize              int             `json:"sink_queue_size"`
+	DistributorType        DistributorType `json:"distributor_type"`
+	BatchSize              int             `json:"batch_size"`
+	Version         	   int             `json:"version"`
+	RequestVolumeThreshold int             `json:"request_volume_threshold"`
+	SleepWindow            int             `json:"sleep_window"`
+	ErrorPercentThreshold  int             `json:"error_percent_threshold"`
 }
 
 // ControlMsg is the struct passed to Dmux control Channel to enable it
@@ -61,10 +65,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{})
+	Consume(msg interface{}, name string)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int)
+	BatchConsume(msg []interface{}, version int, name string)
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -98,6 +102,10 @@ type Dmux struct {
 	err                    chan error
 	distribute             Distributor
 	version                int
+	name 				   string
+	volumeTh			   int
+	errTh				   int
+	sleepWin               int
 }
 
 const defaultSourceQSize int = 1
@@ -106,7 +114,7 @@ const defaultBatchSize int = 1
 const defaultVersion int = 1
 
 //GetDmux is public method used to Get instance of a Dmux struct
-func GetDmux(conf DmuxConf, d Distributor) *Dmux {
+func GetDmux(conf DmuxConf, d Distributor, name string) *Dmux {
 	control := make(chan ControlMsg)
 	response := make(chan ResponseMsg)
 	err := make(chan error)
@@ -131,7 +139,9 @@ func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 		version = conf.Version
 	}
 
-	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version}
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize,
+		control, response, err, d, version, name,
+		conf.RequestVolumeThreshold, conf.ErrorPercentThreshold, conf.SleepWindow}
 	return output
 }
 
@@ -190,8 +200,9 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version)
+	//Create the circuit breaker for the sink with the configuration
+	hystrix.ConfigureCommand(d.name, hystrix.CommandConfig{MaxConcurrentRequests: d.size, ErrorPercentThreshold: d.errTh, SleepWindow: d.sleepWin, RequestVolumeThreshold: d.volumeTh})
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, d.name)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
@@ -208,7 +219,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, d.name)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
@@ -231,11 +242,11 @@ func shutdown(ch []chan interface{}, wg *sync.WaitGroup) {
 	wg.Wait()
 }
 
-func setup(size, qsize, batchSize int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
+func setup(size, qsize, batchSize int, sink Sink, version int, name string) ([]chan interface{}, *sync.WaitGroup) {
 	if version == 1 && batchSize == 1 {
-		return simpleSetup(size, qsize, sink)
+		return simpleSetup(size, qsize, sink, name)
 	} else {
-		return batchSetup(size, qsize, batchSize, sink, version)
+		return batchSetup(size, qsize, batchSize, sink, version, name)
 	}
 }
 
@@ -251,7 +262,7 @@ func setup(size, qsize, batchSize int, sink Sink, version int) ([]chan interface
 // BatchConsumer will update its batch array index from one entry each of respective channel index. (This provides
 // ability for consumer to consume in parallel) and then flush the batch.
 // Close of any channel in a BatchConsumer will stop the BatchConsumer.
-func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{}, *sync.WaitGroup) {
+func batchSetup(sz, qsz, batchsz int, sink Sink, version int, name string) ([]chan interface{}, *sync.WaitGroup) {
 	size := sz * batchsz // create double nuber of channels
 
 	wg := new(sync.WaitGroup)
@@ -294,7 +305,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version)
+				sk.BatchConsume(batch, version, name)
 			}
 
 		}(i)
@@ -302,7 +313,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int) ([]chan interface{
 	return ch, wg
 }
 
-func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGroup) {
+func simpleSetup(size, qsize int, sink Sink, name string) ([]chan interface{}, *sync.WaitGroup) {
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
@@ -311,7 +322,7 @@ func simpleSetup(size, qsize int, sink Sink) ([]chan interface{}, *sync.WaitGrou
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
-				sk.Consume(msg)
+				sk.Consume(msg, name)
 			}
 			wg.Done()
 		}(i)

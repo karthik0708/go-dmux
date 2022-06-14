@@ -2,8 +2,10 @@ package logging
 
 import (
 	"encoding/json"
+	"github.com/afex/hystrix-go/hystrix"
 	"log"
 	"os"
+	"strings"
 
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -45,6 +47,13 @@ type DMuxLogging struct{
 	EnableDebug bool `json:"enable_debug"`
 }
 
+//Overriding the print function for circuit breaker logging
+func (c *DMuxLogging) Printf(format string, items ...interface{}) {
+	if res:= strings.HasSuffix(format,"capacity");!res{
+		log.Printf(format, items...)
+	}
+}
+
 //Start starting logging
 func (c *DMuxLogging) Start(logConf LogConf) {
 	switch logConf.Type {
@@ -70,4 +79,7 @@ func (c *DMuxLogging) Start(logConf LogConf) {
 	default:
 		panic("Invalid logger type")
 	}
+
+	//set the logger for circuit breaker
+	hystrix.SetLogger(c)
 }
