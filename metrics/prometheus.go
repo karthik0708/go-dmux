@@ -20,15 +20,3 @@ func (p *PrometheusConfig) init(){
 		log.Fatal(http.ListenAndServe(*addr, nil))
 	}(p)
 }
-
-//Ingest metrics as and when events are received from the channels
-func (p *PrometheusConfig) ingest(metric interface{}){
-}
-
-//Initialize all the metric collectors
-func (p *PrometheusConfig) createMetrics(){
-}
-
-//Register the metric collectors
-func (p *PrometheusConfig) registerMetrics() {
-}
