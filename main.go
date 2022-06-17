@@ -1,7 +1,10 @@
 package main
 
 import (
+	"github.com/afex/hystrix-go/hystrix"
 	"log"
+	"net"
+	"net/http"
 	"os"
 
 	"github.com/go-dmux/logging"
@@ -39,6 +42,9 @@ func main() {
 			connType.Start(connConf, logDebug, name)
 		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug, item.Name)
 	}
+	hystrixStreamHandler := hystrix.NewStreamHandler()
+	hystrixStreamHandler.Start()
+	go http.ListenAndServe(net.JoinHostPort("", "9999"), hystrixStreamHandler)
 
 	//main thread halts. TODO make changes to listen to kill and reboot
 	select {}

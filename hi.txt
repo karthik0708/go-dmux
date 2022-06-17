@@ -1,0 +1,27 @@
+
+hystrix_sample_name_attempts{name="sample_name"} 4.3187221e+07
+
+hystrix_sample_name_circuit_open{name="sample_name"} 1
+
+hystrix_sample_name_concurrency_in_use{name="sample_name"} 0
+
+hystrix_sample_name_errors{name="sample_name"} 4.3187222e+07
+
+hystrix_sample_name_failures{name="sample_name"} 79
+
+hystrix_sample_name_fallback_failures{name="sample_name"} 4.3187222e+07
+
+hystrix_sample_name_fallback_successes{name="sample_name"} 0
+
+hystrix_sample_name_rejects{name="sample_name"} 0
+
+hystrix_sample_name_run_duration{name="sample_name"} 0
+
+hystrix_sample_name_short_circuits{name="sample_name"} 4.3187143e+07
+
+hystrix_sample_name_successes{name="sample_name"} 0
+
+hystrix_sample_name_timeouts{name="sample_name"} 0
+
+hystrix_sample_name_total_duration{name="sample_name"} 0.000165306
+
