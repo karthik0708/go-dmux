@@ -11,18 +11,7 @@ import (
 	"strconv"
 )
 
-//pusher is an interface where the methods are implemented by the metric type
-type pusher interface {
-	push(p *PrometheusMetrics)
-}
-
-//lagUpdater is an interface where the methods are implemented by source and sink offset metric for
-//keeping track of the lag
-type lagUpdater interface {
-	updateLag(p *PrometheusMetrics)
-}
-
-type PrometheusMetrics struct {
+type PrometheusConfig struct {
 	//keep track of last source and sink details for lag calculation
 	LastSourceDetail map[string]map[int32]int64
 	LastSinkDetail map[string]map[int32]int64
@@ -32,10 +21,18 @@ type PrometheusMetrics struct {
 	sinkOffMetric *prometheus.GaugeVec
 	lagOffMetric *prometheus.GaugeVec
 	partitionOwned *prometheus.GaugeVec
+
+	//metricPort to which the metrics would be sent
+	metricPort int
 }
 
-func (p *PrometheusMetrics) Init(){
-	go p.displayMetrics()
+func (p *PrometheusConfig) init(){
+	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
+	go func(config *PrometheusConfig) {
+		addr := flag.String("listen-address", ":"+strconv.Itoa(config.metricPort), "The address to listen on for HTTP requests.")
+		http.Handle("/metrics", promhttp.Handler())
+		log.Fatal(http.ListenAndServe(*addr, nil))
+	}(p)
 
 	p.LastSinkDetail = make(map[string]map[int32]int64, MaxTopics)
 	p.LastSourceDetail = make(map[string]map[int32]int64, MaxTopics)
@@ -44,30 +41,8 @@ func (p *PrometheusMetrics) Init(){
 	p.registerMetrics()
 }
 
-//Ingest metrics as and when events are received from the channels
-func (p *PrometheusMetrics) Ingest(metric interface{}){
-		switch metric.(type) {
-		case SourceOffset:
-			m := metric.(SourceOffset)
-			m.push(p)
-		case SinkOffset:
-			m := metric.(SinkOffset)
-			m.push(p)
-		case PartitionInfo:
-			m := metric.(PartitionInfo)
-			m.push(p)
-		}
-}
-
-//The metrics are exposed to the http://localhost:<port>/metrics end point
-func  (p *PrometheusMetrics) displayMetrics() {
-	addr := flag.String("listen-address", ":"+strconv.Itoa(MetricPort), "The address to listen on for HTTP requests.")
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(*addr, nil))
-}
-
 //Initialize all the metric collectors
-func (p *PrometheusMetrics) createMetrics(){
+func (p *PrometheusConfig) createMetrics(){
 	p.sourceOffMetric = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "source_offset",
@@ -94,31 +69,46 @@ func (p *PrometheusMetrics) createMetrics(){
 }
 
 //Register the metric collectors
-func (p *PrometheusMetrics) registerMetrics() {
+func (p *PrometheusConfig) registerMetrics() {
 	prometheus.MustRegister(p.sourceOffMetric)
 	prometheus.MustRegister(p.sinkOffMetric)
 	prometheus.MustRegister(p.lagOffMetric)
 	prometheus.MustRegister(p.partitionOwned)
 }
 
-func (info *SourceOffset) push(p *PrometheusMetrics){
+//Ingest metrics as and when events are received from the channels
+func (p *PrometheusConfig) ingest(metric interface{}){
+	switch metric.(type) {
+	case SourceOffset:
+		m := metric.(SourceOffset)
+		m.push(p)
+	case SinkOffset:
+		m := metric.(SinkOffset)
+		m.push(p)
+	case PartitionInfo:
+		m := metric.(PartitionInfo)
+		m.push(p)
+	}
+}
+
+func (info *SourceOffset) push(p *PrometheusConfig){
 	//Push the latest source offset for the corresponding topic and partition
 	p.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
 	info.updateLag(p)
 }
 
-func (info *SinkOffset) push(p *PrometheusMetrics){
+func (info *SinkOffset) push(p *PrometheusConfig){
 	//Push the latest sink offset for the corresponding topic and partition
 	p.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
 	info.updateLag(p)
 }
 
-func (info *PartitionInfo) push(p *PrometheusMetrics){
+func (info *PartitionInfo) push(p *PrometheusConfig){
 	//Push the time stamp at which the partition joined dmux
 	p.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
 }
 
-func (info *SourceOffset) updateLag(p *PrometheusMetrics){
+func (info *SourceOffset) updateLag(p *PrometheusConfig){
 	//Update the previous offset details at source
 	partitionDetail, ok := p.LastSourceDetail[info.Topic]
 	if len(p.LastSourceDetail) <= MaxTopics {
@@ -138,7 +128,7 @@ func (info *SourceOffset) updateLag(p *PrometheusMetrics){
 	}
 }
 
-func (info *SinkOffset) updateLag(p *PrometheusMetrics) {
+func (info *SinkOffset) updateLag(p *PrometheusConfig) {
 	//Update the previous offset details at sink
 	partitionDetail, ok := p.LastSinkDetail[info.Topic]
 	//Check if the overall map is full
@@ -159,7 +149,7 @@ func (info *SinkOffset) updateLag(p *PrometheusMetrics) {
 	}
 }
 
-func (p *PrometheusMetrics) pushLag(info *OffsetInfo, offset int64) {
+func (p *PrometheusConfig) pushLag(info *OffsetInfo, offset int64) {
 	//calculate lag
 	lag := math.Abs(float64(offset - info.Offset))
 
@@ -185,7 +175,7 @@ func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64) map[int32]int6
 	return detail
 }
 
-func (p* PrometheusMetrics) fromCollector(newInfo interface{}) int64 {
+func (p* PrometheusConfig) fromCollector(newInfo interface{}) int64 {
 	switch newInfo.(type) {
 	case SourceOffset:
 		info := newInfo.(SourceOffset)

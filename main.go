@@ -27,12 +27,6 @@ func main() {
 	}
 	conf := dconf.GetDmuxConf()
 
-	//update metric port
-	metrics.MetricPort = conf.MetricPort
-	//update max number of topics and max partitions per topic
-	metrics.MaxTopics = conf.MaxTopics
-	metrics.MaxPartitions = conf.MaxPart
-
 	dmuxLogging := new(logging.DMuxLogging)
 	dmuxLogging.Start(conf.Logging)
 
@@ -41,11 +35,11 @@ func main() {
 
 	log.Printf("config: %v", conf)
 
-	//Initialize metrics before reading conf to avoid registering collectors multiple times in case of multiple dmux connections
-	metrics.Registry = metrics.Init()
+	//start showing metrics at the endpoint
+	metrics.Reg = metrics.Start(conf.MetricPort)
 
-	//Track metrics
-	go metrics.Registry.TrackMetrics()
+	//Start tracking metrics
+	metrics.Reg.TrackMetrics()
 
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool) {
