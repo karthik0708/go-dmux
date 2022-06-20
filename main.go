@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/afex/hystrix-go/hystrix"
+	hystrix_metric "github.com/afex/hystrix-go/hystrix/metric_collector"
+	prometheus_hystrix_go "github.com/gjbae1212/prometheus-hystrix-go"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
-	"net"
 	"net/http"
 	"os"
 
@@ -42,9 +43,16 @@ func main() {
 			connType.Start(connConf, logDebug, name)
 		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug, item.Name)
 	}
-	hystrixStreamHandler := hystrix.NewStreamHandler()
-	hystrixStreamHandler.Start()
-	go http.ListenAndServe(net.JoinHostPort("", "9999"), hystrixStreamHandler)
+
+	wrapper := prometheus_hystrix_go.NewPrometheusCollector("hystrix", map[string]string{"app": "circuit"})
+
+	// register and initialize to hystrix prometheus
+	hystrix_metric.Registry.Register(wrapper)
+
+	// start server
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":9999", nil)
+
 
 	//main thread halts. TODO make changes to listen to kill and reboot
 	select {}
