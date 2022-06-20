@@ -72,6 +72,7 @@ type DmuxConf struct {
 	Name      string     `json:"name"`
 	DMuxItems []DmuxItem `json:"dmuxItems"`
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
+	MetricPort int	     `json:"metric_port"`
 	Logging logging.LogConf `json:"logging"`
 }
 

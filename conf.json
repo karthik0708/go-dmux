@@ -8,7 +8,7 @@
       "connection": {
         "dmux": {
           "size": 250,
-          "distributor_type": "RoundRobin",
+          "distributor_type": "Hash",
           "batch_size": 1,
           "request_volume_threshold": 10,
           "sleep_window": 10000,
@@ -42,6 +42,7 @@
       }
     }
   ],
+  "metric_port": 9999,
   "logging": {
     "type": "file",
     "config": {

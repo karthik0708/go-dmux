@@ -1,11 +1,8 @@
 package main
 
 import (
-	hystrix_metric "github.com/afex/hystrix-go/hystrix/metric_collector"
-	prometheus_hystrix_go "github.com/gjbae1212/prometheus-hystrix-go"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/go-dmux/metrics"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/go-dmux/logging"
@@ -38,21 +35,14 @@ func main() {
 
 	log.Printf("config: %v", conf)
 
+	//start showing metrics at the endpoint
+	metrics.Start(conf.MetricPort)
+
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool, name string) {
 			connType.Start(connConf, logDebug, name)
 		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug, item.Name)
 	}
-
-	wrapper := prometheus_hystrix_go.NewPrometheusCollector("hystrix", map[string]string{"app": "circuit"})
-
-	// register and initialize to hystrix prometheus
-	hystrix_metric.Registry.Register(wrapper)
-
-	// start server
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":9999", nil)
-
 
 	//main thread halts. TODO make changes to listen to kill and reboot
 	select {}
