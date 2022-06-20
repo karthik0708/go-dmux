@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-dmux/metrics"
 	"log"
 	"os"
 
@@ -33,6 +34,9 @@ func main() {
 	go c.start()
 
 	log.Printf("config: %v", conf)
+
+	//start showing metrics at the endpoint
+	metrics.Start(conf.MetricPort)
 
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool) {
