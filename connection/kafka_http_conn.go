@@ -160,7 +160,7 @@ func (h *KafkaOffsetHook) PostHTTPCall(msg interface{}, success bool) {
 		data.MarkDone()
 		rawMsg := data.GetRawMsg()
 		//Create a sinkOffset and send it for ingestion through sink channel
-		metrics.Registry.SinkCh <- metrics.SinkOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
+		metrics.Reg.SinkCh <- metrics.SinkOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
 	}
 	if h.enableDebugLog {
 		val := msg.(sink.HTTPMsg)

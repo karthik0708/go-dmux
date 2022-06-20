@@ -1,7 +1,7 @@
 package metrics
 
 var (
-	Reg *Registry
+	Reg Registry
 	MetricPort int
 	MaxTopics int
 	MaxPartitions int
@@ -44,7 +44,6 @@ func Start(metricPort int) *Registry {
 
 	reg := &Registry{provider: config}
 	reg.provider.init()
-	reg.TrackMetrics()
 	return reg
 }
 

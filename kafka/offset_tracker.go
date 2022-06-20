@@ -27,7 +27,7 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 	}
 	rawMsg := kmsg.GetRawMsg()
 	//Create Source offset and send it for ingestion through source channel
-	metrics.Registry.SourceCh <- metrics.SourceOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
+	metrics.Reg.SourceCh <- metrics.SourceOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
 	k.ch <- kmsg
 }
 

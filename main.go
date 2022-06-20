@@ -36,10 +36,10 @@ func main() {
 	log.Printf("config: %v", conf)
 
 	//start showing metrics at the endpoint
-	metrics.Reg = metrics.Start(conf.MetricPort)
+	metrics.Reg = *metrics.Start(conf.MetricPort)
 
 	//Start tracking metrics
-	metrics.Reg.TrackMetrics()
+	go metrics.Reg.TrackMetrics()
 
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool) {
