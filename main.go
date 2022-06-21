@@ -36,7 +36,7 @@ func main() {
 	log.Printf("config: %v", conf)
 
 	//start showing metrics at the endpoint
-	metrics.Reg = *metrics.Start(conf.MetricPort)
+	metrics.Reg = *metrics.Start(conf.MetricPort, conf.MaxPart, conf.MaxTopics)
 
 	//Start tracking metrics
 	go metrics.Reg.TrackMetrics()

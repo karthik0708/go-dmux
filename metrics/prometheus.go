@@ -13,8 +13,8 @@ import (
 
 type PrometheusConfig struct {
 	//keep track of last source and sink details for lag calculation
-	LastSourceDetail map[string]map[int32]int64
-	LastSinkDetail map[string]map[int32]int64
+	lastSourceDetail map[string]map[int32]int64
+	lastSinkDetail map[string]map[int32]int64
 
 	//metric collectors
 	sourceOffMetric *prometheus.GaugeVec
@@ -24,6 +24,10 @@ type PrometheusConfig struct {
 
 	//metricPort to which the metrics would be sent
 	metricPort int
+
+	//Max topics and max partitions per topic
+	maxTopics int
+	maxPartitions int
 }
 
 func (p *PrometheusConfig) init(){
@@ -34,8 +38,8 @@ func (p *PrometheusConfig) init(){
 		log.Fatal(http.ListenAndServe(*addr, nil))
 	}(p)
 
-	p.LastSinkDetail = make(map[string]map[int32]int64, MaxTopics)
-	p.LastSourceDetail = make(map[string]map[int32]int64, MaxTopics)
+	p.lastSinkDetail = make(map[string]map[int32]int64, p.maxTopics)
+	p.lastSourceDetail = make(map[string]map[int32]int64, p.maxTopics)
 
 	p.createMetrics()
 	p.registerMetrics()
@@ -110,19 +114,19 @@ func (info *PartitionInfo) push(p *PrometheusConfig){
 
 func (info *SourceOffset) updateLag(p *PrometheusConfig){
 	//Update the previous offset details at source
-	partitionDetail, ok := p.LastSourceDetail[info.Topic]
-	if len(p.LastSourceDetail) <= MaxTopics {
-		p.LastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	partitionDetail, ok := p.lastSourceDetail[info.Topic]
+	if len(p.lastSourceDetail) <= p.maxTopics {
+		p.lastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, p.maxPartitions)
 	}
 
 	//Push lag metric based on the stored sink offset
-	if lastOffset, ok := p.LastSinkDetail[info.Topic][info.Partition]; ok {
+	if lastOffset, ok := p.lastSinkDetail[info.Topic][info.Partition]; ok {
 		p.pushLag((*OffsetInfo)(info), lastOffset)
 	} else {
 		//If offset detail is not found thn check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
-		if len(p.LastSinkDetail) >= MaxTopics || len(p.LastSinkDetail[info.Topic]) >= MaxPartitions{
+		if len(p.lastSinkDetail) >= p.maxTopics || len(p.lastSinkDetail[info.Topic]) >= p.maxPartitions{
 			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
 		}
 	}
@@ -130,20 +134,20 @@ func (info *SourceOffset) updateLag(p *PrometheusConfig){
 
 func (info *SinkOffset) updateLag(p *PrometheusConfig) {
 	//Update the previous offset details at sink
-	partitionDetail, ok := p.LastSinkDetail[info.Topic]
+	partitionDetail, ok := p.lastSinkDetail[info.Topic]
 	//Check if the overall map is full
-	if len(p.LastSinkDetail) <= MaxTopics {
-		p.LastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail)
+	if len(p.lastSinkDetail) <= p.maxTopics {
+		p.lastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, p.maxPartitions)
 	}
 
 	//Push lag metric based on the stored source offset
-	if lastOffset, ok := p.LastSourceDetail[info.Topic][info.Partition]; ok {
+	if lastOffset, ok := p.lastSourceDetail[info.Topic][info.Partition]; ok {
 		p.pushLag((*OffsetInfo)(info), lastOffset)
 	} else {
 		//If offset detail is not found thn check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
-		if len(p.LastSourceDetail) >= MaxTopics || len(p.LastSourceDetail[info.Topic]) >= MaxPartitions{
+		if len(p.lastSourceDetail) >= p.maxTopics || len(p.lastSourceDetail[info.Topic]) >= p.maxPartitions{
 			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
 		}
 	}
@@ -157,13 +161,13 @@ func (p *PrometheusConfig) pushLag(info *OffsetInfo, offset int64) {
 	p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(lag)
 }
 
-func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64) map[int32]int64 {
+func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64, partitions int) map[int32]int64 {
 	//Add partitions only if the partition map is not full
-	if len(detail) < MaxPartitions {
+	if len(detail) < partitions {
 		if ok {
 			detail[info.Partition] = info.Offset
 		} else{
-			detail = make(map[int32]int64, MaxPartitions)
+			detail = make(map[int32]int64, partitions)
 			detail[info.Partition] = info.Offset
 		}
 	} else {

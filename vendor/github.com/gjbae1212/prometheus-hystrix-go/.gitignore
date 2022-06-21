@@ -1,8 +1,0 @@
-.idea
-.DS_Store
-.iml
-vendor
-mem.out
-*.test
-/main
-/test
