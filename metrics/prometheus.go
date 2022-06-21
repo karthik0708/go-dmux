@@ -6,7 +6,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	dto "github.com/prometheus/client_model/go"
 	"log"
-	"math"
 	"net/http"
 	"strconv"
 )
@@ -121,14 +120,15 @@ func (info *SourceOffset) updateLag(p *PrometheusConfig){
 
 	//Push lag metric based on the stored sink offset
 	if lastOffset, ok := p.lastSinkDetail[info.Topic][info.Partition]; ok {
-		p.pushLag((*OffsetInfo)(info), lastOffset)
-	} else {
-		//If offset detail is not found thn check if the overall map or the partition map is full and
+		p.pushLag(*info, lastOffset)
+	} else if len(p.lastSinkDetail) >= p.maxTopics || len(p.lastSinkDetail[info.Topic]) >= p.maxPartitions {
+		//If offset detail is not found then check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
-		if len(p.lastSinkDetail) >= p.maxTopics || len(p.lastSinkDetail[info.Topic]) >= p.maxPartitions{
-			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
-		}
+		p.pushLag(*info, p.fromCollector(*info))
+	} else{
+			//if the maps are not full then that implies that it is the first message from that partition
+			p.pushLag(*info, 0)
 	}
 }
 
@@ -142,23 +142,38 @@ func (info *SinkOffset) updateLag(p *PrometheusConfig) {
 
 	//Push lag metric based on the stored source offset
 	if lastOffset, ok := p.lastSourceDetail[info.Topic][info.Partition]; ok {
-		p.pushLag((*OffsetInfo)(info), lastOffset)
+		p.pushLag(*info, lastOffset)
 	} else {
 		//If offset detail is not found thn check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
 		if len(p.lastSourceDetail) >= p.maxTopics || len(p.lastSourceDetail[info.Topic]) >= p.maxPartitions{
-			p.pushLag((*OffsetInfo)(info), p.fromCollector(info))
+			p.pushLag(*info, p.fromCollector(*info))
 		}
 	}
 }
 
-func (p *PrometheusConfig) pushLag(info *OffsetInfo, offset int64) {
-	//calculate lag
-	lag := math.Abs(float64(offset - info.Offset))
+func (p *PrometheusConfig) pushLag(info interface{}, lastOffset int64) {
 
-	//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
-	p.lagOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(lag)
+	if lastOffset == -1 {
+		return
+	}
+
+	//calculate lag based on type of info
+	switch info.(type) {
+	case SourceOffset:
+		srcOff := info.(SourceOffset)
+
+		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
+		p.lagOffMetric.WithLabelValues(srcOff.Topic, strconv.Itoa(int(srcOff.Partition))).Set(float64(srcOff.Offset - lastOffset))
+	case SinkOffset:
+		skOff := info.(SinkOffset)
+
+		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition only if lag is positive
+		if lag := lastOffset - skOff.Offset; lag >= 0 {
+			p.lagOffMetric.WithLabelValues(skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
+		}
+	}
 }
 
 func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64, partitions int) map[int32]int64 {
@@ -198,5 +213,5 @@ func (p* PrometheusConfig) fromCollector(newInfo interface{}) int64 {
 			return int64(lastOffsetValue)
 		}
 	}
-	return 0
+	return -1
 }
