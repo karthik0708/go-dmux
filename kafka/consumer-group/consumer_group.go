@@ -243,7 +243,11 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 }
 
 func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) error {
-	cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
+	isRecorded := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
+	if isRecorded{
+		//Create a sinkOffset and send it for ingestion through sink channel
+		metrics.Reg.SinkCh <- metrics.SinkOffset{Topic: message.Topic, Partition: message.Partition, Offset: message.Offset}
+	}
 	return nil
 }
 

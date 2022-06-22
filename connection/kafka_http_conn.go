@@ -3,7 +3,6 @@ package connection
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-dmux/metrics"
 	"hash/fnv"
 	"log"
 	"os"
@@ -158,9 +157,6 @@ func (h *KafkaOffsetHook) PostHTTPCall(msg interface{}, success bool) {
 	data := msg.(source.KafkaMsg)
 	if success {
 		data.MarkDone()
-		rawMsg := data.GetRawMsg()
-		//Create a sinkOffset and send it for ingestion through sink channel
-		metrics.Reg.SinkCh <- metrics.SinkOffset{Topic: rawMsg.Topic, Partition: rawMsg.Partition, Offset: rawMsg.Offset}
 	}
 	if h.enableDebugLog {
 		val := msg.(sink.HTTPMsg)
