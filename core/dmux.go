@@ -25,12 +25,12 @@ const (
 
 //DmuxConf holds configuration parameters for Dmux
 type DmuxConf struct {
-	Size                   int             `json:"size"`
-	SourceQSize            int             `json:"source_queue_size"`
-	SinkQSize              int             `json:"sink_queue_size"`
-	DistributorType        DistributorType `json:"distributor_type"`
-	BatchSize              int             `json:"batch_size"`
-	Version         	   int             `json:"version"`
+	Size            int             `json:"size"`
+	SourceQSize     int             `json:"source_queue_size"`
+	SinkQSize       int             `json:"sink_queue_size"`
+	DistributorType DistributorType `json:"distributor_type"`
+	BatchSize       int             `json:"batch_size"`
+	Version         int             `json:"version"`
 }
 
 // ControlMsg is the struct passed to Dmux control Channel to enable it
@@ -62,10 +62,10 @@ type Sink interface {
 	// Consume method gets The interface.
 	//TODO currently this method does not return error, need to solve for error
 	// handling
-	Consume(msg interface{}, name string)
+	Consume(msg interface{}, circuitName string)
 
 	//BatchConsume method is invoked in batch_size is configured
-	BatchConsume(msg []interface{}, version int, name string)
+	BatchConsume(msg []interface{}, version int, circuitName string)
 }
 
 //Source is interface that implements input Source to the Dmux
@@ -87,7 +87,9 @@ type Distributor interface {
 	Distribute(data interface{}, size int) int
 }
 
+//config for circuit breaker
 type BreakerSetting struct{
+	IsEnabled			   bool 			   `json:"is_enabled"`
 	RequestVolumeThreshold int             `json:"request_volume_threshold"`
 	SleepWindow            int             `json:"sleep_window"`
 	ErrorPercentThreshold  int             `json:"error_percent_threshold"`
@@ -106,7 +108,7 @@ type Dmux struct {
 	err                    chan error
 	distribute             Distributor
 	version                int
-	name 				   string
+	circuitName 		   string
 	breakerSetting		   BreakerSetting
 }
 
@@ -124,6 +126,7 @@ func GetDmux(conf DmuxConf, breakerSetting BreakerSetting, d Distributor, name s
 	sinkQSize := defaultSinkQSize
 	batchSize := defaultBatchSize
 	version := defaultVersion
+	var circuitName string
 
 	if conf.SourceQSize > 0 {
 		sourceQSize = conf.SourceQSize
@@ -141,8 +144,12 @@ func GetDmux(conf DmuxConf, breakerSetting BreakerSetting, d Distributor, name s
 		version = conf.Version
 	}
 
+	if breakerSetting.IsEnabled == true{
+		circuitName = name
+	}
+
 	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize,
-		control, response, err, d, version, name, breakerSetting}
+		control, response, err, d, version, circuitName, breakerSetting}
 	return output
 }
 
@@ -201,15 +208,17 @@ func getStopMsg() ControlMsg {
 }
 
 func (d *Dmux) run(source Source, sink Sink) {
-	//Create the circuit breaker for the sink with the configuration
-	hystrix.ConfigureCommand(d.name, hystrix.CommandConfig{
-		MaxConcurrentRequests: d.size,
-		ErrorPercentThreshold: d.breakerSetting.ErrorPercentThreshold,
-		SleepWindow: d.breakerSetting.SleepWindow,
-		RequestVolumeThreshold: d.breakerSetting.RequestVolumeThreshold,
-	})
+	//Create the circuit breaker for the sink with the configuration only if circuit is enabled
+	if d.circuitName != "" {
+		hystrix.ConfigureCommand(d.circuitName, hystrix.CommandConfig{
+			MaxConcurrentRequests:  d.size,
+			ErrorPercentThreshold:  d.breakerSetting.ErrorPercentThreshold,
+			SleepWindow:            d.breakerSetting.SleepWindow,
+			RequestVolumeThreshold: d.breakerSetting.RequestVolumeThreshold,
+		})
+	}
 
-	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, d.name)
+	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, d.circuitName)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
@@ -226,7 +235,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 				fmt.Println("processing resize")
 				shutdown(ch, wg)
 				resizeMeta := ctrl.meta.(ResizeMeta)
-				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, d.name)
+				ch, wg = setup(resizeMeta.newSize, d.sinkQSize, d.batchSize, sink, d.version, d.circuitName)
 				d.response <- ResponseMsg{ctrl.signal, Sucess}
 			} else if ctrl.signal == Stop {
 				fmt.Println("processing stop")
@@ -249,11 +258,11 @@ func shutdown(ch []chan interface{}, wg *sync.WaitGroup) {
 	wg.Wait()
 }
 
-func setup(size, qsize, batchSize int, sink Sink, version int, name string) ([]chan interface{}, *sync.WaitGroup) {
+func setup(size, qsize, batchSize int, sink Sink, version int, circuitName string) ([]chan interface{}, *sync.WaitGroup) {
 	if version == 1 && batchSize == 1 {
-		return simpleSetup(size, qsize, sink, name)
+		return simpleSetup(size, qsize, sink, circuitName)
 	} else {
-		return batchSetup(size, qsize, batchSize, sink, version, name)
+		return batchSetup(size, qsize, batchSize, sink, version, circuitName)
 	}
 }
 
@@ -269,7 +278,7 @@ func setup(size, qsize, batchSize int, sink Sink, version int, name string) ([]c
 // BatchConsumer will update its batch array index from one entry each of respective channel index. (This provides
 // ability for consumer to consume in parallel) and then flush the batch.
 // Close of any channel in a BatchConsumer will stop the BatchConsumer.
-func batchSetup(sz, qsz, batchsz int, sink Sink, version int, name string) ([]chan interface{}, *sync.WaitGroup) {
+func batchSetup(sz, qsz, batchsz int, sink Sink, version int, circuitName string) ([]chan interface{}, *sync.WaitGroup) {
 	size := sz * batchsz // create double nuber of channels
 
 	wg := new(sync.WaitGroup)
@@ -312,7 +321,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int, name string) ([]ch
 				}
 				// fmt.Println("flusing ", batch)
 				//flush batched message
-				sk.BatchConsume(batch, version, name)
+				sk.BatchConsume(batch, version, circuitName)
 			}
 
 		}(i)
@@ -320,7 +329,7 @@ func batchSetup(sz, qsz, batchsz int, sink Sink, version int, name string) ([]ch
 	return ch, wg
 }
 
-func simpleSetup(size, qsize int, sink Sink, name string) ([]chan interface{}, *sync.WaitGroup) {
+func simpleSetup(size, qsize int, sink Sink, circuitName string) ([]chan interface{}, *sync.WaitGroup) {
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 	ch := make([]chan interface{}, size)
@@ -329,7 +338,7 @@ func simpleSetup(size, qsize int, sink Sink, name string) ([]chan interface{}, *
 		go func(index int) {
 			sk := sink.Clone()
 			for msg := range ch[index] {
-				sk.Consume(msg, name)
+				sk.Consume(msg, circuitName)
 			}
 			wg.Done()
 		}(i)

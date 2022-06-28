@@ -37,6 +37,7 @@
           "method": "POST"
         },
         "circuit_breaker": {
+          "is_enabled": true,
           "request_volume_threshold": 10,
           "sleep_window": 10000,
           "error_percent_threshold": 50,
