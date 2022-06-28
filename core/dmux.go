@@ -31,9 +31,6 @@ type DmuxConf struct {
 	DistributorType        DistributorType `json:"distributor_type"`
 	BatchSize              int             `json:"batch_size"`
 	Version         	   int             `json:"version"`
-	RequestVolumeThreshold int             `json:"request_volume_threshold"`
-	SleepWindow            int             `json:"sleep_window"`
-	ErrorPercentThreshold  int             `json:"error_percent_threshold"`
 }
 
 // ControlMsg is the struct passed to Dmux control Channel to enable it
@@ -90,6 +87,13 @@ type Distributor interface {
 	Distribute(data interface{}, size int) int
 }
 
+type BreakerSetting struct{
+	RequestVolumeThreshold int             `json:"request_volume_threshold"`
+	SleepWindow            int             `json:"sleep_window"`
+	ErrorPercentThreshold  int             `json:"error_percent_threshold"`
+	Timeout				   int			   `json:"timeout"`
+}
+
 //Dmux struct which enables Size based Dmultiplexing for
 //Source to Sink connections.
 //TODO restrict size to be powers of 2 for better optimization in modulo
@@ -103,9 +107,7 @@ type Dmux struct {
 	distribute             Distributor
 	version                int
 	name 				   string
-	volumeTh			   int
-	errTh				   int
-	sleepWin               int
+	breakerSetting		   BreakerSetting
 }
 
 const defaultSourceQSize int = 1
@@ -114,7 +116,7 @@ const defaultBatchSize int = 1
 const defaultVersion int = 1
 
 //GetDmux is public method used to Get instance of a Dmux struct
-func GetDmux(conf DmuxConf, d Distributor, name string) *Dmux {
+func GetDmux(conf DmuxConf, breakerSetting BreakerSetting, d Distributor, name string) *Dmux {
 	control := make(chan ControlMsg)
 	response := make(chan ResponseMsg)
 	err := make(chan error)
@@ -140,8 +142,7 @@ func GetDmux(conf DmuxConf, d Distributor, name string) *Dmux {
 	}
 
 	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize,
-		control, response, err, d, version, name,
-		conf.RequestVolumeThreshold, conf.ErrorPercentThreshold, conf.SleepWindow}
+		control, response, err, d, version, name, breakerSetting}
 	return output
 }
 
@@ -201,7 +202,13 @@ func getStopMsg() ControlMsg {
 
 func (d *Dmux) run(source Source, sink Sink) {
 	//Create the circuit breaker for the sink with the configuration
-	hystrix.ConfigureCommand(d.name, hystrix.CommandConfig{MaxConcurrentRequests: d.size, ErrorPercentThreshold: d.errTh, SleepWindow: d.sleepWin, RequestVolumeThreshold: d.volumeTh})
+	hystrix.ConfigureCommand(d.name, hystrix.CommandConfig{
+		MaxConcurrentRequests: d.size,
+		ErrorPercentThreshold: d.breakerSetting.ErrorPercentThreshold,
+		SleepWindow: d.breakerSetting.SleepWindow,
+		RequestVolumeThreshold: d.breakerSetting.RequestVolumeThreshold,
+	})
+
 	ch, wg := setup(d.size, d.sinkQSize, d.batchSize, sink, d.version, d.name)
 	in := make(chan interface{}, d.sourceQSize)
 	//start source

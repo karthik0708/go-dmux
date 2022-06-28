@@ -9,10 +9,7 @@
         "dmux": {
           "size": 250,
           "distributor_type": "Hash",
-          "batch_size": 1,
-          "request_volume_threshold": 10,
-          "sleep_window": 10000,
-          "error_percent_threshold": 50
+          "batch_size": 1
         },
         "source": {
           "name": "source_name",
@@ -38,6 +35,12 @@
             }
           ],
           "method": "POST"
+        },
+        "circuit_breaker": {
+          "request_volume_threshold": 10,
+          "sleep_window": 10000,
+          "error_percent_threshold": 50,
+          "timeout": 1000
         }
       }
     }

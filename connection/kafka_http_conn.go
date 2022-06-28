@@ -19,15 +19,16 @@ import (
 
 //KafkaHTTPConnConfig holds config to connect KafkaSource to http_sink
 type KafkaHTTPConnConfig struct {
-	Dmux        core.DmuxConf     `json:"dmux"`
-	Source      source.KafkaConf  `json:"source"`
-	Sink        sink.HTTPSinkConf `json:"sink"`
-	PendingAcks int               `json:"pending_acks"`
+	Dmux        	core.DmuxConf     		`json:"dmux"`
+	Source      	source.KafkaConf  		`json:"source"`
+	Sink        	sink.HTTPSinkConf 		`json:"sink"`
+	PendingAcks 	int               		`json:"pending_acks"`
+	CircuitBreaker	core.BreakerSetting		`json:"circuit_breaker"`
 }
 
 //KafkaHTTPConn struct to abstract this connections Run
 type KafkaHTTPConn struct {
-	Name 			string
+	Name 		   string
 	EnableDebugLog bool
 	Conf           interface{}
 }
@@ -61,7 +62,7 @@ func (c *KafkaHTTPConn) Run() {
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d, c.Name)
+	dmux := core.GetDmux(conf.Dmux, conf.CircuitBreaker, d, c.Name)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }
