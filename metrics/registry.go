@@ -1,6 +1,6 @@
 package metrics
 
-var Reg Registry
+var Reg *Registry
 
 type Registry struct {
 	provider RegistryProvider
@@ -34,12 +34,15 @@ type RegistryProvider interface {
 }
 
 //Start creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
-func Start(metricPort int, part int, topics int) *Registry {
+func Start(metricPort int, part int, topics int)  {
 	config := &PrometheusConfig{metricPort: metricPort, maxTopics: topics, maxPartitions: part}
 
-	reg := &Registry{provider: config, SourceCh: make(chan SourceOffset), SinkCh: make(chan SinkOffset), PartitionCh: make(chan PartitionInfo)}
-	reg.provider.init()
-	return reg
+	Reg = &Registry{provider: config, SourceCh: make(chan SourceOffset), SinkCh: make(chan SinkOffset), PartitionCh: make(chan PartitionInfo)}
+	Reg.provider.init()
+
+
+	//Start tracking metrics
+	go Reg.TrackMetrics()
 }
 
 //TrackMetrics reads from various channels and calls ingest method updating the metrics

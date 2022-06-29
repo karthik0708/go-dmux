@@ -11,16 +11,6 @@ import (
 )
 
 type PrometheusConfig struct {
-	//keep track of last source and sink details for lag calculation
-	lastSourceDetail map[string]map[int32]int64
-	lastSinkDetail map[string]map[int32]int64
-
-	//metric collectors
-	sourceOffMetric *prometheus.GaugeVec
-	sinkOffMetric *prometheus.GaugeVec
-	lagOffMetric *prometheus.GaugeVec
-	partitionOwned *prometheus.GaugeVec
-
 	//metricPort to which the metrics would be sent
 	metricPort int
 
@@ -28,6 +18,22 @@ type PrometheusConfig struct {
 	maxTopics int
 	maxPartitions int
 }
+
+//metric collectors
+type metricCollector struct {
+	sourceOffMetric *prometheus.GaugeVec
+	sinkOffMetric *prometheus.GaugeVec
+	lagOffMetric *prometheus.GaugeVec
+	partitionOwned *prometheus.GaugeVec
+}
+
+var (
+	collectors *metricCollector
+
+	//keep track of last source and sink details for lag calculation
+	lastSourceDetail map[string]map[int32]int64
+	lastSinkDetail map[string]map[int32]int64
+)
 
 func (p *PrometheusConfig) init(){
 	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
@@ -37,46 +43,55 @@ func (p *PrometheusConfig) init(){
 		log.Fatal(http.ListenAndServe(*addr, nil))
 	}(p)
 
-	p.lastSinkDetail = make(map[string]map[int32]int64, p.maxTopics)
-	p.lastSourceDetail = make(map[string]map[int32]int64, p.maxTopics)
+	lastSinkDetail = make(map[string]map[int32]int64, p.maxTopics)
+	lastSourceDetail = make(map[string]map[int32]int64, p.maxTopics)
 
-	p.createMetrics()
-	p.registerMetrics()
+	collectors = createMetrics()
+	collectors.registerMetrics()
 }
 
 //Initialize all the metric collectors
-func (p *PrometheusConfig) createMetrics(){
-	p.sourceOffMetric = prometheus.NewGaugeVec(
+func  createMetrics() *metricCollector{
+	sourceOffMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "source_offset",
 			Help: "Metric to represent the offset at source",
 		}, []string{"topic","partition"})
 
-	p.sinkOffMetric = prometheus.NewGaugeVec(
+	sinkOffMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "sink_offset",
 			Help: "Metric to represent the offset at sink",
 		}, []string{"topic","partition"})
 
-	p.lagOffMetric = prometheus.NewGaugeVec(
+	lagOffMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "lag",
 			Help: "Metric to represent the lag between source and sink",
 		}, []string{"topic","partition"})
 
-	p.partitionOwned = prometheus.NewGaugeVec(
+	partitionOwned := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "partition_owned",
 			Help: "Metric to represent the partitions owned",
 		}, []string{"topic","consumerId", "partitionId"})
+
+	c := &metricCollector{
+		sourceOffMetric: sourceOffMetric,
+		sinkOffMetric:   sinkOffMetric,
+		lagOffMetric:    lagOffMetric,
+		partitionOwned:  partitionOwned,
+	}
+
+	return c
 }
 
 //Register the metric collectors
-func (p *PrometheusConfig) registerMetrics() {
-	prometheus.MustRegister(p.sourceOffMetric)
-	prometheus.MustRegister(p.sinkOffMetric)
-	prometheus.MustRegister(p.lagOffMetric)
-	prometheus.MustRegister(p.partitionOwned)
+func (c *metricCollector) registerMetrics() {
+	prometheus.MustRegister(c.sourceOffMetric)
+	prometheus.MustRegister(c.sinkOffMetric)
+	prometheus.MustRegister(c.lagOffMetric)
+	prometheus.MustRegister(c.partitionOwned)
 }
 
 //Ingest metrics as and when events are received from the channels
@@ -84,76 +99,76 @@ func (p *PrometheusConfig) ingest(metric interface{}){
 	switch metric.(type) {
 	case SourceOffset:
 		m := metric.(SourceOffset)
-		m.push(p)
+		m.push(p.maxTopics, p.maxPartitions)
 	case SinkOffset:
 		m := metric.(SinkOffset)
-		m.push(p)
+		m.push(p.maxTopics, p.maxPartitions)
 	case PartitionInfo:
 		m := metric.(PartitionInfo)
-		m.push(p)
+		m.push()
 	}
 }
 
-func (info *SourceOffset) push(p *PrometheusConfig){
+func (info *SourceOffset) push(maxTopics, maxPartitions int){
 	//Push the latest source offset for the corresponding topic and partition
-	p.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
-	info.updateLag(p)
+	collectors.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	info.updateLag(maxTopics, maxPartitions)
 }
 
-func (info *SinkOffset) push(p *PrometheusConfig){
+func (info *SinkOffset) push(maxTopics, maxPartitions int){
 	//Push the latest sink offset for the corresponding topic and partition
-	p.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
-	info.updateLag(p)
+	collectors.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	info.updateLag(maxTopics, maxPartitions)
 }
 
-func (info *PartitionInfo) push(p *PrometheusConfig){
+func (info *PartitionInfo) push(){
 	//Push the time stamp at which the partition joined dmux
-	p.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
+	collectors.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
 }
 
-func (info *SourceOffset) updateLag(p *PrometheusConfig){
+func (info *SourceOffset) updateLag(maxTopics, maxPartitions int){
 	//Update the previous offset details at source
-	partitionDetail, ok := p.lastSourceDetail[info.Topic]
-	if len(p.lastSourceDetail) <= p.maxTopics {
-		p.lastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, p.maxPartitions)
+	partitionDetail, ok := lastSourceDetail[info.Topic]
+	if len(lastSourceDetail) <= maxTopics {
+		lastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, maxPartitions)
 	}
 
 	//Push lag metric based on the stored sink offset
-	if lastOffset, ok := p.lastSinkDetail[info.Topic][info.Partition]; ok {
-		p.pushLag(*info, lastOffset)
-	} else if len(p.lastSinkDetail) >= p.maxTopics || len(p.lastSinkDetail[info.Topic]) >= p.maxPartitions {
+	if lastOffset, ok := lastSinkDetail[info.Topic][info.Partition]; ok {
+		pushLag(*info, lastOffset)
+	} else if len(lastSinkDetail) >= maxTopics || len(lastSinkDetail[info.Topic]) >= maxPartitions {
 		//If offset detail is not found then check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
-		p.pushLag(*info, p.fromCollector(*info))
+		pushLag(*info, fromCollector(*info))
 	} else{
 			//if the maps are not full then that implies that it is the first message from that partition
-			p.pushLag(*info, 0)
+			pushLag(*info, 0)
 	}
 }
 
-func (info *SinkOffset) updateLag(p *PrometheusConfig) {
+func (info *SinkOffset) updateLag(maxTopics, maxPartitions int) {
 	//Update the previous offset details at sink
-	partitionDetail, ok := p.lastSinkDetail[info.Topic]
+	partitionDetail, ok := lastSinkDetail[info.Topic]
 	//Check if the overall map is full
-	if len(p.lastSinkDetail) <= p.maxTopics {
-		p.lastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, p.maxPartitions)
+	if len(lastSinkDetail) <= maxTopics {
+		lastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, maxPartitions)
 	}
 
 	//Push lag metric based on the stored source offset
-	if lastOffset, ok := p.lastSourceDetail[info.Topic][info.Partition]; ok {
-		p.pushLag(*info, lastOffset)
+	if lastOffset, ok := lastSourceDetail[info.Topic][info.Partition]; ok {
+		pushLag(*info, lastOffset)
 	} else {
 		//If offset detail is not found thn check if the overall map or the partition map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
-		if len(p.lastSourceDetail) >= p.maxTopics || len(p.lastSourceDetail[info.Topic]) >= p.maxPartitions{
-			p.pushLag(*info, p.fromCollector(*info))
+		if len(lastSourceDetail) >= maxTopics || len(lastSourceDetail[info.Topic]) >= maxPartitions{
+			pushLag(*info, fromCollector(*info))
 		}
 	}
 }
 
-func (p *PrometheusConfig) pushLag(info interface{}, lastOffset int64) {
+func  pushLag(info interface{}, lastOffset int64) {
 
 	if lastOffset == -1 {
 		return
@@ -165,13 +180,13 @@ func (p *PrometheusConfig) pushLag(info interface{}, lastOffset int64) {
 		srcOff := info.(SourceOffset)
 
 		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
-		p.lagOffMetric.WithLabelValues(srcOff.Topic, strconv.Itoa(int(srcOff.Partition))).Set(float64(srcOff.Offset - lastOffset))
+		collectors.lagOffMetric.WithLabelValues(srcOff.Topic, strconv.Itoa(int(srcOff.Partition))).Set(float64(srcOff.Offset - lastOffset))
 	case SinkOffset:
 		skOff := info.(SinkOffset)
 
 		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition only if lag is positive
 		if lag := lastOffset - skOff.Offset; lag >= 0 {
-			p.lagOffMetric.WithLabelValues(skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
+			collectors.lagOffMetric.WithLabelValues(skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
 		}
 	}
 }
@@ -194,11 +209,11 @@ func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64, partitions int
 	return detail
 }
 
-func (p* PrometheusConfig) fromCollector(newInfo interface{}) int64 {
+func fromCollector(newInfo interface{}) int64 {
 	switch newInfo.(type) {
 	case SourceOffset:
 		info := newInfo.(SourceOffset)
-		if lastSinkOffset, err := p.sinkOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+		if lastSinkOffset, err := collectors.sinkOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
 			var lastOffset = &dto.Metric{}
 			lastSinkOffset.Write(lastOffset)
 			lastOffsetValue := *lastOffset.Gauge.Value
@@ -206,7 +221,7 @@ func (p* PrometheusConfig) fromCollector(newInfo interface{}) int64 {
 		}
 	case SinkOffset:
 		info := newInfo.(SinkOffset)
-		if lastSourceOffset, err := p.sourceOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+		if lastSourceOffset, err := collectors.sourceOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
 			var lastOffset = &dto.Metric{}
 			lastSourceOffset.Write(lastOffset)
 			lastOffsetValue := *lastOffset.Gauge.Value
