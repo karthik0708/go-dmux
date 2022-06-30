@@ -1,8 +1,11 @@
 {
   "name": "myDmux",
-  "limits" : {
-    "topics": 1,
-    "partitions_per_topic": 2
+  "metrics" : {
+    "metric_port": 9999,
+    "offset_tracker_limits": {
+      "topics": 1,
+      "partitions_per_topic": 2
+    }
   },
   "dmuxItems": [
     {
@@ -43,7 +46,6 @@
       }
     }
   ],
-  "metric_port": 9999,
   "logging": {
     "type": "file",
     "config": {

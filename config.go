@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-dmux/connection"
 	"github.com/go-dmux/logging"
+	"github.com/go-dmux/metrics"
 )
 
 //ConnectionType based on this type of Connection and related forks happen
@@ -65,19 +66,13 @@ type DMuxConfigSetting struct {
 	FilePath string
 }
 
-type Limits struct{
-	MaxTopics  int			`json:"topics"`
-	MaxPart    int			`json:"partitions_per_topic"`
-}
-
 //DmuxConf hold config data
 type DmuxConf struct {
-	Name      string     	`json:"name"`
-	DMuxItems []DmuxItem 	`json:"dmuxItems"`
+	Name      string     			`json:"name"`
+	DMuxItems []DmuxItem 			`json:"dmuxItems"`
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
-	MetricPort int	     	`json:"metric_port"`
-	Logging logging.LogConf `json:"logging"`
-	MaxLimits Limits		`json:"limits"`
+	Logging logging.LogConf 		`json:"logging"`
+	Metrics metrics.MetricConf		`json:"metrics"`
 }
 
 //DmuxItem struct defines name and type of connection

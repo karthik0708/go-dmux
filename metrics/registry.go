@@ -5,7 +5,18 @@ var Reg *Registry
 const (
 	defaultTopics int = 20
 	defaultPartitions int = 200
+	defaultMetricPort int = 9999
 )
+
+type Limits struct{
+	MaxTopics  int			`json:"topics"`
+	MaxPart    int			`json:"partitions_per_topic"`
+}
+
+type MetricConf struct {
+	MetricPort  		int		`json:"metric_port"`
+	OffsetTrackerLimits	Limits	`json:"offset_tracker_limits"`
+}
 
 type Registry struct {
 	provider RegistryProvider
@@ -39,16 +50,24 @@ type RegistryProvider interface {
 }
 
 //Start creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
-func Start(metricPort int, topics int, part int)  {
-	if part <= 0 {
-		part = defaultPartitions
+func Start(metricConf MetricConf)  {
+	partitions := metricConf.OffsetTrackerLimits.MaxPart
+	topics := metricConf.OffsetTrackerLimits.MaxTopics
+	port := metricConf.MetricPort
+
+	if partitions <= 0 {
+		partitions = defaultPartitions
 	}
 
 	if topics <= 0 {
 		topics = defaultTopics
 	}
 
-	config := &PrometheusConfig{metricPort: metricPort, maxEntries: topics*part}
+	if port <= 0 {
+		port = defaultMetricPort
+	}
+
+	config := &PrometheusConfig{metricPort: port, maxEntries: topics*partitions}
 
 	Reg = &Registry{provider: config, SourceCh: make(chan SourceOffset), SinkCh: make(chan SinkOffset), PartitionCh: make(chan PartitionInfo)}
 	Reg.provider.init()
