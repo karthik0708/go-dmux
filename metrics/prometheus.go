@@ -14,9 +14,8 @@ type PrometheusConfig struct {
 	//metricPort to which the metrics would be sent
 	metricPort int
 
-	//Max topics and max partitions per topic
-	maxTopics int
-	maxPartitions int
+	//(MaxTopics )* (max partitions per topic)
+	maxEntries int
 }
 
 //metric collectors
@@ -31,8 +30,8 @@ var (
 	collectors *metricCollector
 
 	//keep track of last source and sink details for lag calculation
-	lastSourceDetail map[string]map[int32]int64
-	lastSinkDetail map[string]map[int32]int64
+	lastSourceDetail map[string]int64
+	lastSinkDetail map[string]int64
 )
 
 func (p *PrometheusConfig) init(){
@@ -43,8 +42,8 @@ func (p *PrometheusConfig) init(){
 		log.Fatal(http.ListenAndServe(*addr, nil))
 	}(p)
 
-	lastSinkDetail = make(map[string]map[int32]int64, p.maxTopics)
-	lastSourceDetail = make(map[string]map[int32]int64, p.maxTopics)
+	lastSinkDetail = make(map[string]int64, p.maxEntries)
+	lastSourceDetail = make(map[string]int64, p.maxEntries)
 
 	collectors = createMetrics()
 	collectors.registerMetrics()
@@ -99,26 +98,26 @@ func (p *PrometheusConfig) ingest(metric interface{}){
 	switch metric.(type) {
 	case SourceOffset:
 		m := metric.(SourceOffset)
-		m.push(p.maxTopics, p.maxPartitions)
+		m.push(p.maxEntries)
 	case SinkOffset:
 		m := metric.(SinkOffset)
-		m.push(p.maxTopics, p.maxPartitions)
+		m.push(p.maxEntries)
 	case PartitionInfo:
 		m := metric.(PartitionInfo)
 		m.push()
 	}
 }
 
-func (info *SourceOffset) push(maxTopics, maxPartitions int){
+func (info *SourceOffset) push(maxEntries int){
 	//Push the latest source offset for the corresponding topic and partition
 	collectors.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
-	info.updateLag(maxTopics, maxPartitions)
+	info.updateLag(maxEntries)
 }
 
-func (info *SinkOffset) push(maxTopics, maxPartitions int){
+func (info *SinkOffset) push(maxEntries int){
 	//Push the latest sink offset for the corresponding topic and partition
 	collectors.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
-	info.updateLag(maxTopics, maxPartitions)
+	info.updateLag(maxEntries)
 }
 
 func (info *PartitionInfo) push(){
@@ -126,50 +125,50 @@ func (info *PartitionInfo) push(){
 	collectors.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
 }
 
-func (info *SourceOffset) updateLag(maxTopics, maxPartitions int){
+func (info *SourceOffset) updateLag(maxEntries int){
 	//Update the previous offset details at source
-	partitionDetail, ok := lastSourceDetail[info.Topic]
-	if len(lastSourceDetail) <= maxTopics {
-		lastSourceDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, maxPartitions)
+	//Check if the overall map is full
+	topicPartition := info.Topic + "_" + strconv.Itoa(int(info.Partition))
+	if _, ok := lastSourceDetail[topicPartition]; ok || len(lastSourceDetail) < maxEntries {
+		lastSourceDetail[topicPartition] = info.Offset
 	}
 
 	//Push lag metric based on the stored sink offset
-	if lastOffset, ok := lastSinkDetail[info.Topic][info.Partition]; ok {
+	if lastOffset, ok := lastSinkDetail[topicPartition]; ok {
 		pushLag(*info, lastOffset)
-	} else if len(lastSinkDetail) >= maxTopics || len(lastSinkDetail[info.Topic]) >= maxPartitions {
-		//If offset detail is not found then check if the overall map or the partition map is full and
+	} else if len(lastSinkDetail) >= maxEntries {
+		//If offset detail is not found then check if the overall map is full and
 		//fetch details from collector(this is computationally expensive and slow and is used only if
 		//maps are full)
 		pushLag(*info, fromCollector(*info))
 	} else{
-			//if the maps are not full then that implies that it is the first message from that partition
-			pushLag(*info, 0)
+		//if the maps are not full then that implies that it is the first message from that partition processed by dmux
+		pushLag(*info, 0)
 	}
 }
 
-func (info *SinkOffset) updateLag(maxTopics, maxPartitions int) {
+func (info *SinkOffset) updateLag(maxEntries int) {
 	//Update the previous offset details at sink
-	partitionDetail, ok := lastSinkDetail[info.Topic]
 	//Check if the overall map is full
-	if len(lastSinkDetail) <= maxTopics {
-		lastSinkDetail[info.Topic] = updateMap(ok, (*OffsetInfo)(info), partitionDetail, maxPartitions)
+	topicPartition := info.Topic + "_" + strconv.Itoa(int(info.Partition))
+	if _, ok := lastSinkDetail[topicPartition]; ok || len(lastSinkDetail) < maxEntries {
+		lastSinkDetail[topicPartition] = info.Offset
 	}
 
 	//Push lag metric based on the stored source offset
-	if lastOffset, ok := lastSourceDetail[info.Topic][info.Partition]; ok {
+	if lastOffset, ok := lastSourceDetail[topicPartition]; ok {
 		pushLag(*info, lastOffset)
 	} else {
-		//If offset detail is not found thn check if the overall map or the partition map is full and
-		//fetch details from collector(this is computationally expensive and slow and is used only if
-		//maps are full)
-		if len(lastSourceDetail) >= maxTopics || len(lastSourceDetail[info.Topic]) >= maxPartitions{
+		//If offset detail is not found thn check if the overall map fetch details
+		//from collector(this is computationally expensive and slow and is used only if //maps are full)
+		if len(lastSourceDetail) >= maxEntries {
 			pushLag(*info, fromCollector(*info))
 		}
 	}
 }
 
 func  pushLag(info interface{}, lastOffset int64) {
-
+	//if lastOffset is -1 then that means it was not fetched from collector in the right way
 	if lastOffset == -1 {
 		return
 	}
@@ -189,24 +188,6 @@ func  pushLag(info interface{}, lastOffset int64) {
 			collectors.lagOffMetric.WithLabelValues(skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
 		}
 	}
-}
-
-func updateMap(ok bool, info *OffsetInfo, detail map[int32]int64, partitions int) map[int32]int64 {
-	//Add partitions only if the partition map is not full
-	if len(detail) < partitions {
-		if ok {
-			detail[info.Partition] = info.Offset
-		} else{
-			detail = make(map[int32]int64, partitions)
-			detail[info.Partition] = info.Offset
-		}
-	} else {
-		//The value corresponding to existing key can be updated
-		if _, ok1 := detail[info.Partition]; ok1 {
-			detail[info.Partition] = info.Offset
-		}
-	}
-	return detail
 }
 
 func fromCollector(newInfo interface{}) int64 {

@@ -1,12 +1,13 @@
 package kafka
 
 import (
+	"github.com/go-dmux/metrics"
+	"os"
 	"time"
-    "os"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 	"github.com/go-dmux/kafka/consumer-group"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 //KafkaSourceHook to track messages coming out of the source in order
@@ -113,6 +114,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			//TODO handle PreHook failure
 			k.hook.Pre(kafkaMsg)
 		}
+		//Create Source offset and send it for ingestion through source channel
+		metrics.Reg.SourceCh <- metrics.SourceOffset{Topic: message.Topic, Partition: message.Partition, Offset: message.Offset}
 		out <- kafkaMsg
 	}
 }

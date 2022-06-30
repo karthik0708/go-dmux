@@ -2,6 +2,11 @@ package metrics
 
 var Reg *Registry
 
+const (
+	defaultTopics int = 20
+	defaultPartitions int = 200
+)
+
 type Registry struct {
 	provider RegistryProvider
 
@@ -34,12 +39,19 @@ type RegistryProvider interface {
 }
 
 //Start creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
-func Start(metricPort int, part int, topics int)  {
-	config := &PrometheusConfig{metricPort: metricPort, maxTopics: topics, maxPartitions: part}
+func Start(metricPort int, topics int, part int)  {
+	if part <= 0 {
+		part = defaultPartitions
+	}
+
+	if topics <= 0 {
+		topics = defaultTopics
+	}
+
+	config := &PrometheusConfig{metricPort: metricPort, maxEntries: topics*part}
 
 	Reg = &Registry{provider: config, SourceCh: make(chan SourceOffset), SinkCh: make(chan SinkOffset), PartitionCh: make(chan PartitionInfo)}
 	Reg.provider.init()
-
 
 	//Start tracking metrics
 	go Reg.TrackMetrics()

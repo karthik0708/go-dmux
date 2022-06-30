@@ -65,6 +65,11 @@ type DMuxConfigSetting struct {
 	FilePath string
 }
 
+type Limits struct{
+	MaxTopics  int			`json:"topics"`
+	MaxPart    int			`json:"partitions_per_topic"`
+}
+
 //DmuxConf hold config data
 type DmuxConf struct {
 	Name      string     	`json:"name"`
@@ -72,8 +77,7 @@ type DmuxConf struct {
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
 	MetricPort int	     	`json:"metric_port"`
 	Logging logging.LogConf `json:"logging"`
-	MaxTopics  int			`json:"topic_limit"`
-	MaxPart    int			`json:"partition_limit"`
+	MaxLimits Limits		`json:"limits"`
 }
 
 //DmuxItem struct defines name and type of connection
