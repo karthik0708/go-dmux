@@ -22,6 +22,7 @@ type KafkaFoxtrotConnConfig struct {
 
 //KafkaFoxtrotConn struct to abstract this connections Run
 type KafkaFoxtrotConn struct {
+	Name 		   string
 	EnableDebugLog bool
 	Conf           interface{}
 }
@@ -47,7 +48,7 @@ func (c *KafkaFoxtrotConn) Run() {
 	}
 	kafkaMsgFactory := getKafkaFoxtrotFactory()
 	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory)
-	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
+	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src, c.Name)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
 	sk.RegisterHook(hook)
@@ -58,7 +59,7 @@ func (c *KafkaFoxtrotConn) Run() {
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d)
+	dmux := core.GetDmux(conf.Dmux, d, c.Name)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }

@@ -17,6 +17,7 @@ type KafkaOffsetTracker struct {
 	ch     chan KafkaMsg
 	source *KafkaSource
 	size   int
+	connectionName string
 }
 
 //TrackMe method ensures messages to track are enqued for tracking
@@ -28,11 +29,12 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 }
 
 //GetKafkaOffsetTracker is Global function to get instance of KafkaOffsetTracker
-func GetKafkaOffsetTracker(size int, source *KafkaSource) OffsetTracker {
+func GetKafkaOffsetTracker(size int, source *KafkaSource, name string) OffsetTracker {
 	k := &KafkaOffsetTracker{
 		ch:     make(chan KafkaMsg, size),
 		source: source,
 		size:   size,
+		connectionName: name,
 	}
 	go k.run()
 	return k
@@ -44,6 +46,6 @@ func (k *KafkaOffsetTracker) run() {
 			//log.Printf("waiting for url %s to process, queue_len %d", kmsg.GetURLPath(), len(k.ch))
 			time.Sleep(100 * time.Microsecond)
 		}
-		k.source.CommitOffsets(kmsg)
+		k.source.CommitOffsets(kmsg, k.connectionName)
 	}
 }

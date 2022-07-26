@@ -110,13 +110,13 @@ func (p *PrometheusConfig) ingest(metric interface{}){
 
 func (info *SourceOffset) push(maxEntries int){
 	//Push the latest source offset for the corresponding topic and partition
-	collectors.sourceOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	collectors.sourceOffMetric.WithLabelValues(info.ConnectionName, info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
 	info.updateLag(maxEntries)
 }
 
 func (info *SinkOffset) push(maxEntries int){
 	//Push the latest sink offset for the corresponding topic and partition
-	collectors.sinkOffMetric.WithLabelValues(info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+	collectors.sinkOffMetric.WithLabelValues(info.ConnectionName, info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
 	info.updateLag(maxEntries)
 }
 

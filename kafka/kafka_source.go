@@ -69,7 +69,7 @@ func (k *KafkaSource) RegisterHook(hook KafkaSourceHook) {
 
 //Generate is Source method implementation, which connect to Kafka and pushes
 //KafkaMessage into the channel
-func (k *KafkaSource) Generate(out chan<- interface{}) {
+func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 
 	kconf := k.conf
 	//config
@@ -115,7 +115,12 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			k.hook.Pre(kafkaMsg)
 		}
 		//Create Source offset and send it for ingestion through source channel
-		metrics.Reg.SourceCh <- metrics.SourceOffset{Topic: message.Topic, Partition: message.Partition, Offset: message.Offset}
+		metrics.Reg.SourceCh <- metrics.SourceOffset{
+			ConnectionName: connectionName,
+			Topic: message.Topic,
+			Partition: message.Partition,
+			Offset: message.Offset,
+		}
 		out <- kafkaMsg
 	}
 }
@@ -129,6 +134,6 @@ func (k *KafkaSource) Stop() {
 }
 
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
-func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
-	return k.consumer.CommitUpto(data.GetRawMsg())
+func (k *KafkaSource) CommitOffsets(data KafkaMsg, connectionName string) error {
+	return k.consumer.CommitUpto(data.GetRawMsg(), connectionName)
 }

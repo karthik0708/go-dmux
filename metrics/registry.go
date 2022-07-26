@@ -27,6 +27,7 @@ type Registry struct {
 }
 
 type OffsetInfo struct {
+	ConnectionName string
 	Topic string
 	Partition int32
 	Offset int64

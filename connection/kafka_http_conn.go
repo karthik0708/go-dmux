@@ -27,6 +27,7 @@ type KafkaHTTPConnConfig struct {
 
 //KafkaHTTPConn struct to abstract this connections Run
 type KafkaHTTPConn struct {
+	Name 		   string
 	EnableDebugLog bool
 	Conf           interface{}
 }
@@ -49,7 +50,7 @@ func (c *KafkaHTTPConn) Run() {
 	}
 	kafkaMsgFactory := getKafkaHTTPFactory()
 	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory)
-	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
+	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src, c.Name)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
 	sk.RegisterHook(hook)
@@ -60,7 +61,7 @@ func (c *KafkaHTTPConn) Run() {
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d)
+	dmux := core.GetDmux(conf.Dmux, d, c.Name)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }
