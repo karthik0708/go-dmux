@@ -99,11 +99,13 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	//get topics
 	kafkaTopics := []string{kconf.Topic}
 
+	var brokerList []string
 	// create consumer
-	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config)
+	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config, connectionName, &brokerList)
 	if err != nil {
 		panic(err)
 	}
+	client, err1 := sarama.NewClient(brokerList, nil)
 
 	k.consumer = consumer
 	for message := range k.consumer.Messages() {
@@ -121,7 +123,17 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 			Partition: message.Partition,
 			Offset: message.Offset,
 		}
-		out <- kafkaMsg
+		if err1 == nil {
+			if off, err2 := client.GetOffset(message.Topic, message.Partition, sarama.OffsetNewest); err2 == nil {
+				metrics.Reg.ProducerCh <- metrics.ProducerOffset{
+					ConnectionName: connectionName,
+					Topic:          message.Topic,
+					Partition:      message.Partition,
+					Offset:         off,
+				}
+			}
+		}
+		//out <- kafkaMsg
 	}
 }
 

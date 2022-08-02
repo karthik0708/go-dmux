@@ -24,6 +24,7 @@ type metricCollector struct {
 	sinkOffMetric *prometheus.GaugeVec
 	lagOffMetric *prometheus.GaugeVec
 	partitionOwned *prometheus.GaugeVec
+	producerOffMetric *prometheus.GaugeVec
 }
 
 var (
@@ -55,31 +56,38 @@ func  createMetrics() *metricCollector{
 		prometheus.GaugeOpts{
 			Name: "source_offset",
 			Help: "Metric to represent the offset at source",
-		}, []string{"topic","partition"})
+		}, []string{"connection", "topic","partition"})
 
 	sinkOffMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "sink_offset",
 			Help: "Metric to represent the offset at sink",
-		}, []string{"topic","partition"})
+		}, []string{"connection","topic","partition"})
 
 	lagOffMetric := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "lag",
 			Help: "Metric to represent the lag between source and sink",
-		}, []string{"topic","partition"})
+		}, []string{"connection","topic","partition"})
 
 	partitionOwned := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "partition_owned",
 			Help: "Metric to represent the partitions owned",
-		}, []string{"topic","consumerId", "partitionId"})
+		}, []string{"connection", "topic","consumerId", "partitionId"})
+
+	producerOffMetric := prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "producer_offset",
+			Help: "Metric to represent the offset that that was last processed at producer side",
+		}, []string{"connection","topic","partition"})
 
 	c := &metricCollector{
 		sourceOffMetric: sourceOffMetric,
 		sinkOffMetric:   sinkOffMetric,
 		lagOffMetric:    lagOffMetric,
 		partitionOwned:  partitionOwned,
+		producerOffMetric: producerOffMetric,
 	}
 
 	return c
@@ -91,6 +99,7 @@ func (c *metricCollector) registerMetrics() {
 	prometheus.MustRegister(c.sinkOffMetric)
 	prometheus.MustRegister(c.lagOffMetric)
 	prometheus.MustRegister(c.partitionOwned)
+	prometheus.MustRegister(c.producerOffMetric)
 }
 
 //Ingest metrics as and when events are received from the channels
@@ -104,6 +113,9 @@ func (p *PrometheusConfig) ingest(metric interface{}){
 		m.push(p.maxEntries)
 	case PartitionInfo:
 		m := metric.(PartitionInfo)
+		m.push()
+	case ProducerOffset:
+		m := metric.(ProducerOffset)
 		m.push()
 	}
 }
@@ -120,15 +132,20 @@ func (info *SinkOffset) push(maxEntries int){
 	info.updateLag(maxEntries)
 }
 
+func (info *ProducerOffset) push(){
+	//Push the last processed producer offset for the corresponding topic and partition
+	collectors.producerOffMetric.WithLabelValues(info.ConnectionName, info.Topic, strconv.Itoa(int(info.Partition))).Set(float64(info.Offset))
+}
+
 func (info *PartitionInfo) push(){
 	//Push the time stamp at which the partition joined dmux
-	collectors.partitionOwned.With(prometheus.Labels{"topic": info.Topic, "consumerId":info.ConsumerId, "partitionId":strconv.Itoa(int(info.PartitionId))}).SetToCurrentTime()
+	collectors.partitionOwned.WithLabelValues(info.ConnectionName, info.Topic, info.ConsumerId, strconv.Itoa(int(info.PartitionId))).SetToCurrentTime()
 }
 
 func (info *SourceOffset) updateLag(maxEntries int){
 	//Update the previous offset details at source
 	//Check if the overall map is full
-	topicPartition := info.Topic + "_" + strconv.Itoa(int(info.Partition))
+	topicPartition := info.ConnectionName + info.Topic + "_" + strconv.Itoa(int(info.Partition))
 	if _, ok := lastSourceDetail[topicPartition]; ok || len(lastSourceDetail) < maxEntries {
 		lastSourceDetail[topicPartition] = info.Offset
 	}
@@ -150,7 +167,7 @@ func (info *SourceOffset) updateLag(maxEntries int){
 func (info *SinkOffset) updateLag(maxEntries int) {
 	//Update the previous offset details at sink
 	//Check if the overall map is full
-	topicPartition := info.Topic + "_" + strconv.Itoa(int(info.Partition))
+	topicPartition := info.ConnectionName + info.Topic + "_" + strconv.Itoa(int(info.Partition))
 	if _, ok := lastSinkDetail[topicPartition]; ok || len(lastSinkDetail) < maxEntries {
 		lastSinkDetail[topicPartition] = info.Offset
 	}
@@ -179,13 +196,13 @@ func  pushLag(info interface{}, lastOffset int64) {
 		srcOff := info.(SourceOffset)
 
 		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition
-		collectors.lagOffMetric.WithLabelValues(srcOff.Topic, strconv.Itoa(int(srcOff.Partition))).Set(float64(srcOff.Offset - lastOffset))
+		collectors.lagOffMetric.WithLabelValues(srcOff.ConnectionName, srcOff.Topic, strconv.Itoa(int(srcOff.Partition))).Set(float64(srcOff.Offset - lastOffset))
 	case SinkOffset:
 		skOff := info.(SinkOffset)
 
 		//Push the lag which is last source offset minus the sink offset for the corresponding topic and partition only if lag is positive
 		if lag := lastOffset - skOff.Offset; lag >= 0 {
-			collectors.lagOffMetric.WithLabelValues(skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
+			collectors.lagOffMetric.WithLabelValues(skOff.ConnectionName, skOff.Topic, strconv.Itoa(int(skOff.Partition))).Set(float64(lastOffset - skOff.Offset))
 		}
 	}
 }
@@ -194,7 +211,7 @@ func fromCollector(newInfo interface{}) int64 {
 	switch newInfo.(type) {
 	case SourceOffset:
 		info := newInfo.(SourceOffset)
-		if lastSinkOffset, err := collectors.sinkOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+		if lastSinkOffset, err := collectors.sinkOffMetric.GetMetricWith(prometheus.Labels{"connection":info.ConnectionName, "topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
 			var lastOffset = &dto.Metric{}
 			lastSinkOffset.Write(lastOffset)
 			lastOffsetValue := *lastOffset.Gauge.Value
@@ -202,7 +219,7 @@ func fromCollector(newInfo interface{}) int64 {
 		}
 	case SinkOffset:
 		info := newInfo.(SinkOffset)
-		if lastSourceOffset, err := collectors.sourceOffMetric.GetMetricWith(prometheus.Labels{"topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
+		if lastSourceOffset, err := collectors.sourceOffMetric.GetMetricWith(prometheus.Labels{"connection":info.ConnectionName, "topic" : info.Topic, "partition":strconv.Itoa(int(info.Partition))});err==nil{
 			var lastOffset = &dto.Metric{}
 			lastSourceOffset.Write(lastOffset)
 			lastOffsetValue := *lastOffset.Gauge.Value

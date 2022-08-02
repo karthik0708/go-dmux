@@ -20,7 +20,7 @@
         },
         "source": {
           "name": "source_name",
-          "zk_path": "localhost:2181/kafka",
+          "zk_path": "127.0.0.1:2181/kafka",
           "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
@@ -28,7 +28,7 @@
         },
         "pending_acks": 1000000,
         "sink": {
-          "endpoint": "http://localhost:8888/1.0/api/event",
+          "endpoint": "http://127.0.0.1:8888/1.0/api/event",
           "timeout": "10s",
           "retry_interval": "100ms",
           "headers": [

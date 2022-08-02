@@ -24,6 +24,7 @@ type Registry struct {
 	SourceCh chan SourceOffset
 	SinkCh chan SinkOffset
 	PartitionCh chan PartitionInfo
+	ProducerCh chan ProducerOffset
 }
 
 type OffsetInfo struct {
@@ -34,6 +35,7 @@ type OffsetInfo struct {
 }
 
 type PartitionInfo struct {
+	ConnectionName string
 	PartitionId int32
 	ConsumerId string
 	Topic string
@@ -42,6 +44,7 @@ type PartitionInfo struct {
 type (
 	SinkOffset OffsetInfo
 	SourceOffset OffsetInfo
+	ProducerOffset OffsetInfo
 )
 
 // RegistryProvider interface that implements metric registry types
@@ -70,7 +73,13 @@ func Start(metricConf MetricConf)  {
 
 	config := &PrometheusConfig{metricPort: port, maxEntries: topics*partitions}
 
-	Reg = &Registry{provider: config, SourceCh: make(chan SourceOffset), SinkCh: make(chan SinkOffset), PartitionCh: make(chan PartitionInfo)}
+	Reg = &Registry{
+		provider: config,
+		SourceCh: make(chan SourceOffset),
+		SinkCh: make(chan SinkOffset),
+		PartitionCh: make(chan PartitionInfo),
+		ProducerCh: make(chan ProducerOffset),
+	}
 	Reg.provider.init()
 
 	//Start tracking metrics
@@ -86,6 +95,8 @@ func (reg *Registry) TrackMetrics(){
 		case info := <- reg.SinkCh:
 			reg.ingest(info)
 		case info := <- reg.PartitionCh:
+			reg.ingest(info)
+		case info := <- reg.ProducerCh:
 			reg.ingest(info)
 		}
 	}

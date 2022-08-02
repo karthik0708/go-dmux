@@ -84,7 +84,7 @@ type ConsumerGroup struct {
 }
 
 // Connects to a consumer group, using Zookeeper for auto-discovery
-func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config) (cg *ConsumerGroup, err error) {
+func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config, connectionName string, brokerList *[]string) (cg *ConsumerGroup, err error) {
 
 	if name == "" {
 		return nil, sarama.ConfigurationError("Empty consumergroup name")
@@ -117,6 +117,8 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	if err != nil {
 		kz.Close()
 		return
+	} else {
+		*brokerList = brokers
 	}
 
 	group := kz.Consumergroup(name)
@@ -177,7 +179,7 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	offsetConfig := OffsetManagerConfig{CommitInterval: config.Offsets.CommitInterval}
 	cg.offsetManager = NewZookeeperOffsetManager(cg, &offsetConfig)
 
-	go cg.topicListConsumer(topics)
+	go cg.topicListConsumer(connectionName, topics)
 
 	return
 }
@@ -255,7 +257,7 @@ func (cg *ConsumerGroup) FlushOffsets() error {
 	return cg.offsetManager.Flush()
 }
 
-func (cg *ConsumerGroup) topicListConsumer(topics []string) {
+func (cg *ConsumerGroup) topicListConsumer(connectionName string, topics []string) {
 	for {
 		select {
 		case <-cg.stopper:
@@ -276,7 +278,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string) {
 
 		for _, topic := range topics {
 			cg.wg.Add(1)
-			go cg.topicConsumer(topic, cg.messages, cg.errors, stopper)
+			go cg.topicConsumer(connectionName, topic, cg.messages, cg.errors, stopper)
 		}
 
 		select {
@@ -304,7 +306,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string) {
 	}
 }
 
-func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
+func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
 	defer cg.wg.Done()
 
 	select {
@@ -347,7 +349,7 @@ func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.Con
 	for _, pid := range myPartitions {
 		//Create PartitionInfo and send it for ingestion through the partition channel
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
-		metrics.Reg.PartitionCh <- metrics.PartitionInfo{PartitionId: pid.ID, ConsumerId: cg.instance.ID, Topic: topic}
+		metrics.Reg.PartitionCh <- metrics.PartitionInfo{ConnectionName:connectionName, PartitionId: pid.ID, ConsumerId: cg.instance.ID, Topic: topic}
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}

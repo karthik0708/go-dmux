@@ -2,3 +2,1261 @@
 2021/01/28 15:10:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
 2021/01/28 15:20:56 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://elb/1.0/api/consume headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:false kafka_version_major:2 name:source_name read_newest:true topic:source_topic zk_path:zookeeper1:2181,zookeeper2:2181,zookeeper3:2181/zk-path]]}] {default.log false {256 90 5 true}}}
 2021/01/28 15:20:56 Starting  kafka_http
+2022/07/29 17:00:14 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:00:14 Starting  kafka_http
+2022/07/29 17:00:14 enabling sarama logs
+2022/07/29 17:00:14 Connected to 127.0.0.1:2181
+2022/07/29 17:00:14 Authenticated: id=72058112319815682, timeout=6000
+2022/07/29 17:00:14 Re-submitting `0` credentials after reconnect
+2022/07/29 17:04:34 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:04:34 Starting  kafka_http
+2022/07/29 17:04:34 enabling sarama logs
+2022/07/29 17:04:34 Connected to 127.0.0.1:2181
+2022/07/29 17:04:34 Authenticated: id=72058112319815683, timeout=6000
+2022/07/29 17:04:34 Re-submitting `0` credentials after reconnect
+2022/07/29 17:04:53 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:04:53 Starting  kafka_http
+2022/07/29 17:04:53 enabling sarama logs
+2022/07/29 17:04:53 Connected to 127.0.0.1:2181
+2022/07/29 17:04:53 Authenticated: id=72058112319815684, timeout=6000
+2022/07/29 17:04:53 Re-submitting `0` credentials after reconnect
+2022/07/29 17:06:56 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:06:56 Starting  kafka_http
+2022/07/29 17:06:56 enabling sarama logs
+2022/07/29 17:06:56 Connected to 127.0.0.1:2181
+2022/07/29 17:06:56 Authenticated: id=72058112319815685, timeout=6000
+2022/07/29 17:06:56 Re-submitting `0` credentials after reconnect
+2022/07/29 17:15:13 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:15:13 Starting  kafka_http
+2022/07/29 17:15:13 enabling sarama logs
+2022/07/29 17:15:13 Connected to 127.0.0.1:2181
+2022/07/29 17:15:13 Authenticated: id=72058112319815686, timeout=6000
+2022/07/29 17:15:13 Re-submitting `0` credentials after reconnect
+2022/07/29 17:18:04 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:18:04 Starting  kafka_http
+2022/07/29 17:18:04 enabling sarama logs
+2022/07/29 17:18:04 Connected to 127.0.0.1:2181
+2022/07/29 17:18:04 Authenticated: id=72058186477404164, timeout=6000
+2022/07/29 17:18:04 Re-submitting `0` credentials after reconnect
+2022/07/29 17:18:15 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:18:15 Starting  kafka_http
+2022/07/29 17:18:15 enabling sarama logs
+2022/07/29 17:18:15 Connected to 127.0.0.1:2181
+2022/07/29 17:18:15 Authenticated: id=72058186477404165, timeout=6000
+2022/07/29 17:18:15 Re-submitting `0` credentials after reconnect
+2022/07/29 17:20:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:20:08 listen tcp :1234: bind: address already in use
+2022/07/29 17:20:20 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:20:20 listen tcp :1234: bind: address already in use
+2022/07/29 17:20:20 Starting  kafka_http
+2022/07/29 17:20:28 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 17:20:28 Starting  kafka_http
+2022/07/29 17:20:28 enabling sarama logs
+2022/07/29 17:20:28 Connected to 127.0.0.1:2181
+2022/07/29 17:20:29 Authenticated: id=72058186477404166, timeout=6000
+2022/07/29 17:20:29 Re-submitting `0` credentials after reconnect
+2022/07/29 17:20:29 [127.0.0.1:9092]
+2022/07/29 18:17:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 18:17:08 Starting  kafka_http
+2022/07/29 18:17:08 enabling sarama logs
+2022/07/29 18:17:08 Connected to 127.0.0.1:2181
+2022/07/29 18:17:08 Authenticated: id=72058186477404167, timeout=6000
+2022/07/29 18:17:08 Re-submitting `0` credentials after reconnect
+2022/07/29 18:35:03 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 18:35:03 Starting  kafka_http
+2022/07/29 18:35:03 enabling sarama logs
+2022/07/29 18:35:03 Connected to 127.0.0.1:2181
+2022/07/29 18:35:03 Authenticated: id=72058186477404168, timeout=6000
+2022/07/29 18:35:03 Re-submitting `0` credentials after reconnect
+2022/07/29 18:52:18 /sample-topic/0//630 after kafka source
+2022/07/29 18:54:08 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 18:54:08 Starting  kafka_http
+2022/07/29 18:54:08 enabling sarama logs
+2022/07/29 18:54:08 Connected to 127.0.0.1:2181
+2022/07/29 18:54:08 Authenticated: id=72058186477404169, timeout=6000
+2022/07/29 18:54:08 Re-submitting `0` credentials after reconnect
+2022/07/29 18:54:16 /sample-topic/0//636 after kafka source
+2022/07/29 18:54:30 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 18:54:30 Starting  kafka_http
+2022/07/29 18:54:30 enabling sarama logs
+2022/07/29 18:54:30 Connected to 127.0.0.1:2181
+2022/07/29 18:54:30 Authenticated: id=72058186477404170, timeout=6000
+2022/07/29 18:54:30 Re-submitting `0` credentials after reconnect
+2022/07/29 18:54:39 /sample-topic/0//649 after kafka source
+2022/07/29 18:56:58 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/29 18:56:58 Starting  kafka_http
+2022/07/29 18:56:58 enabling sarama logs
+2022/07/29 18:56:58 Connected to 127.0.0.1:2181
+2022/07/29 18:56:58 Authenticated: id=72058186477404171, timeout=6000
+2022/07/29 18:56:58 Re-submitting `0` credentials after reconnect
+2022/07/29 18:56:58 []
+2022/07/31 09:57:01 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 09:57:01 Starting  kafka_http
+2022/07/31 09:57:01 enabling sarama logs
+2022/07/31 09:57:01 Connected to 127.0.0.1:2181
+2022/07/31 09:57:01 Authenticated: id=72058186477404172, timeout=6000
+2022/07/31 09:57:01 Re-submitting `0` credentials after reconnect
+2022/07/31 09:57:01 []
+2022/07/31 09:57:18 /sample-topic/0//650 after kafka source
+2022/07/31 09:57:35 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 09:57:35 Starting  kafka_http
+2022/07/31 09:57:35 enabling sarama logs
+2022/07/31 09:57:35 Connected to 127.0.0.1:2181
+2022/07/31 09:57:35 Authenticated: id=72058186477404173, timeout=6000
+2022/07/31 09:57:35 Re-submitting `0` credentials after reconnect
+2022/07/31 09:57:35 []
+2022/07/31 09:57:44 /sample-topic/0//651 after kafka source
+2022/07/31 09:58:04 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 09:58:04 Starting  kafka_http
+2022/07/31 09:58:04 enabling sarama logs
+2022/07/31 09:58:04 Connected to 127.0.0.1:2181
+2022/07/31 09:58:04 Authenticated: id=72058186477404174, timeout=6000
+2022/07/31 09:58:04 Re-submitting `0` credentials after reconnect
+2022/07/31 09:58:04 []
+2022/07/31 09:58:17 Recv loop terminated: err=EOF
+2022/07/31 09:58:17 Send loop terminated: err=<nil>
+2022/07/31 09:58:57 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 09:58:57 Starting  kafka_http
+2022/07/31 09:58:57 enabling sarama logs
+2022/07/31 09:59:12 Connected to 127.0.0.1:2181
+2022/07/31 09:59:12 Authenticated: id=72058186477404175, timeout=6000
+2022/07/31 09:59:12 Re-submitting `0` credentials after reconnect
+2022/07/31 09:59:37 Recv loop terminated: err=read tcp 127.0.0.1:54960->127.0.0.1:2181: i/o timeout
+2022/07/31 09:59:39 Send loop terminated: err=<nil>
+2022/07/31 10:08:40 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 10:08:40 Starting  kafka_http
+2022/07/31 10:08:40 enabling sarama logs
+2022/07/31 10:08:46 Connected to 127.0.0.1:2181
+2022/07/31 10:08:46 Authenticated: id=72058186477404176, timeout=6000
+2022/07/31 10:08:46 Re-submitting `0` credentials after reconnect
+2022/07/31 10:08:51 Recv loop terminated: err=read tcp 127.0.0.1:54999->127.0.0.1:2181: i/o timeout
+2022/07/31 10:08:51 Send loop terminated: err=zk: connection closed
+2022/07/31 10:08:52 []
+2022/07/31 10:09:32 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 10:09:32 Starting  kafka_http
+2022/07/31 10:09:32 enabling sarama logs
+2022/07/31 10:09:36 Connected to 127.0.0.1:2181
+2022/07/31 10:09:36 Authenticated: id=72058186477404177, timeout=6000
+2022/07/31 10:09:36 Re-submitting `0` credentials after reconnect
+2022/07/31 10:09:58 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/07/31 10:09:58 Starting  kafka_http
+2022/07/31 10:09:58 enabling sarama logs
+2022/08/02 11:17:50 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:17:50 Starting  kafka_http
+2022/08/02 11:17:50 enabling sarama logs
+2022/08/02 11:17:54 Connected to 127.0.0.1:2181
+2022/08/02 11:17:54 Authenticated: id=72058186477404179, timeout=6000
+2022/08/02 11:17:54 Re-submitting `0` credentials after reconnect
+2022/08/02 11:18:04 Recv loop terminated: err=EOF
+2022/08/02 11:18:06 Send loop terminated: err=<nil>
+2022/08/02 11:18:07 Connected to 127.0.0.1:2181
+2022/08/02 11:18:07 Authentication failed: zk: session has been expired by the server
+2022/08/02 11:24:30 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:24:30 Starting  kafka_http
+2022/08/02 11:24:30 enabling sarama logs
+2022/08/02 11:24:30 Connected to 127.0.0.1:2181
+2022/08/02 11:24:30 Authenticated: id=72058186477404180, timeout=6000
+2022/08/02 11:24:30 Re-submitting `0` credentials after reconnect
+2022/08/02 11:24:54 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:24:54 Starting  kafka_http
+2022/08/02 11:24:54 enabling sarama logs
+2022/08/02 11:25:18 Connected to 127.0.0.1:2181
+2022/08/02 11:25:18 Authenticated: id=72058186477404181, timeout=6000
+2022/08/02 11:25:18 Re-submitting `0` credentials after reconnect
+2022/08/02 11:25:36 Recv loop terminated: err=read tcp 127.0.0.1:56381->127.0.0.1:2181: i/o timeout
+2022/08/02 11:25:36 Send loop terminated: err=<nil>
+2022/08/02 11:25:46 Failed to connect to 127.0.0.1:2181: dial tcp 127.0.0.1:2181: i/o timeout
+2022/08/02 11:25:50 Failed to connect to 127.0.0.1:2181: dial tcp 127.0.0.1:2181: i/o timeout
+2022/08/02 11:25:55 Failed to connect to 127.0.0.1:2181: dial tcp 127.0.0.1:2181: i/o timeout
+2022/08/02 11:25:57 Connected to 127.0.0.1:2181
+2022/08/02 11:25:57 Authentication failed: zk: session has been expired by the server
+2022/08/02 11:26:13 [127.0.0.1:9092]
+2022/08/02 11:26:34 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:26:34 Starting  kafka_http
+2022/08/02 11:26:34 enabling sarama logs
+2022/08/02 11:26:36 Connected to 127.0.0.1:2181
+2022/08/02 11:26:36 Authenticated: id=72058186477404182, timeout=6000
+2022/08/02 11:26:36 Re-submitting `0` credentials after reconnect
+2022/08/02 11:26:39 []
+2022/08/02 11:26:56 /sample-topic/0//652 after kafka source
+2022/08/02 11:27:22 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:27:22 Starting  kafka_http
+2022/08/02 11:27:22 enabling sarama logs
+2022/08/02 11:27:22 Connected to 127.0.0.1:2181
+2022/08/02 11:27:22 Authenticated: id=72058186477404183, timeout=6000
+2022/08/02 11:27:22 Re-submitting `0` credentials after reconnect
+2022/08/02 11:27:22 []
+2022/08/02 11:28:34 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:28:34 Starting  kafka_http
+2022/08/02 11:28:34 enabling sarama logs
+2022/08/02 11:28:39 Connected to 127.0.0.1:2181
+2022/08/02 11:28:39 Authenticated: id=72058186477404184, timeout=6000
+2022/08/02 11:28:39 Re-submitting `0` credentials after reconnect
+2022/08/02 11:28:39 []
+2022/08/02 11:28:43 /sample-topic/0//653 after kafka source
+2022/08/02 11:29:03 Recv loop terminated: err=read tcp 127.0.0.1:56422->127.0.0.1:2181: i/o timeout
+2022/08/02 11:29:21 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:29:21 Starting  kafka_http
+2022/08/02 11:29:21 enabling sarama logs
+2022/08/02 11:29:21 Connected to 127.0.0.1:2181
+2022/08/02 11:29:21 Authenticated: id=72058186477404185, timeout=6000
+2022/08/02 11:29:21 Re-submitting `0` credentials after reconnect
+2022/08/02 11:29:21 []
+2022/08/02 11:29:28 /sample-topic/0//654 after kafka source
+2022/08/02 11:30:11 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:30:11 Starting  kafka_http
+2022/08/02 11:30:11 enabling sarama logs
+2022/08/02 11:30:21 Connected to 127.0.0.1:2181
+2022/08/02 11:30:21 Authenticated: id=72058186477404186, timeout=6000
+2022/08/02 11:30:21 Re-submitting `0` credentials after reconnect
+2022/08/02 11:34:50 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:34:50 Starting  kafka_http
+2022/08/02 11:34:50 enabling sarama logs
+2022/08/02 11:35:32 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:35:32 Starting  kafka_http
+2022/08/02 11:35:32 enabling sarama logs
+2022/08/02 11:36:07 Connected to 127.0.0.1:2181
+2022/08/02 11:36:07 Authenticated: id=72058186477404187, timeout=6000
+2022/08/02 11:36:07 Re-submitting `0` credentials after reconnect
+2022/08/02 11:46:34 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:46:34 Starting  kafka_http
+2022/08/02 11:46:34 enabling sarama logs
+2022/08/02 11:55:23 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:55:23 Starting  kafka_http
+2022/08/02 11:55:23 enabling sarama logs
+2022/08/02 11:55:27 Connected to 127.0.0.1:2181
+2022/08/02 11:55:27 Authenticated: id=72058186477404188, timeout=6000
+2022/08/02 11:55:27 Re-submitting `0` credentials after reconnect
+2022/08/02 11:58:09 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 11:58:09 Starting  kafka_http
+2022/08/02 11:58:09 enabling sarama logs
+2022/08/02 11:58:14 Connected to 127.0.0.1:2181
+2022/08/02 11:58:14 Authenticated: id=72058186477404189, timeout=6000
+2022/08/02 11:58:14 Re-submitting `0` credentials after reconnect
+2022/08/02 11:58:28 /sample-topic/0//655 after kafka source
+2022/08/02 11:58:28 /sample-topic/0//655 before http sink
+2022/08/02 11:58:28 /sample-topic/0//655 after http sink, status = true
+2022/08/02 12:02:22 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:02:22 Starting  kafka_http
+2022/08/02 12:02:22 enabling sarama logs
+2022/08/02 12:02:26 Connected to 127.0.0.1:2181
+2022/08/02 12:02:26 Authenticated: id=72058186477404190, timeout=6000
+2022/08/02 12:02:26 Re-submitting `0` credentials after reconnect
+2022/08/02 12:02:36 /sample-topic/0//656 after kafka source
+2022/08/02 12:02:36 /sample-topic/0//656 before http sink
+2022/08/02 12:02:36 /sample-topic/0//656 after http sink, status = true
+2022/08/02 12:03:14 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:03:14 Starting  kafka_http
+2022/08/02 12:03:14 enabling sarama logs
+2022/08/02 12:03:14 Connected to 127.0.0.1:2181
+2022/08/02 12:03:14 Authenticated: id=72058186477404191, timeout=6000
+2022/08/02 12:03:14 Re-submitting `0` credentials after reconnect
+2022/08/02 12:03:22 /sample-topic/0//657 after kafka source
+2022/08/02 12:03:22 /sample-topic/0//657 before http sink
+2022/08/02 12:03:22 /sample-topic/0//657 after http sink, status = true
+2022/08/02 12:04:24 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:04:24 Starting  kafka_http
+2022/08/02 12:04:24 enabling sarama logs
+2022/08/02 12:04:27 Connected to 127.0.0.1:2181
+2022/08/02 12:04:27 Authenticated: id=72058186477404192, timeout=6000
+2022/08/02 12:04:27 Re-submitting `0` credentials after reconnect
+2022/08/02 12:04:33 /sample-topic/0//658 after kafka source
+2022/08/02 12:04:33 /sample-topic/0//658 before http sink
+2022/08/02 12:04:33 /sample-topic/0//658 after http sink, status = true
+2022/08/02 12:04:39 /sample-topic/0//659 after kafka source
+2022/08/02 12:04:39 /sample-topic/0//659 before http sink
+2022/08/02 12:04:39 /sample-topic/0//659 after http sink, status = true
+2022/08/02 12:05:16 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:05:16 Starting  kafka_http
+2022/08/02 12:05:16 enabling sarama logs
+2022/08/02 12:05:16 Connected to 127.0.0.1:2181
+2022/08/02 12:05:16 Authenticated: id=72058186477404193, timeout=6000
+2022/08/02 12:05:16 Re-submitting `0` credentials after reconnect
+2022/08/02 12:05:22 /sample-topic/0//660 after kafka source
+2022/08/02 12:05:22 /sample-topic/0//660 before http sink
+2022/08/02 12:05:22 /sample-topic/0//660 after http sink, status = true
+2022/08/02 12:05:36 /sample-topic/0//661 after kafka source
+2022/08/02 12:09:46 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:09:46 Starting  kafka_http
+2022/08/02 12:09:46 enabling sarama logs
+2022/08/02 12:09:46 Connected to 127.0.0.1:2181
+2022/08/02 12:09:46 Authenticated: id=72058186477404194, timeout=6000
+2022/08/02 12:09:46 Re-submitting `0` credentials after reconnect
+2022/08/02 12:09:54 /sample-topic/0//662 after kafka source
+2022/08/02 12:10:23 Recv loop terminated: err=read tcp 127.0.0.1:56871->127.0.0.1:2181: i/o timeout
+2022/08/02 12:10:23 Send loop terminated: err=<nil>
+2022/08/02 12:20:50 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:20:50 Starting  kafka_http
+2022/08/02 12:20:50 enabling sarama logs
+2022/08/02 12:20:50 Connected to 127.0.0.1:2181
+2022/08/02 12:20:50 Authenticated: id=72058186477404195, timeout=6000
+2022/08/02 12:20:50 Re-submitting `0` credentials after reconnect
+2022/08/02 12:20:54 /sample-topic/0//663 after kafka source
+2022/08/02 12:20:54 /sample-topic/0//663 before http sink
+2022/08/02 12:20:54 /sample-topic/0//663 after http sink, status = true
+2022/08/02 12:21:02 /sample-topic/0//664 after kafka source
+2022/08/02 12:23:26 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:23:26 Starting  kafka_http
+2022/08/02 12:23:26 enabling sarama logs
+2022/08/02 12:23:26 Connected to 127.0.0.1:2181
+2022/08/02 12:23:26 Authenticated: id=72058186477404196, timeout=6000
+2022/08/02 12:23:26 Re-submitting `0` credentials after reconnect
+2022/08/02 12:24:27 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:24:27 Starting  kafka_http
+2022/08/02 12:24:27 enabling sarama logs
+2022/08/02 12:24:27 Connected to 127.0.0.1:2181
+2022/08/02 12:24:27 Authenticated: id=72058186477404197, timeout=6000
+2022/08/02 12:24:27 Re-submitting `0` credentials after reconnect
+2022/08/02 12:25:01 /sample-topic/0//665 after kafka source
+2022/08/02 12:25:24 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:25:24 Starting  kafka_http
+2022/08/02 12:25:24 enabling sarama logs
+2022/08/02 12:25:24 Connected to 127.0.0.1:2181
+2022/08/02 12:25:24 Authenticated: id=72058186477404198, timeout=6000
+2022/08/02 12:25:24 Re-submitting `0` credentials after reconnect
+2022/08/02 12:25:50 /sample-topic/0//666 after kafka source
+2022/08/02 12:25:55 /sample-topic/0//666 before http sink
+2022/08/02 12:25:58 /sample-topic/0//666 after http sink, status = true
+2022/08/02 12:26:54 /sample-topic/0//667 after kafka source
+2022/08/02 12:26:57 /sample-topic/0//667 before http sink
+2022/08/02 12:26:57 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:57 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:57 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:57 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:57 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:57 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:58 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:58 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:26:59 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:26:59 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:00 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:00 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 /sample-topic/0//668 after kafka source
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:01 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:01 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:02 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:02 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 /sample-topic/0//669 after kafka source
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:03 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:03 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:04 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:04 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:05 /sample-topic/0//670 after kafka source
+2022/08/02 12:27:05 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:05 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:06 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:06 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:07 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:07 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:08 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:08 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:09 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:09 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:10 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:10 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:11 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:11 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:12 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:12 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:13 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:13 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:14 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:14 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:15 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:15 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:16 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:16 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:17 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:17 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:18 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:18 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:19 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:19 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:20 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:20 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:21 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:21 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:22 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:22 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:23 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:23 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:24 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:24 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:25 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:25 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:26 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:26 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:27 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:27 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:28 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:28 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:29 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:29 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:30 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:30 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:31 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:31 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:32 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:32 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:33 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:33 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:34 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:34 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:35 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:35 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:36 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:36 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:37 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:37 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:38 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:38 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:39 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:39 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:40 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:40 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:41 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:41 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:42 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:42 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 failed in http call invoke http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 Post "http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667": dial tcp 127.0.0.1:8888: connect: connection refused 
+2022/08/02 12:27:43 retry in execute POST 	 http://127.0.0.1:8888/1.0/api/event/sample-topic/0//667 
+2022/08/02 12:27:43 /sample-topic/0//667 after http sink, status = true
+2022/08/02 12:27:43 /sample-topic/0//668 before http sink
+2022/08/02 12:27:43 /sample-topic/0//668 after http sink, status = true
+2022/08/02 12:27:43 /sample-topic/0//669 before http sink
+2022/08/02 12:27:43 /sample-topic/0//669 after http sink, status = true
+2022/08/02 12:27:43 /sample-topic/0//670 before http sink
+2022/08/02 12:27:43 /sample-topic/0//670 after http sink, status = true
+2022/08/02 12:27:56 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:27:56 Starting  kafka_http
+2022/08/02 12:27:56 enabling sarama logs
+2022/08/02 12:27:56 Connected to 127.0.0.1:2181
+2022/08/02 12:27:56 Authenticated: id=72058186477404199, timeout=6000
+2022/08/02 12:27:56 Re-submitting `0` credentials after reconnect
+2022/08/02 12:28:03 /sample-topic/0//671 after kafka source
+2022/08/02 12:28:05 /sample-topic/0//672 after kafka source
+2022/08/02 12:28:06 /sample-topic/0//673 after kafka source
+2022/08/02 12:28:49 config: {myDmux [{sample_name false kafka_http map[dmux:map[batch_size:1 distributor_type:Hash size:250] pending_acks:1e+06 sink:map[endpoint:http://127.0.0.1:8888/1.0/api/event headers:[map[name:X-Client value:go-dumx] map[name:Content-Type value:application/json]] method:POST retry_interval:100ms timeout:10s] source:map[force_restart:true kafka_version_major:2 name:source_name read_newest:true topic:sample-topic zk_path:127.0.0.1:2181/kafka]]}] {file map[enable_debug:true path:default.log rotation:map[compress:true retention_count:5 retention_days:90 size_in_mb:256]]} {9999 {1 2}}}
+2022/08/02 12:28:49 Starting  kafka_http
+2022/08/02 12:28:49 enabling sarama logs
+2022/08/02 12:28:49 Connected to 127.0.0.1:2181
+2022/08/02 12:28:49 Authenticated: id=72058186477404200, timeout=6000
+2022/08/02 12:28:49 Re-submitting `0` credentials after reconnect
+2022/08/02 12:28:54 /sample-topic/0//674 after kafka source
+2022/08/02 12:29:06 /sample-topic/0//675 after kafka source

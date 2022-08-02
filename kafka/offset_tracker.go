@@ -29,12 +29,12 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 }
 
 //GetKafkaOffsetTracker is Global function to get instance of KafkaOffsetTracker
-func GetKafkaOffsetTracker(size int, source *KafkaSource, name string) OffsetTracker {
+func GetKafkaOffsetTracker(size int, source *KafkaSource, connectionName string) OffsetTracker {
 	k := &KafkaOffsetTracker{
 		ch:     make(chan KafkaMsg, size),
 		source: source,
 		size:   size,
-		connectionName: name,
+		connectionName: connectionName,
 	}
 	go k.run()
 	return k
