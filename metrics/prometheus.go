@@ -14,7 +14,7 @@ type PrometheusConfig struct {
 	//metricPort to which the metrics would be sent
 	metricPort int
 
-	//(MaxTopics )* (max partitions per topic)
+	//(MaxTopics )*(max partitions per topic)
 	maxEntries int
 }
 

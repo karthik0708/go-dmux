@@ -123,6 +123,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 			Partition: message.Partition,
 			Offset: message.Offset,
 		}
+
+		//send producer metrics to registry if client was created and offset was fetched successfully
 		if err1 == nil {
 			if off, err2 := client.GetOffset(message.Topic, message.Partition, sarama.OffsetNewest); err2 == nil {
 				metrics.Reg.ProducerCh <- metrics.ProducerOffset{
