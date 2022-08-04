@@ -30,7 +30,7 @@ type metricCollector struct {
 var (
 	collectors *metricCollector
 
-	//keep track of last source and sink details for lag calculation
+	//keep track of last source, sink, producer, consumer details for lag calculation
 	lastSourceDetail map[string]int64
 	lastSinkDetail map[string]int64
 )
