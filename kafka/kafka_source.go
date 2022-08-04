@@ -105,42 +105,38 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	if err != nil {
 		panic(err)
 	}
-	if client, err := sarama.NewClient(brokerList, nil); err == nil {
-		go getProducerOffsets(connectionName, kconf.Topic, client, 5*time.Second)
-	}
 
 	k.consumer = consumer
-	for message := range k.consumer.Messages() {
-		//TODO handle Create failure
-		kafkaMsg := k.factory.Create(message)
 
-		if k.hook != nil {
-			//TODO handle PreHook failure
-			k.hook.Pre(kafkaMsg)
-		}
-		//Create Source offset and send it for ingestion through source channel
-		metrics.Reg.SourceCh <- metrics.SourceOffset{
-			ConnectionName: connectionName,
-			Topic: message.Topic,
-			Partition: message.Partition,
-			Offset: message.Offset,
-		}
-
-		out <- kafkaMsg
-	}
-}
-
-func getProducerOffsets(connectionName string, topic string, client sarama.Client, interval time.Duration) {
 	for {
 		select {
-		case <-time.After(interval):
-			if partitions, err1 := client.Partitions(topic); err1 == nil {
-				for partition := range partitions {
-					if off, err2 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err2 == nil {
-						metrics.Reg.ProducerCh <- metrics.ProducerOffset{connectionName, topic, int32(partition), off}
+		case <-time.After(time.Second*5):
+			if client, err := sarama.NewClient(brokerList, nil); err == nil {
+				if partitions, err1 := client.Partitions(kconf.Topic); err1 == nil {
+					for partition := range partitions {
+						if off, err2 := client.GetOffset(kconf.Topic, int32(partition), sarama.OffsetNewest); err2 == nil {
+							metrics.Reg.ProducerCh <- metrics.ProducerOffset{connectionName, kconf.Topic, int32(partition), off}
+						}
 					}
 				}
 			}
+		case message := <- k.consumer.Messages():
+			//TODO handle Create failure
+			kafkaMsg := k.factory.Create(message)
+
+			if k.hook != nil {
+				//TODO handle PreHook failure
+				k.hook.Pre(kafkaMsg)
+			}
+			//Create Source offset and send it for ingestion through source channel
+			metrics.Reg.SourceCh <- metrics.SourceOffset{
+				ConnectionName: connectionName,
+				Topic: message.Topic,
+				Partition: message.Partition,
+				Offset: message.Offset,
+			}
+
+			out <- kafkaMsg
 		}
 	}
 }
