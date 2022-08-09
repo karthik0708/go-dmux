@@ -185,14 +185,15 @@ func (h *HTTPSink) retryPost(msg interface{}, state bool,
 
 func (h *HTTPSink) retryExecute(method, url string, headers map[string]string,
 	data []byte, respEval func(respCode int, nonRetriableHttpStatusCodes []int) (error, bool)) bool {
-
+	log.Println("payload: ", data, url)
 	for {
 
 		status, respCode := h.execute(method, url, headers, bytes.NewReader(data))
-
+		log.Printf("status: %v \t respCode: %v", status, respCode)
 		if status {
 			nonRetriableHttpStatusCodes := h.conf.NonRetriableHttpStatusCodes
 			err, outcome := respEval(respCode, nonRetriableHttpStatusCodes)
+			log.Println(err)
 			if err == nil {
 				return outcome
 			}
