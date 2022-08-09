@@ -1,7 +1,10 @@
 package kafka
 
 import (
+	"github.com/go-dmux/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -25,6 +28,16 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 	if len(k.ch) == k.size {
 		log.Printf("warning: pending_acks threshold %d reached, please increase pending_acks size", k.size)
 	}
+
+	msg := kmsg.GetRawMsg()
+	metricName := "source_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
+
+	metrics.Reg.Ingest(metrics.PrometheusMetric{
+		prometheus.GaugeValue,
+		metricName,
+		msg.Offset,
+	})
+
 	k.ch <- kmsg
 }
 
@@ -46,6 +59,13 @@ func (k *KafkaOffsetTracker) run() {
 			//log.Printf("waiting for url %s to process, queue_len %d", kmsg.GetURLPath(), len(k.ch))
 			time.Sleep(100 * time.Microsecond)
 		}
-		k.source.CommitOffsets(kmsg, k.connectionName)
+		msg := kmsg.GetRawMsg()
+
+		metricName := "sink_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
+		metrics.Reg.Ingest(metrics.PrometheusMetric{
+			prometheus.GaugeValue,
+			metricName,
+			msg.Offset,
+		})
 	}
 }

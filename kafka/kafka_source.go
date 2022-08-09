@@ -2,7 +2,9 @@ package kafka
 
 import (
 	"github.com/go-dmux/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -112,14 +114,20 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 		select {
 		case <-time.After(time.Second*5):
 			if client, err := sarama.NewClient(brokerList, nil); err == nil {
-				if partitions, err1 := client.Partitions(kconf.Topic); err1 == nil {
+				if partitions, err := client.Partitions(kconf.Topic); err == nil {
 					for partition := range partitions {
-						if off, err2 := client.GetOffset(kconf.Topic, int32(partition), sarama.OffsetNewest); err2 == nil {
-							metrics.Reg.ProducerCh <- metrics.ProducerOffset{connectionName, kconf.Topic, int32(partition), off}
+						if leader, err := client.Leader(kconf.Topic, int32(partition));err == nil {
+							leader.FetchOffset(&sarama.OffsetFetchRequest{})
+						}
+
+						if off, err := client.GetOffset(kconf.Topic, int32(partition), sarama.OffsetNewest); err == nil {
+							metricName := "producer_offset" + "." + connectionName + "." + kconf.Topic + "." + strconv.Itoa(partition)
+							metrics.Reg.Ingest(metrics.PrometheusMetric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: off})
 						}
 					}
 				}
 			}
+
 		case message := <- k.consumer.Messages():
 			//TODO handle Create failure
 			kafkaMsg := k.factory.Create(message)
@@ -127,13 +135,6 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 			if k.hook != nil {
 				//TODO handle PreHook failure
 				k.hook.Pre(kafkaMsg)
-			}
-			//Create Source offset and send it for ingestion through source channel
-			metrics.Reg.SourceCh <- metrics.SourceOffset{
-				ConnectionName: connectionName,
-				Topic: message.Topic,
-				Partition: message.Partition,
-				Offset: message.Offset,
 			}
 
 			out <- kafkaMsg
@@ -150,6 +151,6 @@ func (k *KafkaSource) Stop() {
 }
 
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
-func (k *KafkaSource) CommitOffsets(data KafkaMsg, connectionName string) error {
-	return k.consumer.CommitUpto(data.GetRawMsg(), connectionName)
+func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
+	return k.consumer.CommitUpto(data.GetRawMsg())
 }

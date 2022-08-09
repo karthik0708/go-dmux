@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-dmux/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 	"sync"
 	"time"
 
@@ -244,12 +245,8 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 	return cg.instance.Registered()
 }
 
-func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, connectionName string) error {
-	isRecorded := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
-	if isRecorded{
-		//Create a sinkOffset and send it for ingestion through sink channel
-		metrics.Reg.SinkCh <- metrics.SinkOffset{ConnectionName: connectionName, Topic: message.Topic, Partition: message.Partition, Offset: message.Offset}
-	}
+func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) error {
+	cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
 	return nil
 }
 
@@ -349,7 +346,9 @@ func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, mess
 	for _, pid := range myPartitions {
 		//Create PartitionInfo and send it for ingestion through the partition channel
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
-		metrics.Reg.PartitionCh <- metrics.PartitionInfo{ConnectionName:connectionName, PartitionId: pid.ID, ConsumerId: cg.instance.ID, Topic: topic}
+
+		metricName := connectionName + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
+		metrics.Reg.Ingest(metrics.PrometheusMetric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: int64(pid.ID)})
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}
