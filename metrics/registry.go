@@ -11,6 +11,13 @@ type MetricConf struct {
 	MetricPort  		int		`json:"metric_port"`
 }
 
+//generic metric structure
+type Metric struct {
+	MetricType interface{}
+	MetricName string
+	MetricValue int64
+}
+
 type Registry struct {
 	provider RegistryProvider
 }
@@ -18,7 +25,7 @@ type Registry struct {
 // RegistryProvider interface that implements metric registry types
 type RegistryProvider interface {
 	init()
-	ingest(interface{})
+	ingest(metric Metric)
 }
 
 //Start creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
@@ -39,6 +46,6 @@ func Start(metricConf MetricConf)  {
 }
 
 //Ingest calls the ingest method of the provider which is implementation by a metric registry type and forwards the metric
-func (reg *Registry) Ingest(metric interface{}){
+func (reg *Registry) Ingest(metric Metric){
 	reg.provider.ingest(metric)
 }

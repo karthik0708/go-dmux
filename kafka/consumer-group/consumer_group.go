@@ -348,7 +348,7 @@ func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, mess
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
 
 		metricName := connectionName + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
-		metrics.Reg.Ingest(metrics.PrometheusMetric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: int64(pid.ID)})
+		metrics.Reg.Ingest(metrics.Metric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: int64(pid.ID)})
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}
@@ -517,4 +517,14 @@ partitionConsumerLoop:
 	if err := cg.offsetManager.FinalizePartition(topic, partition, lastOffset, cg.config.Offsets.ProcessingTimeout); err != nil {
 		cg.Logf("%s/%d :: %s\n", topic, partition, err)
 	}
+}
+
+func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) int64{
+	offsets := c.consumer.HighWaterMarks()
+	if partitions, ok := offsets[topic]; ok {
+		if offset, ok := partitions[partition]; ok {
+			return offset
+		}
+	}
+	return -1
 }

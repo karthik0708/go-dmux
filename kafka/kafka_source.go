@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"context"
 	"github.com/go-dmux/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"os"
@@ -110,34 +111,51 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 
 	k.consumer = consumer
 
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx)
+
+	for message := range k.consumer.Messages() {
+		//TODO handle Create failure
+		kafkaMsg := k.factory.Create(message)
+
+		if k.hook != nil {
+			//TODO handle PreHook failure
+			k.hook.Pre(kafkaMsg)
+		}
+		out <- kafkaMsg
+	}
+
+	cancelFunc()
+}
+
+func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context) {
 	for {
 		select {
 		case <-time.After(time.Second*5):
 			if client, err := sarama.NewClient(brokerList, nil); err == nil {
-				if partitions, err := client.Partitions(kconf.Topic); err == nil {
+				if partitions, err := client.Partitions(topic); err == nil {
 					for partition := range partitions {
-						if leader, err := client.Leader(kconf.Topic, int32(partition));err == nil {
-							leader.FetchOffset(&sarama.OffsetFetchRequest{})
+						if off, err := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err == nil {
+							metricName := connectionName + "." + topic + "." + strconv.Itoa(partition)
+
+							metrics.Reg.Ingest(metrics.Metric{
+								MetricType:  prometheus.GaugeValue,
+								MetricName:  "producer_offset" + "." + metricName,
+								MetricValue: off - 1,
+							})
+
+							metrics.Reg.Ingest(metrics.Metric{
+								MetricType:  prometheus.GaugeValue,
+								MetricName:  "consumer_offset" + "." + metricName,
+								MetricValue: consumer.GetConsumerOffset(topic, int32(partition)) - 1,
+							})
 						}
 
-						if off, err := client.GetOffset(kconf.Topic, int32(partition), sarama.OffsetNewest); err == nil {
-							metricName := "producer_offset" + "." + connectionName + "." + kconf.Topic + "." + strconv.Itoa(partition)
-							metrics.Reg.Ingest(metrics.PrometheusMetric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: off})
-						}
 					}
 				}
 			}
-
-		case message := <- k.consumer.Messages():
-			//TODO handle Create failure
-			kafkaMsg := k.factory.Create(message)
-
-			if k.hook != nil {
-				//TODO handle PreHook failure
-				k.hook.Pre(kafkaMsg)
-			}
-
-			out <- kafkaMsg
+		case <-ctx.Done():
+			return
 		}
 	}
 }

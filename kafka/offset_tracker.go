@@ -32,7 +32,7 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 	msg := kmsg.GetRawMsg()
 	metricName := "source_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
 
-	metrics.Reg.Ingest(metrics.PrometheusMetric{
+	metrics.Reg.Ingest(metrics.Metric{
 		prometheus.GaugeValue,
 		metricName,
 		msg.Offset,
@@ -62,7 +62,7 @@ func (k *KafkaOffsetTracker) run() {
 		msg := kmsg.GetRawMsg()
 
 		metricName := "sink_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
-		metrics.Reg.Ingest(metrics.PrometheusMetric{
+		metrics.Reg.Ingest(metrics.Metric{
 			prometheus.GaugeValue,
 			metricName,
 			msg.Offset,
