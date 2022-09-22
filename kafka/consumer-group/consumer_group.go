@@ -519,12 +519,16 @@ partitionConsumerLoop:
 	}
 }
 
-func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) int64{
-	offsets := c.consumer.HighWaterMarks()
-	if partitions, ok := offsets[topic]; ok {
-		if offset, ok := partitions[partition]; ok {
-			return offset
+func (c *ConsumerGroup) GetInstanceId() string {
+	return c.instance.ID
+}
+
+func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) (int64, error) {
+	mark := c.consumer.HighWaterMarks()
+	if partitions, ok := mark[topic]; ok {
+		if offset, ok1 := partitions[partition]; ok1 {
+			return offset, nil
 		}
 	}
-	return -1
+	return -1, errors.New("could not get offset")
 }

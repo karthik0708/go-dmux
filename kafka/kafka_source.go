@@ -87,11 +87,11 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	}
 
 	if kconf.SASLEnabled {
-    		//sarama config plain by default
-    		config.Net.SASL.User = kconf.SASLUsername
-    		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
-    		config.Net.SASL.Enable = true
-    	}
+		//sarama config plain by default
+		config.Net.SASL.User = kconf.SASLUsername
+		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
+		config.Net.SASL.Enable = true
+	}
 
 	config.Offsets.ProcessingTimeout = 10 * time.Second
 
@@ -115,6 +115,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx)
 
 	for message := range k.consumer.Messages() {
+		continue
 		//TODO handle Create failure
 		kafkaMsg := k.factory.Create(message)
 
@@ -129,33 +130,64 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 }
 
 func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context) {
-	for {
-		select {
-		case <-time.After(time.Second*5):
-			if client, err := sarama.NewClient(brokerList, nil); err == nil {
+	if client, err := sarama.NewClient(brokerList, nil); err == nil {
+		for {
+			select {
+			case <-time.After(time.Second * 5):
 				if partitions, err := client.Partitions(topic); err == nil {
 					for partition := range partitions {
-						if off, err := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err == nil {
+						if producerOff, err := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err == nil {
 							metricName := connectionName + "." + topic + "." + strconv.Itoa(partition)
 
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "producer_offset" + "." + metricName,
-								MetricValue: off - 1,
+								MetricValue: producerOff - 1,
 							})
+
+							//from zom
+							consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition))
+							if err1 == nil {
+								metrics.Reg.Ingest(metrics.Metric{
+									MetricType:  prometheus.GaugeValue,
+									MetricName:  "consumer_offset" + "." + metricName,
+									MetricValue: consumerOff - 1,
+								})
+							}
+
+							//from offsetManager
+							//if offsetManager, err := sarama.NewOffsetManagerFromClient(consumer.GetInstanceId(), client); err == nil {
+							//	if offsetPartitionManager, err1 := offsetManager.ManagePartition(topic, int32(partition)); err1 == nil {
+							//		consumerOffset, metadata := offsetPartitionManager.NextOffset()
+							//		log.Println("metadata:", metadata)
+							//		metrics.Reg.Ingest(metrics.Metric{
+							//			MetricType:  prometheus.GaugeValue,
+							//			MetricName:  "consumer_offset" + "." + metricName,
+							//			MetricValue: consumerOffset,
+							//		})
+							//	}
+							//}
+
+							//from client
+							//if off, err := client.Partitions("topic"); err == nil {
+							//	metrics.Reg.Ingest(metrics.Metric{
+							//		MetricType:  prometheus.GaugeValue,
+							//		MetricName:  "consumer_offset" + "." + metricName,
+							//		MetricValue: int64(off),
+							//	})
+							//}
 
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
-								MetricName:  "consumer_offset" + "." + metricName,
-								MetricValue: consumer.GetConsumerOffset(topic, int32(partition)) - 1,
+								MetricName:  "lag" + "." + metricName,
+								MetricValue: consumerOff - producerOff,
 							})
 						}
-
 					}
 				}
+			case <-ctx.Done():
+				return
 			}
-		case <-ctx.Done():
-			return
 		}
 	}
 }
