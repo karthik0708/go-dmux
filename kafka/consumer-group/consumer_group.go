@@ -519,10 +519,6 @@ partitionConsumerLoop:
 	}
 }
 
-func (c *ConsumerGroup) GetInstanceId() string {
-	return c.instance.ID
-}
-
 func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) (int64, error) {
 	mark := c.consumer.HighWaterMarks()
 	if partitions, ok := mark[topic]; ok {

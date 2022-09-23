@@ -8,7 +8,6 @@ import (
 
 	"github.com/go-dmux/connection"
 	"github.com/go-dmux/logging"
-	"github.com/go-dmux/metrics"
 )
 
 //ConnectionType based on this type of Connection and related forks happen
@@ -42,7 +41,7 @@ func (c ConnectionType) Start(conf interface{}, enableDebug bool, name string) {
 	switch c {
 	case KafkaHTTP:
 		connObj := &connection.KafkaHTTPConn{
-			Name: name,
+			Name:           name,
 			EnableDebugLog: enableDebug,
 			Conf:           conf,
 		}
@@ -50,7 +49,7 @@ func (c ConnectionType) Start(conf interface{}, enableDebug bool, name string) {
 		connObj.Run()
 	case KafkaFoxtrot:
 		connObj := &connection.KafkaFoxtrotConn{
-			Name: name,
+			Name:           name,
 			EnableDebugLog: enableDebug,
 			Conf:           conf,
 		}
@@ -70,11 +69,11 @@ type DMuxConfigSetting struct {
 
 //DmuxConf hold config data
 type DmuxConf struct {
-	Name      string     			`json:"name"`
-	DMuxItems []DmuxItem 			`json:"dmuxItems"`
+	Name      string     `json:"name"`
+	DMuxItems []DmuxItem `json:"dmuxItems"`
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
-	Logging logging.LogConf 		`json:"logging"`
-	Metrics metrics.MetricConf		`json:"metrics"`
+	MetricPort int             `json:"metric_port"`
+	Logging    logging.LogConf `json:"logging"`
 }
 
 //DmuxItem struct defines name and type of connection

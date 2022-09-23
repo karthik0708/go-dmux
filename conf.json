@@ -1,12 +1,5 @@
 {
   "name": "myDmux",
-  "metrics" : {
-    "metric_port": 9999,
-    "offset_tracker_limits": {
-      "topics": 1,
-      "partitions_per_topic": 2
-    }
-  },
   "dmuxItems": [
     {
       "name": "sample_name",
@@ -24,7 +17,8 @@
           "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
-          "read_newest": true
+          "read_newest": true,
+          "offset_polling_interval": "5s"
         },
         "pending_acks": 1000000,
         "sink": {
@@ -46,6 +40,7 @@
       }
     }
   ],
+  "metric_port": 9999,
   "logging": {
     "type": "file",
     "config": {

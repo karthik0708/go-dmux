@@ -36,7 +36,7 @@ func main() {
 	log.Printf("config: %v", conf)
 
 	//start showing metrics at the endpoint
-	metrics.Start(conf.Metrics)
+	metrics.Start(conf.MetricPort)
 
 	for _, item := range conf.DMuxItems {
 		go func(connType ConnectionType, connConf interface{}, logDebug bool, name string) {

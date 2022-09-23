@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/go-dmux/metrics"
 	"github.com/prometheus/client_golang/prometheus"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -40,15 +41,16 @@ type KafkaSource struct {
 
 //KafkaConf holds configuration options for KafkaSource
 type KafkaConf struct {
-	ConsumerGroupName string `json:"name"`
-	ZkPath            string `json:"zk_path"`
-	Topic             string `json:"topic"`
-	ForceRestart      bool   `json:"force_restart"`
-	ReadNewest        bool   `json:"read_newest"`
-	KafkaVersion      int    `json:"kafka_version_major"`
-	SASLEnabled       bool   `json:"sasl_enabled"`
-	SASLUsername      string `json:"username"`
-	SASLPasswordKey   string `json:"passwordKey"`
+	ConsumerGroupName     string        `json:"name"`
+	ZkPath                string        `json:"zk_path"`
+	Topic                 string        `json:"topic"`
+	ForceRestart          bool          `json:"force_restart"`
+	ReadNewest            bool          `json:"read_newest"`
+	KafkaVersion          int           `json:"kafka_version_major"`
+	SASLEnabled           bool          `json:"sasl_enabled"`
+	SASLUsername          string        `json:"username"`
+	SASLPasswordKey       string        `json:"passwordKey"`
+	OffsetPollingInterval time.Duration `json:"offset_polling_interval"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
@@ -112,11 +114,10 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	k.consumer = consumer
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
-	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx)
+	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx, k.conf.OffsetPollingInterval)
 
 	for message := range k.consumer.Messages() {
-		continue
-		//TODO handle Create failure
+		//TODO handle Create failurex
 		kafkaMsg := k.factory.Create(message)
 
 		if k.hook != nil {
@@ -129,59 +130,43 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	cancelFunc()
 }
 
-func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context) {
+func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
 	if client, err := sarama.NewClient(brokerList, nil); err == nil {
 		for {
 			select {
-			case <-time.After(time.Second * 5):
+			case <-time.After(pollingInterval):
 				if partitions, err := client.Partitions(topic); err == nil {
 					for partition := range partitions {
-						if producerOff, err := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err == nil {
-							metricName := connectionName + "." + topic + "." + strconv.Itoa(partition)
+						metricName := connectionName + "." + topic + "." + strconv.Itoa(partition)
+						pOff := int64(-1)
+						cOff := int64(-1)
 
+						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff >= 0 {
+							pOff = producerOff
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "producer_offset" + "." + metricName,
 								MetricValue: producerOff - 1,
 							})
+						}
 
-							//from zom
-							consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition))
-							if err1 == nil {
-								metrics.Reg.Ingest(metrics.Metric{
-									MetricType:  prometheus.GaugeValue,
-									MetricName:  "consumer_offset" + "." + metricName,
-									MetricValue: consumerOff - 1,
-								})
-							}
+						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff >= 0 {
+							cOff = consumerOff
+							metrics.Reg.Ingest(metrics.Metric{
+								MetricType:  prometheus.GaugeValue,
+								MetricName:  "consumer_offset" + "." + metricName,
+								MetricValue: consumerOff - 1,
+							})
+						}
 
-							//from offsetManager
-							//if offsetManager, err := sarama.NewOffsetManagerFromClient(consumer.GetInstanceId(), client); err == nil {
-							//	if offsetPartitionManager, err1 := offsetManager.ManagePartition(topic, int32(partition)); err1 == nil {
-							//		consumerOffset, metadata := offsetPartitionManager.NextOffset()
-							//		log.Println("metadata:", metadata)
-							//		metrics.Reg.Ingest(metrics.Metric{
-							//			MetricType:  prometheus.GaugeValue,
-							//			MetricName:  "consumer_offset" + "." + metricName,
-							//			MetricValue: consumerOffset,
-							//		})
-							//	}
-							//}
-
-							//from client
-							//if off, err := client.Partitions("topic"); err == nil {
-							//	metrics.Reg.Ingest(metrics.Metric{
-							//		MetricType:  prometheus.GaugeValue,
-							//		MetricName:  "consumer_offset" + "." + metricName,
-							//		MetricValue: int64(off),
-							//	})
-							//}
-
+						if pOff >= 0 && cOff >= 0 && (cOff-pOff >= 0) {
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "lag" + "." + metricName,
-								MetricValue: consumerOff - producerOff,
+								MetricValue: cOff - pOff,
 							})
+						} else {
+							log.Println("Invalid consumer or producer offset")
 						}
 					}
 				}
