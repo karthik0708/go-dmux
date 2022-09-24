@@ -141,7 +141,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 						pOff := int64(-1)
 						cOff := int64(-1)
 
-						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff >= 0 {
+						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff > 0 {
 							pOff = producerOff
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
@@ -150,7 +150,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 							})
 						}
 
-						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff >= 0 {
+						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff > 0 {
 							cOff = consumerOff
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,

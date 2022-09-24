@@ -348,7 +348,11 @@ func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, mess
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
 
 		metricName := connectionName + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
-		metrics.Reg.Ingest(metrics.Metric{MetricType: prometheus.GaugeValue, MetricName: metricName, MetricValue: int64(pid.ID)})
+		metrics.Reg.Ingest(metrics.Metric{
+			MetricType:  prometheus.GaugeValue,
+			MetricName:  "partition_owned." + metricName,
+			MetricValue: int64(pid.ID),
+		})
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}
