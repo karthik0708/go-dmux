@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"time"
 
 	"github.com/go-dmux/connection"
 	"github.com/go-dmux/logging"
@@ -72,8 +73,9 @@ type DmuxConf struct {
 	Name      string     `json:"name"`
 	DMuxItems []DmuxItem `json:"dmuxItems"`
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
-	MetricPort int             `json:"metric_port"`
-	Logging    logging.LogConf `json:"logging"`
+	MetricPort              int             `json:"metric_port"`
+	offset_polling_interval time.Duration   `json:"offset_Polling_Interval"`
+	Logging                 logging.LogConf `json:"logging"`
 }
 
 //DmuxItem struct defines name and type of connection

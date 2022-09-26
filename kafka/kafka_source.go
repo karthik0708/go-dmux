@@ -114,23 +114,40 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	k.consumer = consumer
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
-	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx, k.conf.OffsetPollingInterval)
+	doThrottle := false
+	throttleCh := make(chan bool)
 
-	for message := range k.consumer.Messages() {
-		//TODO handle Create failurex
-		kafkaMsg := k.factory.Create(message)
+	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx, k.conf.OffsetPollingInterval, throttleCh, 2)
 
-		if k.hook != nil {
-			//TODO handle PreHook failure
-			k.hook.Pre(kafkaMsg)
+	for {
+		select {
+		case signal := <-throttleCh:
+			doThrottle = signal
+		default:
+			if !doThrottle {
+				select {
+				case message := <-k.consumer.Messages():
+					//TODO handle Create failure
+					kafkaMsg := k.factory.Create(message)
+
+					if k.hook != nil {
+						//TODO handle PreHook failure
+						k.hook.Pre(kafkaMsg)
+					}
+					log.Println("Sending message", kafkaMsg.GetRawMsg().Offset)
+					out <- kafkaMsg
+				default:
+					continue
+				}
+			}
 		}
-		out <- kafkaMsg
 	}
 
 	cancelFunc()
 }
 
-func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
+func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration, throttleCh chan<- bool, throttleTh int64) {
+	isThrottled := false
 	if client, err := sarama.NewClient(brokerList, nil); err == nil {
 		for {
 			select {
@@ -159,12 +176,25 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 							})
 						}
 
-						if pOff >= 0 && cOff >= 0 && (cOff-pOff >= 0) {
+						lag := cOff - pOff
+						if pOff >= 0 && cOff >= 0 && (lag >= 0) {
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "lag" + "." + metricName,
-								MetricValue: cOff - pOff,
+								MetricValue: lag,
 							})
+
+							if lag >= throttleTh && !isThrottled {
+								log.Println("Throttling the source")
+								isThrottled = true
+								throttleCh <- true
+							}
+
+							if isThrottled && lag < throttleTh {
+								log.Println("Resuming the source")
+								isThrottled = false
+								throttleCh <- false
+							}
 						} else {
 							log.Println("Invalid consumer or producer offset")
 						}
