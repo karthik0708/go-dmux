@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/go-dmux/metrics"
 	"github.com/prometheus/client_golang/prometheus"
-	"log"
 	"os"
 	"strconv"
 	"time"
@@ -114,6 +113,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	k.consumer = consumer
 
+	//context for gracefully shutting down the offset reader goroutine
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	go readOffset(brokerList, kconf.Topic, k.connectionName, consumer, ctx, k.pollingInterval)
 
@@ -131,6 +131,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	cancelFunc()
 }
 
+//Ingest producer and consumer offset after a certain interval
 func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
 	if client, err := sarama.NewClient(brokerList, nil); err == nil {
 		for {
@@ -142,6 +143,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 						pOff := int64(-1)
 						cOff := int64(-1)
 
+						//producerOff fetched from client
 						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff > 0 {
 							pOff = producerOff
 							metrics.Reg.Ingest(metrics.Metric{
@@ -151,6 +153,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 							})
 						}
 
+						//consumerOff feched from consumer
 						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff > 0 {
 							cOff = consumerOff
 							metrics.Reg.Ingest(metrics.Metric{
@@ -160,14 +163,12 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 							})
 						}
 
-						if pOff >= 0 && cOff >= 0 && (cOff-pOff >= 0) {
+						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "lag" + "." + metricName,
-								MetricValue: cOff - pOff,
+								MetricValue: pOff - cOff,
 							})
-						} else {
-							log.Println("Invalid consumer or producer offset")
 						}
 					}
 				}
