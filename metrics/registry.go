@@ -6,11 +6,6 @@ const (
 	defaultMetricPort int = 9999
 )
 
-type MetricConf struct {
-	metricPort int
-	OffsetPolling
-}
-
 //generic metric structure
 type Metric struct {
 	MetricType  interface{}

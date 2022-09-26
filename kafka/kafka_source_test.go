@@ -98,7 +98,7 @@ func TestKafkaSource(t *testing.T) {
 		SourceQSize: 1,
 		SinkQSize:   100,
 	}
-	dmux := core.GetDmux(dconf, d, "test-connection")
+	dmux := core.GetDmux(dconf, d)
 	// dmux.Connect(source, sink)
 	fmt.Printf("source: %v", source)
 	assert.NotNil(t, source, "Source should not be Nil")

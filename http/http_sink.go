@@ -20,6 +20,7 @@ type HTTPSink struct {
 	client *http.Client
 	hook   HTTPSinkHook
 	conf   HTTPSinkConf
+	name   string
 }
 
 //HTTPSinkConf  holds config to HTTPSink
@@ -90,6 +91,10 @@ func GetHTTPSink(size int, conf HTTPSinkConf) *HTTPSink {
 
 func (h *HTTPSink) RegisterHook(hook HTTPSinkHook) {
 	h.hook = hook
+}
+
+func (h *HTTPSink) SetConnectionName(name string) {
+	h.name = name
 }
 
 //HTTPMsg is an interface which incoming data should implment for HttpSink to

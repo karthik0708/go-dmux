@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/go-dmux/core"
 	"io/ioutil"
 	"log"
 	"os"
@@ -38,21 +39,23 @@ func (c ConnectionType) getConfig(data []byte) interface{} {
 }
 
 //Start invokes Run of the respective connection in a go routine
-func (c ConnectionType) Start(conf interface{}, enableDebug bool, name string) {
+func (c ConnectionType) Start(conf interface{}, enableDebug bool, name string, offsetPollinginterval time.Duration) {
 	switch c {
 	case KafkaHTTP:
 		connObj := &connection.KafkaHTTPConn{
-			Name:           name,
-			EnableDebugLog: enableDebug,
-			Conf:           conf,
+			Name:            name,
+			EnableDebugLog:  enableDebug,
+			Conf:            conf,
+			PollingInterval: offsetPollinginterval,
 		}
 		log.Println("Starting ", KafkaHTTP)
 		connObj.Run()
 	case KafkaFoxtrot:
 		connObj := &connection.KafkaFoxtrotConn{
-			Name:           name,
-			EnableDebugLog: enableDebug,
-			Conf:           conf,
+			Name:            name,
+			EnableDebugLog:  enableDebug,
+			Conf:            conf,
+			PollingInterval: offsetPollinginterval,
 		}
 		log.Println("Starting ", KafkaFoxtrot)
 		connObj.Run()
@@ -73,9 +76,9 @@ type DmuxConf struct {
 	Name      string     `json:"name"`
 	DMuxItems []DmuxItem `json:"dmuxItems"`
 	// DMuxMap    map[string]KafkaHTTPConnConfig `json:"dmuxMap"`
-	MetricPort              int             `json:"metric_port"`
-	offset_polling_interval time.Duration   `json:"offset_Polling_Interval"`
-	Logging                 logging.LogConf `json:"logging"`
+	MetricPort            int             `json:"metric_port"`
+	OffsetPollingInterval core.Duration   `json:"offset_polling_interval"`
+	Logging               logging.LogConf `json:"logging"`
 }
 
 //DmuxItem struct defines name and type of connection

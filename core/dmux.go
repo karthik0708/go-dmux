@@ -72,7 +72,7 @@ type Source interface {
 	//Generate method takes output channel to which it writes data. The
 	//implementation can write to to this using multiple goroutines
 	//This method is not expected to return, its run in a separate goroutine
-	Generate(out chan<- interface{}, name string)
+	Generate(out chan<- interface{})
 	//Method used to trigger GracefulStop of Source
 	Stop()
 }
@@ -90,7 +90,6 @@ type Distributor interface {
 //Source to Sink connections.
 //TODO restrict size to be powers of 2 for better optimization in modulo
 type Dmux struct {
-	connectionName		   string
 	size                   int
 	batchSize              int
 	sourceQSize, sinkQSize int
@@ -107,7 +106,7 @@ const defaultBatchSize int = 1
 const defaultVersion int = 1
 
 //GetDmux is public method used to Get instance of a Dmux struct
-func GetDmux(conf DmuxConf, d Distributor, name string) *Dmux {
+func GetDmux(conf DmuxConf, d Distributor) *Dmux {
 	control := make(chan ControlMsg)
 	response := make(chan ResponseMsg)
 	err := make(chan error)
@@ -132,7 +131,7 @@ func GetDmux(conf DmuxConf, d Distributor, name string) *Dmux {
 		version = conf.Version
 	}
 
-	output := &Dmux{name, conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version}
+	output := &Dmux{conf.Size, batchSize, sourceQSize, sinkQSize, control, response, err, d, version}
 	return output
 }
 
@@ -196,7 +195,7 @@ func (d *Dmux) run(source Source, sink Sink) {
 	in := make(chan interface{}, d.sourceQSize)
 	//start source
 	//TODO handle panic recovery if in channel is closed for shutdown
-	go source.Generate(in, d.connectionName)
+	go source.Generate(in)
 
 	for {
 		select {

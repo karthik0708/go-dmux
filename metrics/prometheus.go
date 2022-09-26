@@ -28,7 +28,7 @@ func (p *PrometheusConfig) init() {
 	offsetMetrics := prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "offset_metrics",
-			Help: "The metric represent offset related metrics for dmux",
+			Help: "The metric represent all offset related metrics for dmux",
 		}, []string{"key"})
 
 	p.offsetMetrics = offsetMetrics

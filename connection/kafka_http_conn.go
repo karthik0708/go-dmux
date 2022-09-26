@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/go-dmux/core"
@@ -27,9 +28,10 @@ type KafkaHTTPConnConfig struct {
 
 //KafkaHTTPConn struct to abstract this connections Run
 type KafkaHTTPConn struct {
-	Name 		   string
-	EnableDebugLog bool
-	Conf           interface{}
+	Name            string
+	EnableDebugLog  bool
+	Conf            interface{}
+	PollingInterval time.Duration
 }
 
 func (c *KafkaHTTPConn) getConfiguration() *KafkaHTTPConnConfig {
@@ -54,14 +56,17 @@ func (c *KafkaHTTPConn) Run() {
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
 	sk.RegisterHook(hook)
+	sk.SetConnectionName(c.Name)
 	src.RegisterHook(hook)
+	src.SetConnectionName(c.Name)
+	src.SetPollinginterval(c.PollingInterval)
 
 	//hash distribution
 	h := GetKafkaMsgHasher()
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d, c.Name)
+	dmux := core.GetDmux(conf.Dmux, d)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }
