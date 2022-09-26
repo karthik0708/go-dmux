@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-dmux/core"
 	"github.com/go-dmux/metrics"
 	"log"
 	"os"
@@ -39,9 +40,9 @@ func main() {
 	metrics.Start(conf.MetricPort)
 
 	for _, item := range conf.DMuxItems {
-		go func(connType ConnectionType, connConf interface{}, logDebug bool, name string) {
-			connType.Start(connConf, logDebug, name)
-		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug, item.Name)
+		go func(connType ConnectionType, connConf interface{}, logDebug bool, name string, offsetPollinginterval core.Duration) {
+			connType.Start(connConf, logDebug, name, offsetPollinginterval.Duration)
+		}(item.ConnType, item.Connection, dmuxLogging.EnableDebug, item.Name, conf.OffsetPollingInterval)
 	}
 
 	//main thread halts. TODO make changes to listen to kill and reboot

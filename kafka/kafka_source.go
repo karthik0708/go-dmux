@@ -33,24 +33,25 @@ type KafkaMsg interface {
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
 type KafkaSource struct {
-	conf     KafkaConf
-	consumer *consumergroup.ConsumerGroup
-	hook     KafkaSourceHook
-	factory  KafkaMsgFactory
+	conf            KafkaConf
+	consumer        *consumergroup.ConsumerGroup
+	hook            KafkaSourceHook
+	factory         KafkaMsgFactory
+	pollingInterval time.Duration
+	connectionName  string
 }
 
 //KafkaConf holds configuration options for KafkaSource
 type KafkaConf struct {
-	ConsumerGroupName     string        `json:"name"`
-	ZkPath                string        `json:"zk_path"`
-	Topic                 string        `json:"topic"`
-	ForceRestart          bool          `json:"force_restart"`
-	ReadNewest            bool          `json:"read_newest"`
-	KafkaVersion          int           `json:"kafka_version_major"`
-	SASLEnabled           bool          `json:"sasl_enabled"`
-	SASLUsername          string        `json:"username"`
-	SASLPasswordKey       string        `json:"passwordKey"`
-	OffsetPollingInterval time.Duration `json:"offset_polling_interval"`
+	ConsumerGroupName string `json:"name"`
+	ZkPath            string `json:"zk_path"`
+	Topic             string `json:"topic"`
+	ForceRestart      bool   `json:"force_restart"`
+	ReadNewest        bool   `json:"read_newest"`
+	KafkaVersion      int    `json:"kafka_version_major"`
+	SASLEnabled       bool   `json:"sasl_enabled"`
+	SASLUsername      string `json:"username"`
+	SASLPasswordKey   string `json:"passwordKey"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
@@ -74,7 +75,7 @@ func (k *KafkaSource) RegisterHook(hook KafkaSourceHook) {
 
 //Generate is Source method implementation, which connect to Kafka and pushes
 //KafkaMessage into the channel
-func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
+func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	kconf := k.conf
 	//config
@@ -106,7 +107,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 
 	var brokerList []string
 	// create consumer
-	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config, connectionName, &brokerList)
+	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config, k.connectionName, &brokerList)
 	if err != nil {
 		panic(err)
 	}
@@ -114,7 +115,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}, connectionName string) {
 	k.consumer = consumer
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
-	go readOffset(brokerList, kconf.Topic, connectionName, consumer, ctx, k.conf.OffsetPollingInterval)
+	go readOffset(brokerList, kconf.Topic, k.connectionName, consumer, ctx, k.pollingInterval)
 
 	for message := range k.consumer.Messages() {
 		//TODO handle Create failurex
@@ -188,4 +189,12 @@ func (k *KafkaSource) Stop() {
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
 func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
 	return k.consumer.CommitUpto(data.GetRawMsg())
+}
+
+func (k *KafkaSource) SetPollinginterval(interval time.Duration) {
+	k.pollingInterval = interval
+}
+
+func (k *KafkaSource) SetConnectionName(name string) {
+	k.connectionName = name
 }

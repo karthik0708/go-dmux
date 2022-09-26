@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/go-dmux/core"
@@ -22,9 +23,10 @@ type KafkaFoxtrotConnConfig struct {
 
 //KafkaFoxtrotConn struct to abstract this connections Run
 type KafkaFoxtrotConn struct {
-	Name 		   string
-	EnableDebugLog bool
-	Conf           interface{}
+	Name            string
+	EnableDebugLog  bool
+	Conf            interface{}
+	PollingInterval time.Duration
 }
 
 //CustomURLKey  place holder name, which will be replaced by kafka key
@@ -52,14 +54,17 @@ func (c *KafkaFoxtrotConn) Run() {
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
 	sk.RegisterHook(hook)
+	sk.SetConnectionName(c.Name)
 	src.RegisterHook(hook)
+	src.SetConnectionName(c.Name)
+	src.SetPollinginterval(c.PollingInterval)
 
 	//hash distribution
 	h := GetKafkaMsgHasher()
 
 	d := core.GetDistribution(conf.Dmux.DistributorType, h)
 
-	dmux := core.GetDmux(conf.Dmux, d, c.Name)
+	dmux := core.GetDmux(conf.Dmux, d)
 	dmux.Connect(src, sk)
 	dmux.Join()
 }
