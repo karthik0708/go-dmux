@@ -17,7 +17,8 @@
           "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
-          "read_newest": false
+          "read_newest": false,
+          "throttle_threshold": 2
         },
         "pending_acks": 1000000,
         "sink": {

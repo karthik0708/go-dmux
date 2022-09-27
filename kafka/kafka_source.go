@@ -29,6 +29,10 @@ type KafkaMsg interface {
 	IsProcessed() bool
 }
 
+type SinkOffset struct {
+	offset int64
+}
+
 //KafkaSource is Source implementation which reads from Kafka. This implementation
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
@@ -39,6 +43,8 @@ type KafkaSource struct {
 	factory         KafkaMsgFactory
 	pollingInterval time.Duration
 	connectionName  string
+	ThrottleCh      chan SinkOffset
+	SinkOffsets     map[string]int64
 }
 
 //KafkaConf holds configuration options for KafkaSource
@@ -52,6 +58,7 @@ type KafkaConf struct {
 	SASLEnabled       bool   `json:"sasl_enabled"`
 	SASLUsername      string `json:"username"`
 	SASLPasswordKey   string `json:"passwordKey"`
+	ThrottleTh        int    `json:"throttle_threshold"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
@@ -119,7 +126,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	doThrottle := false
 	throttleCh := make(chan bool)
 
-	go readOffset(brokerList, kconf.Topic, k.connectionName, consumer, ctx, k.pollingInterval, throttleCh, 2)
+	go readOffset(brokerList, kconf.Topic, k.connectionName, consumer, ctx, k.pollingInterval)
 
 	for {
 		select {
@@ -148,8 +155,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	cancelFunc()
 }
 
-func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration, throttleCh chan<- bool, throttleTh int64) {
-	isThrottled := false
+//Ingest producer and consumer offset after a certain interval
+func readOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
 	if client, err := sarama.NewClient(brokerList, nil); err == nil {
 		for {
 			select {
@@ -181,24 +188,11 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 						}
 
 						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
-							lag := pOff - cOff
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
 								MetricName:  "lag" + "." + metricName,
-								MetricValue: lag,
+								MetricValue: pOff - cOff,
 							})
-
-							if lag >= throttleTh && !isThrottled {
-								log.Println("Throttling the source")
-								isThrottled = true
-								throttleCh <- true
-							}
-
-							if isThrottled && lag < throttleTh {
-								log.Println("Resuming the source")
-								isThrottled = false
-								throttleCh <- false
-							}
 						}
 					}
 				}
