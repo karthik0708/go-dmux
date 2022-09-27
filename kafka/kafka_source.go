@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -43,8 +44,7 @@ type KafkaSource struct {
 	factory         KafkaMsgFactory
 	pollingInterval time.Duration
 	connectionName  string
-	ThrottleCh      chan SinkOffset
-	SinkOffsets     map[string]int64
+	SinkOffsets     sync.Map
 }
 
 //KafkaConf holds configuration options for KafkaSource
@@ -58,14 +58,16 @@ type KafkaConf struct {
 	SASLEnabled       bool   `json:"sasl_enabled"`
 	SASLUsername      string `json:"username"`
 	SASLPasswordKey   string `json:"passwordKey"`
-	ThrottleTh        int    `json:"throttle_threshold"`
+	ThrottleTh        int64  `json:"throttle_threshold"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
 func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory) *KafkaSource {
+	sinkOffsets := sync.Map{}
 	return &KafkaSource{
-		conf:    conf,
-		factory: factory,
+		conf:        conf,
+		factory:     factory,
+		SinkOffsets: sinkOffsets,
 	}
 }
 
@@ -123,30 +125,46 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	//context for gracefully shutting down the offset reader goroutine
 	ctx, cancelFunc := context.WithCancel(context.Background())
-	doThrottle := false
-	throttleCh := make(chan bool)
-
 	go readOffset(brokerList, kconf.Topic, k.connectionName, consumer, ctx, k.pollingInterval)
+
+	throttle := false
+	srcOff := &sarama.ConsumerMessage{Offset: -1}
 
 	for {
 		select {
-		case signal := <-throttleCh:
-			doThrottle = signal
-		default:
-			if !doThrottle {
-				select {
-				case message := <-k.consumer.Messages():
-					//TODO handle Create failure
-					kafkaMsg := k.factory.Create(message)
+		case message := <-k.consumer.Messages():
+			srcOff = message
+			if !throttle {
+				//TODO handle Create failurex
+				kafkaMsg := k.factory.Create(message)
 
-					if k.hook != nil {
-						//TODO handle PreHook failure
-						k.hook.Pre(kafkaMsg)
+				if k.hook != nil {
+					//TODO handle PreHook failure
+					k.hook.Pre(kafkaMsg)
+				}
+				out <- kafkaMsg
+
+			}
+		default:
+			if skOff, ok := k.SinkOffsets.Load(srcOff.Topic + "." + strconv.Itoa(int(srcOff.Partition))); ok && srcOff.Offset >= 0 {
+				lagSrcSk := srcOff.Offset - skOff.(int64)
+				if lagSrcSk >= 0 {
+					metricName := k.connectionName + "." + srcOff.Topic + "." + strconv.Itoa(int(srcOff.Partition))
+					metrics.Reg.Ingest(metrics.Metric{
+						MetricType:  prometheus.GaugeValue,
+						MetricName:  "lag_src_sk" + "." + metricName,
+						MetricValue: lagSrcSk,
+					})
+
+					if lagSrcSk >= k.conf.ThrottleTh && !throttle {
+						log.Println("throttling the source")
+						throttle = true
 					}
-					log.Println("Sending message", kafkaMsg.GetRawMsg().Offset)
-					out <- kafkaMsg
-				default:
-					continue
+
+					if lagSrcSk < k.conf.ThrottleTh && throttle {
+						log.Println("resuming source")
+						throttle = false
+					}
 				}
 			}
 		}
@@ -190,7 +208,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
-								MetricName:  "lag" + "." + metricName,
+								MetricName:  "lag_producer_consumer" + "." + metricName,
 								MetricValue: pOff - cOff,
 							})
 						}

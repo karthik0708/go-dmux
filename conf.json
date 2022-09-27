@@ -17,7 +17,7 @@
           "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
-          "read_newest": false,
+          "read_newest": true,
           "throttle_threshold": 2
         },
         "pending_acks": 1000000,
@@ -41,7 +41,7 @@
     }
   ],
   "metric_port": 9999,
-  "offset_polling_interval": "5s",
+  "offset_polling_interval": "1s",
   "logging": {
     "type": "file",
     "config": {
