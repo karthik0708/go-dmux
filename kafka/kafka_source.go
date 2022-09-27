@@ -193,6 +193,9 @@ func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
 }
 
 func (k *KafkaSource) SetPollinginterval(interval time.Duration) {
+	if interval <= 0 {
+		interval = 5
+	}
 	k.pollingInterval = interval
 }
 
