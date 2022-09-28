@@ -7,7 +7,7 @@
       "connectionType": "kafka_http",
       "connection": {
         "dmux": {
-          "size": 2,
+          "size": 250,
           "distributor_type": "Hash",
           "batch_size": 1
         },

@@ -156,14 +156,16 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 						MetricValue: lagSrcSk,
 					})
 
-					if lagSrcSk >= k.conf.ThrottleTh && !throttle {
-						log.Println("throttling the source")
-						throttle = true
-					}
+					if k.conf.ThrottleTh > 0 {
+						if lagSrcSk >= k.conf.ThrottleTh && !throttle {
+							log.Println("throttling the source")
+							throttle = true
+						}
 
-					if lagSrcSk < k.conf.ThrottleTh && throttle {
-						log.Println("resuming source")
-						throttle = false
+						if lagSrcSk < k.conf.ThrottleTh && throttle {
+							log.Println("resuming source")
+							throttle = false
+						}
 					}
 				}
 			}
