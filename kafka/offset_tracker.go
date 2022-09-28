@@ -62,11 +62,13 @@ func (k *KafkaOffsetTracker) run() {
 		}
 		msg := kmsg.GetRawMsg()
 
+		//take highest offset at sink
 		finalSkOff := msg.Offset
 		if skOff, ok := k.source.SinkOffsets.Load(msg.Topic + "." + strconv.Itoa(int(msg.Partition))); ok {
 			finalSkOff = int64(math.Max(float64(finalSkOff), float64(skOff.(int64))))
-			k.source.SinkOffsets.Store(msg.Topic+"."+strconv.Itoa(int(msg.Partition)), finalSkOff)
 		}
+
+		k.source.SinkOffsets.Store(msg.Topic+"."+strconv.Itoa(int(msg.Partition)), finalSkOff)
 
 		metricName := "sink_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
 		metrics.Reg.Ingest(metrics.Metric{

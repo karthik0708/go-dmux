@@ -234,10 +234,12 @@ func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
 	return k.consumer.CommitUpto(data.GetRawMsg())
 }
 
+// SetPollinginterval sets the offset polling interval
 func (k *KafkaSource) SetPollinginterval(interval time.Duration) {
 	k.pollingInterval = interval
 }
 
+// SetConnectionName updates the conneciton name
 func (k *KafkaSource) SetConnectionName(name string) {
 	k.connectionName = name
 }
