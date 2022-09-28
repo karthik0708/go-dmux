@@ -61,9 +61,11 @@ type KafkaConf struct {
 
 //GetKafkaSource method is used to get instance of KafkaSource.
 func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory) *KafkaSource {
+	sinkOffsets := sync.Map{}
 	return &KafkaSource{
-		conf:    conf,
-		factory: factory,
+		conf:               conf,
+		factory:            factory,
+		HighestSinkOffsets: sinkOffsets,
 	}
 }
 
