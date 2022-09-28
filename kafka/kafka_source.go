@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -28,16 +29,21 @@ type KafkaMsg interface {
 	IsProcessed() bool
 }
 
+type SinkOffset struct {
+	offset int64
+}
+
 //KafkaSource is Source implementation which reads from Kafka. This implementation
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
 type KafkaSource struct {
-	conf            KafkaConf
-	consumer        *consumergroup.ConsumerGroup
-	hook            KafkaSourceHook
-	factory         KafkaMsgFactory
-	pollingInterval time.Duration
-	connectionName  string
+	conf               KafkaConf
+	consumer           *consumergroup.ConsumerGroup
+	hook               KafkaSourceHook
+	factory            KafkaMsgFactory
+	pollingInterval    time.Duration
+	connectionName     string
+	HighestSinkOffsets sync.Map
 }
 
 //KafkaConf holds configuration options for KafkaSource
@@ -166,7 +172,7 @@ func readOffset(brokerList []string, topic string, connectionName string, consum
 						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
 							metrics.Reg.Ingest(metrics.Metric{
 								MetricType:  prometheus.GaugeValue,
-								MetricName:  "lag" + "." + metricName,
+								MetricName:  "lag_producer_consumer" + "." + metricName,
 								MetricValue: pOff - cOff,
 							})
 						}
@@ -192,6 +198,7 @@ func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
 	return k.consumer.CommitUpto(data.GetRawMsg())
 }
 
+// SetPollinginterval sets the offset polling interval
 func (k *KafkaSource) SetPollinginterval(interval time.Duration) {
 	if interval <= 0 {
 		interval = 5
@@ -199,6 +206,7 @@ func (k *KafkaSource) SetPollinginterval(interval time.Duration) {
 	k.pollingInterval = interval
 }
 
+// SetConnectionName updates the conneciton name
 func (k *KafkaSource) SetConnectionName(name string) {
 	k.connectionName = name
 }

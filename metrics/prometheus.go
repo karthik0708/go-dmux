@@ -37,7 +37,7 @@ func (p *PrometheusConfig) init() {
 	prometheus.MustRegister(p.offsetMetrics)
 }
 
-//Ingest metrics as and when events are received from the channels
+//Ingest metrics as and when events are received
 func (p *PrometheusConfig) ingest(metric Metric) {
 	switch metric.MetricType {
 	case prometheus.GaugeValue:

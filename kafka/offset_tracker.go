@@ -4,6 +4,7 @@ import (
 	"github.com/go-dmux/metrics"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
+	"math"
 	"strconv"
 	"time"
 )
@@ -17,9 +18,9 @@ type OffsetTracker interface {
 //KafkaOffsetTracker is implementation of OffsetTracker to track offsets for
 //KafkaSource, KafkaMessage
 type KafkaOffsetTracker struct {
-	ch     chan KafkaMsg
-	source *KafkaSource
-	size   int
+	ch             chan KafkaMsg
+	source         *KafkaSource
+	size           int
 	connectionName string
 }
 
@@ -44,9 +45,9 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 //GetKafkaOffsetTracker is Global function to get instance of KafkaOffsetTracker
 func GetKafkaOffsetTracker(size int, source *KafkaSource, connectionName string) OffsetTracker {
 	k := &KafkaOffsetTracker{
-		ch:     make(chan KafkaMsg, size),
-		source: source,
-		size:   size,
+		ch:             make(chan KafkaMsg, size),
+		source:         source,
+		size:           size,
 		connectionName: connectionName,
 	}
 	go k.run()
@@ -61,11 +62,20 @@ func (k *KafkaOffsetTracker) run() {
 		}
 		msg := kmsg.GetRawMsg()
 
+		//take highest offset at sink
+		finalSkOff := msg.Offset
+		if skOff, ok := k.source.HighestSinkOffsets.Load(msg.Topic + "." + strconv.Itoa(int(msg.Partition))); ok {
+			finalSkOff = int64(math.Max(float64(finalSkOff), float64(skOff.(int64))))
+		}
+
+		k.source.HighestSinkOffsets.Store(msg.Topic+"."+strconv.Itoa(int(msg.Partition)), finalSkOff)
+
 		metricName := "sink_offset" + "." + k.connectionName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition))
 		metrics.Reg.Ingest(metrics.Metric{
 			prometheus.GaugeValue,
 			metricName,
-			msg.Offset,
+			finalSkOff,
 		})
+
 	}
 }
