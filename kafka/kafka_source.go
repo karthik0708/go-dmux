@@ -38,13 +38,13 @@ type SinkOffset struct {
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
 type KafkaSource struct {
-	conf            KafkaConf
-	consumer        *consumergroup.ConsumerGroup
-	hook            KafkaSourceHook
-	factory         KafkaMsgFactory
-	pollingInterval time.Duration
-	connectionName  string
-	SinkOffsets     sync.Map
+	conf               KafkaConf
+	consumer           *consumergroup.ConsumerGroup
+	hook               KafkaSourceHook
+	factory            KafkaMsgFactory
+	pollingInterval    time.Duration
+	connectionName     string
+	HighestSinkOffsets sync.Map
 }
 
 //KafkaConf holds configuration options for KafkaSource
@@ -65,9 +65,9 @@ type KafkaConf struct {
 func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory) *KafkaSource {
 	sinkOffsets := sync.Map{}
 	return &KafkaSource{
-		conf:        conf,
-		factory:     factory,
-		SinkOffsets: sinkOffsets,
+		conf:               conf,
+		factory:            factory,
+		HighestSinkOffsets: sinkOffsets,
 	}
 }
 
@@ -146,7 +146,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 			}
 		default:
-			if skOff, ok := k.SinkOffsets.Load(srcOff.Topic + "." + strconv.Itoa(int(srcOff.Partition))); ok && srcOff.Offset >= 0 {
+			if skOff, ok := k.HighestSinkOffsets.Load(srcOff.Topic + "." + strconv.Itoa(int(srcOff.Partition))); ok && srcOff.Offset >= 0 {
 				lagSrcSk := srcOff.Offset - skOff.(int64)
 				if lagSrcSk >= 0 {
 					metricName := k.connectionName + "." + srcOff.Topic + "." + strconv.Itoa(int(srcOff.Partition))
