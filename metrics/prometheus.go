@@ -40,7 +40,7 @@ func (p *PrometheusConfig) init() {
 //Ingest metrics as and when events are received
 func (p *PrometheusConfig) ingest(metric Metric) {
 	switch metric.MetricType {
-	case prometheus.GaugeValue:
+	case GAUGE:
 		p.offsetMetrics.WithLabelValues(metric.MetricName).Set(float64(metric.MetricValue))
 	}
 }

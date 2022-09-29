@@ -3,12 +3,12 @@ package connection
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-dmux/utils"
 	"hash/fnv"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/go-dmux/core"
@@ -28,10 +28,8 @@ type KafkaHTTPConnConfig struct {
 
 //KafkaHTTPConn struct to abstract this connections Run
 type KafkaHTTPConn struct {
-	Name            string
-	EnableDebugLog  bool
-	Conf            interface{}
-	PollingInterval time.Duration
+	EnableDebugLog bool
+	Conf           interface{}
 }
 
 func (c *KafkaHTTPConn) getConfiguration() *KafkaHTTPConnConfig {
@@ -52,14 +50,11 @@ func (c *KafkaHTTPConn) Run() {
 	}
 	kafkaMsgFactory := getKafkaHTTPFactory()
 	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory)
-	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src, c.Name)
+	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
 	sk.RegisterHook(hook)
-	sk.SetConnectionName(c.Name)
 	src.RegisterHook(hook)
-	src.SetConnectionName(c.Name)
-	src.SetPollinginterval(c.PollingInterval)
 
 	//hash distribution
 	h := GetKafkaMsgHasher()
@@ -264,13 +259,13 @@ func (k *KafkaMessage) BatchPayload(msgs []interface{}, version int) []byte {
 		} else {
 			partition = int(msg.Msg.Partition)
 			offset := msg.Msg.Offset
-			payload[i] = core.EncodePayload(msg.Msg.Key, offset, msg.GetPayload())
+			payload[i] = utils.EncodePayload(msg.Msg.Key, offset, msg.GetPayload())
 		}
 	}
 	if version == 1 {
-		return core.Encode(payload)
+		return utils.Encode(payload)
 	} else {
-		return core.EncodeV2(partition, payload)
+		return utils.EncodeV2(partition, payload)
 	}
 }
 

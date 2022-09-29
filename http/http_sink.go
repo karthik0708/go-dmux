@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/go-dmux/utils"
 	"io"
 	"io/ioutil"
 	"log"
@@ -20,14 +21,13 @@ type HTTPSink struct {
 	client *http.Client
 	hook   HTTPSinkHook
 	conf   HTTPSinkConf
-	name   string
 }
 
 //HTTPSinkConf  holds config to HTTPSink
 type HTTPSinkConf struct {
 	Endpoint                    string              `json:"endpoint"` //http://destinationHost:port/prefixPath
-	Timeout                     core.Duration       `json:"timeout"`
-	RetryInterval               core.Duration       `json:"retry_interval"`
+	Timeout                     utils.Duration      `json:"timeout"`
+	RetryInterval               utils.Duration      `json:"retry_interval"`
 	Headers                     []map[string]string `json:"headers"`
 	Method                      string              `json:"method"`                    //GET,POST,PUT,DELETE
 	NonRetriableHttpStatusCodes []int               `json:nonRetriableHttpStatusCodes` //this is for handling customized errorCode thrown by sink
@@ -91,10 +91,6 @@ func GetHTTPSink(size int, conf HTTPSinkConf) *HTTPSink {
 
 func (h *HTTPSink) RegisterHook(hook HTTPSinkHook) {
 	h.hook = hook
-}
-
-func (h *HTTPSink) SetConnectionName(name string) {
-	h.name = name
 }
 
 //HTTPMsg is an interface which incoming data should implment for HttpSink to
@@ -275,7 +271,7 @@ func (h *HTTPSink) execute(method, url string, headers map[string]string,
 }
 
 func responseCodeEvaluation(respCode int, nonRetriableHttpStatusCodes []int) (error, bool) {
-	if (respCode < 300) || core.Contains(nonRetriableHttpStatusCodes, respCode) { //2xx or ay http status defined in nonRetriableHttpStatusCodes status implies sucess
+	if (respCode < 300) || utils.Contains(nonRetriableHttpStatusCodes, respCode) { //2xx or ay http status defined in nonRetriableHttpStatusCodes status implies sucess
 		return nil, true
 	}
 	return errors.New(strconv.Itoa(respCode)), false //all other status code mean error

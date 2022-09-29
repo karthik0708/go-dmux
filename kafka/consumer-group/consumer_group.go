@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-dmux/metrics"
-	"github.com/prometheus/client_golang/prometheus"
+	"strconv"
 	"sync"
 	"time"
 
@@ -85,7 +85,7 @@ type ConsumerGroup struct {
 }
 
 // Connects to a consumer group, using Zookeeper for auto-discovery
-func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config, connectionName string, brokerList *[]string) (cg *ConsumerGroup, err error) {
+func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config, brokerList *[]string) (cg *ConsumerGroup, err error) {
 
 	if name == "" {
 		return nil, sarama.ConfigurationError("Empty consumergroup name")
@@ -180,7 +180,7 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	offsetConfig := OffsetManagerConfig{CommitInterval: config.Offsets.CommitInterval}
 	cg.offsetManager = NewZookeeperOffsetManager(cg, &offsetConfig)
 
-	go cg.topicListConsumer(connectionName, topics)
+	go cg.topicListConsumer(name, topics)
 
 	return
 }
@@ -245,8 +245,16 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 	return cg.instance.Registered()
 }
 
-func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) error {
-	cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
+func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, consumerGroupName string) error {
+	isUpdated := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
+	if isUpdated {
+		metricName := "sink_offset" + "." + consumerGroupName + "." + message.Topic + "." + strconv.Itoa(int(message.Partition))
+		metrics.Reg.Ingest(metrics.Metric{
+			MetricType:  metrics.GAUGE,
+			MetricName:  metricName,
+			MetricValue: message.Offset,
+		})
+	}
 	return nil
 }
 
@@ -254,7 +262,7 @@ func (cg *ConsumerGroup) FlushOffsets() error {
 	return cg.offsetManager.Flush()
 }
 
-func (cg *ConsumerGroup) topicListConsumer(connectionName string, topics []string) {
+func (cg *ConsumerGroup) topicListConsumer(name string, topics []string) {
 	for {
 		select {
 		case <-cg.stopper:
@@ -275,7 +283,7 @@ func (cg *ConsumerGroup) topicListConsumer(connectionName string, topics []strin
 
 		for _, topic := range topics {
 			cg.wg.Add(1)
-			go cg.topicConsumer(connectionName, topic, cg.messages, cg.errors, stopper)
+			go cg.topicConsumer(name, topic, cg.messages, cg.errors, stopper)
 		}
 
 		select {
@@ -303,7 +311,7 @@ func (cg *ConsumerGroup) topicListConsumer(connectionName string, topics []strin
 	}
 }
 
-func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
+func (cg *ConsumerGroup) topicConsumer(name string, topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
 	defer cg.wg.Done()
 
 	select {
@@ -347,9 +355,9 @@ func (cg *ConsumerGroup) topicConsumer(connectionName string, topic string, mess
 		//Create PartitionInfo and send it for ingestion through the partition channel
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
 
-		metricName := connectionName + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
+		metricName := name + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
 		metrics.Reg.Ingest(metrics.Metric{
-			MetricType:  prometheus.GaugeValue,
+			MetricType:  metrics.GAUGE,
 			MetricName:  "partition_owned." + metricName,
 			MetricValue: int64(pid.ID),
 		})

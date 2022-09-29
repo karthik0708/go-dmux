@@ -4,11 +4,16 @@ var Reg *Registry
 
 const (
 	defaultMetricPort int = 9999
+	COUNTER           int = 0
+	GAUGE             int = 1
+	SUMMARY           int = 2
+	UNTYPED           int = 3
+	HISTOGRAM         int = 4
 )
 
 //generic metric structure
 type Metric struct {
-	MetricType  interface{}
+	MetricType  int
 	MetricName  string
 	MetricValue int64
 }
