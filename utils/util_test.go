@@ -44,10 +44,10 @@ func TestContains(t *testing.T) {
 	var b bool = false
 	var c bool = true
 
-	if(b != actual1) {
+	if(b!= actual1) {
 		t.Errorf("expected %v  equal %v", b, actual1)
 	}
-	if(c != actual2) {
+	if(c!= actual2) {
 		t.Errorf("expected %v  actual %v",c, actual2)
 	}
 
