@@ -49,7 +49,7 @@ type KafkaConf struct {
 	SASLEnabled       bool       `json:"sasl_enabled"`
 	SASLUsername      string     `json:"username"`
 	SASLPasswordKey   string     `json:"passwordKey"`
-	LagMonitor        LagMonitor `json:"producer_consumer_lag_monitor"`
+	LagMonitor        LagMonitor `json:"lag_monitor"`
 }
 
 type LagMonitor struct {
