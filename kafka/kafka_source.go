@@ -125,7 +125,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 		if k.conf.LagMonitor.PollingInterval.Duration <= 0 {
 			k.conf.LagMonitor.PollingInterval.Duration = 5 * time.Second
 		}
-		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx, k.conf.LagMonitor.PollingInterval.Duration)
+		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx,
+			k.conf.LagMonitor.PollingInterval.Duration)
 	}
 
 	for message := range k.consumer.Messages() {
@@ -139,11 +140,10 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 		if kconf.LagMonitor.Enabled {
 			//ingest sourceOffset
-			metricName := "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition))
 
 			metrics.Ingest(metrics.Metric{
 				Type:  metrics.Offset,
-				Name:  metricName,
+				Name:  "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition)),
 				Value: kafkaMsg.GetRawMsg().Offset,
 			})
 		}
@@ -154,7 +154,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 }
 
 //Ingest producer and consumer offset after a certain interval
-func readProducerConsumerOffset(brokerList []string, topic string, connectionName string, consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
+func readProducerConsumerOffset(brokerList []string, topic string, connectionName string,
+	consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
 
 	if client, err := sarama.NewClient(brokerList, nil); err == nil {
 		for {
@@ -167,7 +168,7 @@ func readProducerConsumerOffset(brokerList []string, topic string, connectionNam
 						cOff := int64(-1)
 
 						//producerOff fetched from client
-						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff > 0 {
+						if producerOff, errInCollection := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); errInCollection == nil && producerOff > 0 {
 							pOff = producerOff
 							metrics.Ingest(metrics.Metric{
 								Type:  metrics.Offset,
@@ -177,7 +178,7 @@ func readProducerConsumerOffset(brokerList []string, topic string, connectionNam
 						}
 
 						//consumerOff feched from consumer
-						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff > 0 {
+						if consumerOff, errInCollection := consumer.GetConsumerOffset(topic, int32(partition)); errInCollection == nil && consumerOff > 0 {
 							cOff = consumerOff
 							metrics.Ingest(metrics.Metric{
 								Type:  metrics.Offset,
@@ -212,6 +213,6 @@ func (k *KafkaSource) Stop() {
 
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
 func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
-	return k.consumer.CommitUpto(data.GetRawMsg(), k.conf.ConsumerGroupName)
+	return k.consumer.CommitUpto(data.GetRawMsg(), k.conf.ConsumerGroupName, k.conf.LagMonitor.Enabled)
 
 }

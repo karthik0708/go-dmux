@@ -245,13 +245,12 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 	return cg.instance.Registered()
 }
 
-func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, consumerGroupName string) error {
+func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, consumerGroupName string, enabled bool) error {
 	isUpdated := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
-	if isUpdated {
-		metricName := "sink_offset" + "." + consumerGroupName + "." + message.Topic + "." + strconv.Itoa(int(message.Partition))
+	if isUpdated && enabled {
 		metrics.Ingest(metrics.Metric{
 			Type:  metrics.Offset,
-			Name:  metricName,
+			Name:  "sink_offset" + "." + consumerGroupName + "." + message.Topic + "." + strconv.Itoa(int(message.Partition)),
 			Value: message.Offset,
 		})
 	}
@@ -351,16 +350,16 @@ func (cg *ConsumerGroup) topicConsumer(name string, topic string, messages chan<
 
 	// Consume all the assigned partitions
 	var wg sync.WaitGroup
-	for _, pid := range myPartitions {
+	metric := metrics.Metric{
+		Type: metrics.Offset,
+	}
+	for i, pid := range myPartitions {
 		//Create PartitionInfo and send it for ingestion through the partition channel
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
+		metric.Name = "partition_owned." + name + "." + topic + "." + strconv.Itoa(i)
+		metric.Value = int64(pid.ID)
+		metrics.Ingest(metric)
 
-		metricName := name + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
-		metrics.Ingest(metrics.Metric{
-			Type:  metrics.Offset,
-			Name:  "partition_owned." + metricName,
-			Value: int64(pid.ID),
-		})
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
 	}
@@ -394,7 +393,8 @@ func (cg *ConsumerGroup) consumePartition(topic string, partition int32, nextOff
 }
 
 // Consumes a partition
-func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messages chan<- *sarama.ConsumerMessage, errors chan<- error, wg *sync.WaitGroup, stopper <-chan struct{}) {
+func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messages chan<- *sarama.ConsumerMessage,
+	errors chan<- error, wg *sync.WaitGroup, stopper <-chan struct{}) {
 	defer wg.Done()
 
 	// Since ProcessingTimeout is the amount of time we'll wait for the final batch
