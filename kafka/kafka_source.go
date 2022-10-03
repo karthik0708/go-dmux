@@ -53,8 +53,8 @@ type KafkaConf struct {
 }
 
 type LagMonitor struct {
-	enabled         bool           `json:"enabled"`
-	pollingInterval utils.Duration `json:"polling_interval"`
+	Enabled         bool           `json:"enabled"`
+	PollingInterval utils.Duration `json:"polling_interval"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
@@ -117,15 +117,15 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	k.consumer = consumer
 
-	if k.conf.LagMonitor.enabled {
+	if k.conf.LagMonitor.Enabled {
 		//context for gracefully shutting down the offset reader goroutine
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		defer cancelFunc()
 		//if polling interval is invalid then set it to default value - 5 seconds
-		if k.conf.LagMonitor.pollingInterval.Duration <= 0 {
-			k.conf.LagMonitor.pollingInterval.Duration = 5 * time.Second
+		if k.conf.LagMonitor.PollingInterval.Duration <= 0 {
+			k.conf.LagMonitor.PollingInterval.Duration = 5 * time.Second
 		}
-		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx, k.conf.LagMonitor.pollingInterval.Duration)
+		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx, k.conf.LagMonitor.PollingInterval.Duration)
 	}
 
 	for message := range k.consumer.Messages() {
@@ -137,7 +137,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			k.hook.Pre(kafkaMsg)
 		}
 
-		if kconf.LagMonitor.enabled {
+		if kconf.LagMonitor.Enabled {
 			//ingest sourceOffset
 			metricName := "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition))
 
