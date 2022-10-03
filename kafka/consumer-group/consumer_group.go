@@ -249,10 +249,10 @@ func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, consumerGro
 	isUpdated := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
 	if isUpdated {
 		metricName := "sink_offset" + "." + consumerGroupName + "." + message.Topic + "." + strconv.Itoa(int(message.Partition))
-		metrics.Reg.Ingest(metrics.Metric{
-			MetricType:  metrics.GAUGE,
-			MetricName:  metricName,
-			MetricValue: message.Offset,
+		metrics.Ingest(metrics.Metric{
+			Type:  metrics.Offset,
+			Name:  metricName,
+			Value: message.Offset,
 		})
 	}
 	return nil
@@ -356,10 +356,10 @@ func (cg *ConsumerGroup) topicConsumer(name string, topic string, messages chan<
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
 
 		metricName := name + "." + topic + "." + cg.instance.ID + "." + time.Now().Format(time.RFC850)
-		metrics.Reg.Ingest(metrics.Metric{
-			MetricType:  metrics.GAUGE,
-			MetricName:  "partition_owned." + metricName,
-			MetricValue: int64(pid.ID),
+		metrics.Ingest(metrics.Metric{
+			Type:  metrics.Offset,
+			Name:  "partition_owned." + metricName,
+			Value: int64(pid.ID),
 		})
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)

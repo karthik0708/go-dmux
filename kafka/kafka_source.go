@@ -53,8 +53,8 @@ type KafkaConf struct {
 }
 
 type LagMonitor struct {
-	Enabled         bool           `json:"enabled"`
-	PollingInterval utils.Duration `json:"polling_interval"`
+	enabled         bool           `json:"enabled"`
+	pollingInterval utils.Duration `json:"polling_interval"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
@@ -117,15 +117,15 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	k.consumer = consumer
 
-	if k.conf.LagMonitor.Enabled {
+	if k.conf.LagMonitor.enabled {
 		//context for gracefully shutting down the offset reader goroutine
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		defer cancelFunc()
 		//if polling interval is invalid then set it to default value - 5 seconds
-		if k.conf.LagMonitor.PollingInterval.Duration <= 0 {
-			k.conf.LagMonitor.PollingInterval.Duration = 5 * time.Second
+		if k.conf.LagMonitor.pollingInterval.Duration <= 0 {
+			k.conf.LagMonitor.pollingInterval.Duration = 5 * time.Second
 		}
-		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx, k.conf.LagMonitor.PollingInterval.Duration)
+		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx, k.conf.LagMonitor.pollingInterval.Duration)
 	}
 
 	for message := range k.consumer.Messages() {
@@ -137,14 +137,16 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			k.hook.Pre(kafkaMsg)
 		}
 
-		//ingest sourceOffset
-		metricName := "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition))
+		if kconf.LagMonitor.enabled {
+			//ingest sourceOffset
+			metricName := "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition))
 
-		metrics.Reg.Ingest(metrics.Metric{
-			MetricType:  metrics.GAUGE,
-			MetricName:  metricName,
-			MetricValue: kafkaMsg.GetRawMsg().Offset,
-		})
+			metrics.Ingest(metrics.Metric{
+				Type:  metrics.Offset,
+				Name:  metricName,
+				Value: kafkaMsg.GetRawMsg().Offset,
+			})
+		}
 
 		out <- kafkaMsg
 	}
@@ -167,28 +169,28 @@ func readProducerConsumerOffset(brokerList []string, topic string, connectionNam
 						//producerOff fetched from client
 						if producerOff, err1 := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); err1 == nil && producerOff > 0 {
 							pOff = producerOff
-							metrics.Reg.Ingest(metrics.Metric{
-								MetricType:  metrics.GAUGE,
-								MetricName:  "producer_offset" + "." + metricName,
-								MetricValue: producerOff - 1,
+							metrics.Ingest(metrics.Metric{
+								Type:  metrics.Offset,
+								Name:  "producer_offset" + "." + metricName,
+								Value: producerOff - 1,
 							})
 						}
 
 						//consumerOff feched from consumer
 						if consumerOff, err1 := consumer.GetConsumerOffset(topic, int32(partition)); err1 == nil && consumerOff > 0 {
 							cOff = consumerOff
-							metrics.Reg.Ingest(metrics.Metric{
-								MetricType:  metrics.GAUGE,
-								MetricName:  "consumer_offset" + "." + metricName,
-								MetricValue: consumerOff - 1,
+							metrics.Ingest(metrics.Metric{
+								Type:  metrics.Offset,
+								Name:  "consumer_offset" + "." + metricName,
+								Value: consumerOff - 1,
 							})
 						}
 
 						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
-							metrics.Reg.Ingest(metrics.Metric{
-								MetricType:  metrics.GAUGE,
-								MetricName:  "lag_producer_consumer" + "." + metricName,
-								MetricValue: pOff - cOff,
+							metrics.Ingest(metrics.Metric{
+								Type:  metrics.Offset,
+								Name:  "lag_producer_consumer" + "." + metricName,
+								Value: pOff - cOff,
 							})
 						}
 					}

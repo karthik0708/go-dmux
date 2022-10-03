@@ -1,32 +1,25 @@
 package metrics
 
-var Reg *Registry
+type MetricType int64
 
 const (
-	defaultMetricPort int = 9999
-	COUNTER           int = 0
-	GAUGE             int = 1
-	SUMMARY           int = 2
-	UNTYPED           int = 3
-	HISTOGRAM         int = 4
+	defaultMetricPort int        = 9999
+	Offset            MetricType = iota
 )
 
 //generic metric structure
 type Metric struct {
-	MetricType  int
-	MetricName  string
-	MetricValue int64
+	Type  MetricType
+	Name  string
+	Value int64
 }
 
-type Registry struct {
-	provider RegistryProvider
-}
-
-// RegistryProvider interface that implements metric registry types
-type RegistryProvider interface {
-	init()
+type Registry interface {
+	start(conf interface{})
 	ingest(metric Metric)
 }
+
+var registry PrometheusRegistry
 
 //Start creates a registry and initializes the metrics based on the registry type and implementation and returns the created registry
 func Start(metricPort int) {
@@ -35,16 +28,14 @@ func Start(metricPort int) {
 		metricPort = defaultMetricPort
 	}
 
-	config := &PrometheusConfig{metricPort: metricPort}
+	config := PrometheusConfig{metricPort: metricPort}
 
-	Reg = &Registry{
-		provider: config,
-	}
-	Reg.provider.init()
+	registry = PrometheusRegistry{}
+	registry.start(config)
 
 }
 
 //Ingest calls the ingest method of the provider which is implementation by a metric registry type and forwards the metric
-func (reg *Registry) Ingest(metric Metric) {
-	reg.provider.ingest(metric)
+func Ingest(metric Metric) {
+	registry.ingest(metric)
 }

@@ -9,38 +9,40 @@ import (
 	"strconv"
 )
 
-type PrometheusConfig struct {
-	//metricPort to which the metrics would be sent
-	metricPort int
-
-	//metric collector
-	offsetMetrics *prometheus.GaugeVec
-}
-
-func (p *PrometheusConfig) init() {
-	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
-	go func(config *PrometheusConfig) {
-		addr := flag.String("listen-address", ":"+strconv.Itoa(config.metricPort), "The address to listen on for HTTP requests.")
-		http.Handle("/metrics", promhttp.Handler())
-		log.Fatal(http.ListenAndServe(*addr, nil))
-	}(p)
-
-	offsetMetrics := prometheus.NewGaugeVec(
+var (
+	// initialize all the metrics here
+	offsetMetrics = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "offset_metrics",
 			Help: "The metric represent all offset related metrics for dmux",
 		}, []string{"key"})
+)
 
-	p.offsetMetrics = offsetMetrics
+type PrometheusConfig struct {
+	//metricPort to which the metrics would be sent
+	metricPort int
+}
+type PrometheusRegistry struct {
+	// stateless
+}
+
+func (p PrometheusRegistry) start(config interface{}) {
+	pConfig := config.(PrometheusConfig)
+	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
+	go func(config PrometheusConfig) {
+		addr := flag.String("listen-address", ":"+strconv.Itoa(config.metricPort), "The address to listen on for HTTP requests.")
+		http.Handle("/metrics", promhttp.Handler())
+		log.Fatal(http.ListenAndServe(*addr, nil))
+	}(pConfig)
 
 	//register collector for offset metrics
-	prometheus.MustRegister(p.offsetMetrics)
+	prometheus.MustRegister(offsetMetrics)
 }
 
 //Ingest metrics as and when events are received
-func (p *PrometheusConfig) ingest(metric Metric) {
-	switch metric.MetricType {
-	case GAUGE:
-		p.offsetMetrics.WithLabelValues(metric.MetricName).Set(float64(metric.MetricValue))
+func (p PrometheusRegistry) ingest(metric Metric) {
+	switch metric.Type {
+	case Offset:
+		offsetMetrics.WithLabelValues(metric.Name).Set(float64(metric.Value))
 	}
 }
