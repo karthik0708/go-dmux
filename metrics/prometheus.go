@@ -27,7 +27,12 @@ type PrometheusRegistry struct {
 }
 
 func (p PrometheusRegistry) start(config interface{}) {
-	pConfig := config.(PrometheusConfig)
+	pConfig, ok := config.(PrometheusConfig)
+	if !ok {
+		log.Println("error in starting metric ingestion - invalid config")
+		return
+	}
+
 	//The metrics can be fetched by a Get request from the http://localhost:9999/metrics end point
 	go func(config PrometheusConfig) {
 		addr := flag.String("listen-address", ":"+strconv.Itoa(config.metricPort), "The address to listen on for HTTP requests.")
