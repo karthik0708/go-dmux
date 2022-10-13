@@ -2,10 +2,8 @@ package kafka
 
 import (
 	"context"
-	"github.com/go-dmux/metrics"
-	"github.com/go-dmux/utils"
+	"github.com/go-dmux/offset_monitor"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
@@ -32,36 +30,32 @@ type KafkaMsg interface {
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
 type KafkaSource struct {
-	conf     KafkaConf
-	consumer *consumergroup.ConsumerGroup
-	hook     KafkaSourceHook
-	factory  KafkaMsgFactory
+	conf       KafkaConf
+	consumer   *consumergroup.ConsumerGroup
+	hook       KafkaSourceHook
+	factory    KafkaMsgFactory
+	offMonitor offset_monitor.OffMonitor
 }
 
 //KafkaConf holds configuration options for KafkaSource
 type KafkaConf struct {
-	ConsumerGroupName string     `json:"name"`
-	ZkPath            string     `json:"zk_path"`
-	Topic             string     `json:"topic"`
-	ForceRestart      bool       `json:"force_restart"`
-	ReadNewest        bool       `json:"read_newest"`
-	KafkaVersion      int        `json:"kafka_version_major"`
-	SASLEnabled       bool       `json:"sasl_enabled"`
-	SASLUsername      string     `json:"username"`
-	SASLPasswordKey   string     `json:"passwordKey"`
-	LagMonitor        LagMonitor `json:"lag_monitor"`
-}
-
-type LagMonitor struct {
-	Enabled         bool           `json:"enabled"`
-	PollingInterval utils.Duration `json:"polling_interval"`
+	ConsumerGroupName string `json:"name"`
+	ZkPath            string `json:"zk_path"`
+	Topic             string `json:"topic"`
+	ForceRestart      bool   `json:"force_restart"`
+	ReadNewest        bool   `json:"read_newest"`
+	KafkaVersion      int    `json:"kafka_version_major"`
+	SASLEnabled       bool   `json:"sasl_enabled"`
+	SASLUsername      string `json:"username"`
+	SASLPasswordKey   string `json:"passwordKey"`
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
-func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory) *KafkaSource {
+func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory, offMonitor offset_monitor.OffMonitor) *KafkaSource {
 	return &KafkaSource{
-		conf:    conf,
-		factory: factory,
+		conf:       conf,
+		factory:    factory,
+		offMonitor: offMonitor,
 	}
 }
 
@@ -117,16 +111,12 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	k.consumer = consumer
 
-	if k.conf.LagMonitor.Enabled {
+	if k.offMonitor.ProducerConsumerMonitorEnabled {
 		//context for gracefully shutting down the offset reader goroutine
 		ctx, cancelFunc := context.WithCancel(context.Background())
 		defer cancelFunc()
-		//if polling interval is invalid then set it to default value - 5 seconds
-		if k.conf.LagMonitor.PollingInterval.Duration <= 0 {
-			k.conf.LagMonitor.PollingInterval.Duration = 5 * time.Second
-		}
-		go readProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx,
-			k.conf.LagMonitor.PollingInterval.Duration)
+
+		go k.offMonitor.MonitorProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
 	}
 
 	for message := range k.consumer.Messages() {
@@ -138,69 +128,9 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			k.hook.Pre(kafkaMsg)
 		}
 
-		if kconf.LagMonitor.Enabled {
-			//ingest sourceOffset
-
-			metrics.Ingest(metrics.Metric{
-				Type:  metrics.Offset,
-				Name:  "source_offset" + "." + k.conf.ConsumerGroupName + "." + k.conf.Topic + "." + strconv.Itoa(int(kafkaMsg.GetRawMsg().Partition)),
-				Value: kafkaMsg.GetRawMsg().Offset,
-			})
-		}
-
 		out <- kafkaMsg
 	}
 
-}
-
-//Ingest producer and consumer offset after a certain interval
-func readProducerConsumerOffset(brokerList []string, topic string, connectionName string,
-	consumer *consumergroup.ConsumerGroup, ctx context.Context, pollingInterval time.Duration) {
-
-	if client, err := sarama.NewClient(brokerList, nil); err == nil {
-		for {
-			select {
-			case <-time.After(pollingInterval):
-				if partitions, err := client.Partitions(topic); err == nil {
-					for partition := range partitions {
-						metricName := connectionName + "." + topic + "." + strconv.Itoa(partition)
-						pOff := int64(-1)
-						cOff := int64(-1)
-
-						//producerOff fetched from client
-						if producerOff, errInCollection := client.GetOffset(topic, int32(partition), sarama.OffsetNewest); errInCollection == nil && producerOff > 0 {
-							pOff = producerOff
-							metrics.Ingest(metrics.Metric{
-								Type:  metrics.Offset,
-								Name:  "producer_offset" + "." + metricName,
-								Value: producerOff - 1,
-							})
-						}
-
-						//consumerOff feched from consumer
-						if consumerOff, errInCollection := consumer.GetConsumerOffset(topic, int32(partition)); errInCollection == nil && consumerOff > 0 {
-							cOff = consumerOff
-							metrics.Ingest(metrics.Metric{
-								Type:  metrics.Offset,
-								Name:  "consumer_offset" + "." + metricName,
-								Value: consumerOff - 1,
-							})
-						}
-
-						if pOff >= 0 && cOff >= 0 && (pOff-cOff >= 0) {
-							metrics.Ingest(metrics.Metric{
-								Type:  metrics.Offset,
-								Name:  "lag_producer_consumer" + "." + metricName,
-								Value: pOff - cOff,
-							})
-						}
-					}
-				}
-			case <-ctx.Done():
-				return
-			}
-		}
-	}
 }
 
 //Stop method implements Source interface stop method, to Stop the KafkaConsumer
@@ -212,7 +142,7 @@ func (k *KafkaSource) Stop() {
 }
 
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
-func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
-	return k.consumer.CommitUpto(data.GetRawMsg(), k.conf.ConsumerGroupName, k.conf.LagMonitor.Enabled)
+func (k *KafkaSource) CommitOffsets(data KafkaMsg) (bool, error) {
+	return k.consumer.CommitUpto(data.GetRawMsg())
 
 }

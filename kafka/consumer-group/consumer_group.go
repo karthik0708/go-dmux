@@ -245,16 +245,9 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 	return cg.instance.Registered()
 }
 
-func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage, consumerGroupName string, enabled bool) error {
+func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) (bool, error) {
 	isUpdated := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
-	if isUpdated && enabled {
-		metrics.Ingest(metrics.Metric{
-			Type:  metrics.Offset,
-			Name:  "sink_offset" + "." + consumerGroupName + "." + message.Topic + "." + strconv.Itoa(int(message.Partition)),
-			Value: message.Offset,
-		})
-	}
-	return nil
+	return isUpdated, nil
 }
 
 func (cg *ConsumerGroup) FlushOffsets() error {

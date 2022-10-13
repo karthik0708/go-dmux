@@ -3,7 +3,7 @@ package connection
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-dmux/utils"
+	"github.com/go-dmux/offset_monitor"
 	"hash/fnv"
 	"log"
 	"os"
@@ -20,10 +20,11 @@ import (
 
 //KafkaHTTPConnConfig holds config to connect KafkaSource to http_sink
 type KafkaHTTPConnConfig struct {
-	Dmux        core.DmuxConf     `json:"dmux"`
-	Source      source.KafkaConf  `json:"source"`
-	Sink        sink.HTTPSinkConf `json:"sink"`
-	PendingAcks int               `json:"pending_acks"`
+	Dmux        core.DmuxConf             `json:"dmux"`
+	Source      source.KafkaConf          `json:"source"`
+	Sink        sink.HTTPSinkConf         `json:"sink"`
+	PendingAcks int                       `json:"pending_acks"`
+	OffMonitor  offset_monitor.OffMonitor `json:"offset_monitor"`
 }
 
 //KafkaHTTPConn struct to abstract this connections Run
@@ -49,7 +50,7 @@ func (c *KafkaHTTPConn) Run() {
 		sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 	}
 	kafkaMsgFactory := getKafkaHTTPFactory()
-	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory)
+	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, conf.OffMonitor)
 	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
@@ -259,13 +260,13 @@ func (k *KafkaMessage) BatchPayload(msgs []interface{}, version int) []byte {
 		} else {
 			partition = int(msg.Msg.Partition)
 			offset := msg.Msg.Offset
-			payload[i] = utils.EncodePayload(msg.Msg.Key, offset, msg.GetPayload())
+			payload[i] = core.EncodePayload(msg.Msg.Key, offset, msg.GetPayload())
 		}
 	}
 	if version == 1 {
-		return utils.Encode(payload)
+		return core.Encode(payload)
 	} else {
-		return utils.EncodeV2(partition, payload)
+		return core.EncodeV2(partition, payload)
 	}
 }
 

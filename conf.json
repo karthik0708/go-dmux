@@ -17,11 +17,7 @@
           "topic": "sample-topic",
           "kafka_version_major": 2,
           "force_restart": true,
-          "read_newest": true,
-          "lag_monitor": {
-            "enabled": true,
-            "polling_interval": "5s"
-          }
+          "read_newest": true
         },
         "pending_acks": 1000000,
         "sink": {
@@ -39,6 +35,11 @@
             }
           ],
           "method": "POST"
+        },
+        "offset_monitor": {
+          "source_sink_monitor_enabled": true,
+          "producer_consumer_monitor_enabled": true,
+          "offset_polling_interval": "5s"
         }
       }
     }
