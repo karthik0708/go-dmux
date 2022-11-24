@@ -46,7 +46,7 @@ func (c *KafkaFoxtrotConn) Run() {
 		sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 	}
 	kafkaMsgFactory := getKafkaFoxtrotFactory()
-	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, conf.OffMonitor)
+	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, conf.OffsetMonitor)
 	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)

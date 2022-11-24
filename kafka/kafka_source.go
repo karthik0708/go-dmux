@@ -111,16 +111,14 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 
 	k.consumer = consumer
 
-	if k.offMonitor.ProducerConsumerMonitorEnabled {
-		//context for gracefully shutting down the offset reader goroutine
-		ctx, cancelFunc := context.WithCancel(context.Background())
-		defer cancelFunc()
+	//context for gracefully shutting down the producerConsumer offset reader goroutine
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
 
-		go k.offMonitor.MonitorProducerConsumerOffset(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
-	}
+	k.offMonitor.StartProducerConsumerMonitor(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
 
 	for message := range k.consumer.Messages() {
-		//TODO handle Create failurex
+		//TODO handle Create failure
 		kafkaMsg := k.factory.Create(message)
 
 		if k.hook != nil {

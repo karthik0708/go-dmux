@@ -1,9 +1,7 @@
 package kafka
 
 import (
-	"github.com/go-dmux/metrics"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -26,15 +24,8 @@ func (k *KafkaOffsetTracker) TrackMe(kmsg KafkaMsg) {
 	if len(k.ch) == k.size {
 		log.Printf("warning: pending_acks threshold %d reached, please increase pending_acks size", k.size)
 	}
-	if k.source.offMonitor.SourceSinkMonitorEnabled {
-		//ingest sourceOffset
-		msg := kmsg.GetRawMsg()
-		metrics.Ingest(metrics.Metric{
-			Type:  metrics.Offset,
-			Name:  "source_offset" + "." + k.source.conf.ConsumerGroupName + "." + k.source.conf.Topic + "." + strconv.Itoa(int(msg.Partition)),
-			Value: msg.Offset,
-		})
-	}
+
+	k.source.offMonitor.IngestSrcSkMetric("source_offset"+"."+k.source.conf.ConsumerGroupName, kmsg.GetRawMsg())
 	k.ch <- kmsg
 }
 
@@ -56,13 +47,8 @@ func (k *KafkaOffsetTracker) run() {
 			time.Sleep(100 * time.Microsecond)
 		}
 
-		if isUpdated, err := k.source.CommitOffsets(kmsg); isUpdated && err == nil && k.source.offMonitor.SourceSinkMonitorEnabled {
-			msg := kmsg.GetRawMsg()
-			metrics.Ingest(metrics.Metric{
-				Type:  metrics.Offset,
-				Name:  "sink_offset" + "." + k.source.conf.ConsumerGroupName + "." + msg.Topic + "." + strconv.Itoa(int(msg.Partition)),
-				Value: msg.Offset,
-			})
+		if isUpdated, err := k.source.CommitOffsets(kmsg); isUpdated && err == nil {
+			k.source.offMonitor.IngestSrcSkMetric("sink_offset"+"."+k.source.conf.ConsumerGroupName, kmsg.GetRawMsg())
 		}
 	}
 }

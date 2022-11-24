@@ -20,11 +20,11 @@ import (
 
 //KafkaHTTPConnConfig holds config to connect KafkaSource to http_sink
 type KafkaHTTPConnConfig struct {
-	Dmux        core.DmuxConf             `json:"dmux"`
-	Source      source.KafkaConf          `json:"source"`
-	Sink        sink.HTTPSinkConf         `json:"sink"`
-	PendingAcks int                       `json:"pending_acks"`
-	OffMonitor  offset_monitor.OffMonitor `json:"offset_monitor"`
+	Dmux          core.DmuxConf             `json:"dmux"`
+	Source        source.KafkaConf          `json:"source"`
+	Sink          sink.HTTPSinkConf         `json:"sink"`
+	PendingAcks   int                       `json:"pending_acks"`
+	OffsetMonitor offset_monitor.OffMonitor `json:"offset_monitor"`
 }
 
 //KafkaHTTPConn struct to abstract this connections Run
@@ -50,7 +50,7 @@ func (c *KafkaHTTPConn) Run() {
 		sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 	}
 	kafkaMsgFactory := getKafkaHTTPFactory()
-	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, conf.OffMonitor)
+	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, conf.OffsetMonitor)
 	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)

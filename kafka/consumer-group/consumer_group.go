@@ -527,8 +527,8 @@ partitionConsumerLoop:
 //GetConsumerOffset fetches the highest offset for a partition
 func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) (int64, error) {
 	mark := c.consumer.HighWaterMarks()
-	if partitions, ok := mark[topic]; ok {
-		if offset, ok1 := partitions[partition]; ok1 {
+	if partitions, partitionOk := mark[topic]; partitionOk {
+		if offset, offsetOk := partitions[partition]; offsetOk {
 			return offset, nil
 		}
 	}
