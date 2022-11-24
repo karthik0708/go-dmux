@@ -102,9 +102,8 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	//get topics
 	kafkaTopics := []string{kconf.Topic}
 
-	var brokerList []string
 	// create consumer
-	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config, &brokerList)
+	consumer, err := consumergroup.JoinConsumerGroup(kconf.ConsumerGroupName, kafkaTopics, zookeeperNodes, config)
 	if err != nil {
 		panic(err)
 	}
@@ -115,7 +114,7 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	defer cancelFunc()
 
-	k.offMonitor.StartProducerConsumerMonitor(brokerList, kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
+	k.offMonitor.StartProducerConsumerMonitor(consumer.GetBrokerList(), kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
 
 	for message := range k.consumer.Messages() {
 		//TODO handle Create failure

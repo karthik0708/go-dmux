@@ -82,10 +82,12 @@ type ConsumerGroup struct {
 	consumers kazoo.ConsumergroupInstanceList
 
 	offsetManager OffsetManager
+
+	brokerList []string
 }
 
 // Connects to a consumer group, using Zookeeper for auto-discovery
-func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config, brokerList *[]string) (cg *ConsumerGroup, err error) {
+func JoinConsumerGroup(name string, topics []string, zookeeper []string, config *Config) (cg *ConsumerGroup, err error) {
 
 	if name == "" {
 		return nil, sarama.ConfigurationError("Empty consumergroup name")
@@ -118,8 +120,6 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	if err != nil {
 		kz.Close()
 		return
-	} else {
-		*brokerList = brokers
 	}
 
 	group := kz.Consumergroup(name)
@@ -151,6 +151,8 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 		messages: make(chan *sarama.ConsumerMessage, config.ChannelBufferSize),
 		errors:   make(chan error, config.ChannelBufferSize),
 		stopper:  make(chan struct{}),
+
+		brokerList: brokers,
 	}
 
 	// Register consumer group
@@ -533,4 +535,8 @@ func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) (int64,
 		}
 	}
 	return -1, errors.New("could not get offset")
+}
+
+func (c *ConsumerGroup) GetBrokerList() []string {
+	return c.brokerList
 }
