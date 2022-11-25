@@ -3,11 +3,13 @@ package consumergroup
 import (
 	"errors"
 	"fmt"
+	"github.com/go-dmux/metrics"
+	"strconv"
 	"sync"
 	"time"
 
-    "github.com/go-dmux/kafka/kazoo-go"
 	"github.com/Shopify/sarama"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 var (
@@ -80,6 +82,8 @@ type ConsumerGroup struct {
 	consumers kazoo.ConsumergroupInstanceList
 
 	offsetManager OffsetManager
+
+	brokerList []string
 }
 
 // Connects to a consumer group, using Zookeeper for auto-discovery
@@ -147,6 +151,8 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 		messages: make(chan *sarama.ConsumerMessage, config.ChannelBufferSize),
 		errors:   make(chan error, config.ChannelBufferSize),
 		stopper:  make(chan struct{}),
+
+		brokerList: brokers,
 	}
 
 	// Register consumer group
@@ -176,7 +182,7 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	offsetConfig := OffsetManagerConfig{CommitInterval: config.Offsets.CommitInterval}
 	cg.offsetManager = NewZookeeperOffsetManager(cg, &offsetConfig)
 
-	go cg.topicListConsumer(topics)
+	go cg.topicListConsumer(name, topics)
 
 	return
 }
@@ -241,16 +247,16 @@ func (cg *ConsumerGroup) InstanceRegistered() (bool, error) {
 	return cg.instance.Registered()
 }
 
-func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) error {
-	cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
-	return nil
+func (cg *ConsumerGroup) CommitUpto(message *sarama.ConsumerMessage) (bool, error) {
+	isUpdated := cg.offsetManager.MarkAsProcessed(message.Topic, message.Partition, message.Offset)
+	return isUpdated, nil
 }
 
 func (cg *ConsumerGroup) FlushOffsets() error {
 	return cg.offsetManager.Flush()
 }
 
-func (cg *ConsumerGroup) topicListConsumer(topics []string) {
+func (cg *ConsumerGroup) topicListConsumer(name string, topics []string) {
 	for {
 		select {
 		case <-cg.stopper:
@@ -271,7 +277,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string) {
 
 		for _, topic := range topics {
 			cg.wg.Add(1)
-			go cg.topicConsumer(topic, cg.messages, cg.errors, stopper)
+			go cg.topicConsumer(name, topic, cg.messages, cg.errors, stopper)
 		}
 
 		select {
@@ -299,7 +305,7 @@ func (cg *ConsumerGroup) topicListConsumer(topics []string) {
 	}
 }
 
-func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
+func (cg *ConsumerGroup) topicConsumer(name string, topic string, messages chan<- *sarama.ConsumerMessage, errors chan<- error, stopper <-chan struct{}) {
 	defer cg.wg.Done()
 
 	select {
@@ -339,7 +345,15 @@ func (cg *ConsumerGroup) topicConsumer(topic string, messages chan<- *sarama.Con
 
 	// Consume all the assigned partitions
 	var wg sync.WaitGroup
+	metric := metrics.Metric{
+		Type: metrics.Offset,
+	}
 	for _, pid := range myPartitions {
+		//Create PartitionInfo and send it for ingestion through the partition channel
+		//In case of re-balancing this function will be triggered again and the latest information will be sent
+		metric.Name = "partition_owned." + name + "." + topic + "." + strconv.Itoa(int(pid.ID))
+		metric.Value = int64(1)
+		metrics.Ingest(metric)
 
 		wg.Add(1)
 		go cg.partitionConsumer(topic, pid.ID, messages, errors, &wg, stopper)
@@ -509,4 +523,19 @@ partitionConsumerLoop:
 	if err := cg.offsetManager.FinalizePartition(topic, partition, lastOffset, cg.config.Offsets.ProcessingTimeout); err != nil {
 		cg.Logf("%s/%d :: %s\n", topic, partition, err)
 	}
+}
+
+//GetConsumerOffset fetches the highest offset for a partition
+func (c *ConsumerGroup) GetConsumerOffset(topic string, partition int32) (int64, error) {
+	mark := c.consumer.HighWaterMarks()
+	if partitions, partitionOk := mark[topic]; partitionOk {
+		if offset, offsetOk := partitions[partition]; offsetOk {
+			return offset, nil
+		}
+	}
+	return -1, errors.New("could not get offset")
+}
+
+func (c *ConsumerGroup) GetBrokerList() []string {
+	return c.brokerList
 }

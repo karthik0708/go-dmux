@@ -1,12 +1,14 @@
 package kafka
 
 import (
+	"context"
+	"github.com/go-dmux/offset_monitor"
+	"os"
 	"time"
-    "os"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
 	"github.com/go-dmux/kafka/consumer-group"
+	"github.com/go-dmux/kafka/kazoo-go"
 )
 
 //KafkaSourceHook to track messages coming out of the source in order
@@ -28,10 +30,11 @@ type KafkaMsg interface {
 //uses sarama lib and wvanbergen implementation of HA Kafka Consumer using
 //zookeeper
 type KafkaSource struct {
-	conf     KafkaConf
-	consumer *consumergroup.ConsumerGroup
-	hook     KafkaSourceHook
-	factory  KafkaMsgFactory
+	conf       KafkaConf
+	consumer   *consumergroup.ConsumerGroup
+	hook       KafkaSourceHook
+	factory    KafkaMsgFactory
+	offMonitor offset_monitor.OffMonitor
 }
 
 //KafkaConf holds configuration options for KafkaSource
@@ -48,10 +51,11 @@ type KafkaConf struct {
 }
 
 //GetKafkaSource method is used to get instance of KafkaSource.
-func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory) *KafkaSource {
+func GetKafkaSource(conf KafkaConf, factory KafkaMsgFactory, offMonitor offset_monitor.OffMonitor) *KafkaSource {
 	return &KafkaSource{
-		conf:    conf,
-		factory: factory,
+		conf:       conf,
+		factory:    factory,
+		offMonitor: offMonitor,
 	}
 }
 
@@ -83,11 +87,11 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	}
 
 	if kconf.SASLEnabled {
-    		//sarama config plain by default
-    		config.Net.SASL.User = kconf.SASLUsername
-    		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
-    		config.Net.SASL.Enable = true
-    	}
+		//sarama config plain by default
+		config.Net.SASL.User = kconf.SASLUsername
+		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
+		config.Net.SASL.Enable = true
+	}
 
 	config.Offsets.ProcessingTimeout = 10 * time.Second
 
@@ -105,6 +109,13 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	}
 
 	k.consumer = consumer
+
+	//context for gracefully shutting down the producerConsumer offset reader goroutine
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
+
+	k.offMonitor.StartProducerConsumerMonitor(consumer.GetBrokerList(), kconf.Topic, k.conf.ConsumerGroupName, consumer, ctx)
+
 	for message := range k.consumer.Messages() {
 		//TODO handle Create failure
 		kafkaMsg := k.factory.Create(message)
@@ -113,8 +124,10 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 			//TODO handle PreHook failure
 			k.hook.Pre(kafkaMsg)
 		}
+
 		out <- kafkaMsg
 	}
+
 }
 
 //Stop method implements Source interface stop method, to Stop the KafkaConsumer
@@ -126,6 +139,6 @@ func (k *KafkaSource) Stop() {
 }
 
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
-func (k *KafkaSource) CommitOffsets(data KafkaMsg) error {
+func (k *KafkaSource) CommitOffsets(data KafkaMsg) (bool, error) {
 	return k.consumer.CommitUpto(data.GetRawMsg())
 }

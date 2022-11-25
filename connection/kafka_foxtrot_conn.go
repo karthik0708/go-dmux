@@ -2,6 +2,7 @@ package connection
 
 import (
 	"encoding/json"
+	"github.com/go-dmux/offset_monitor"
 	"log"
 	"os"
 	"strconv"
@@ -46,7 +47,8 @@ func (c *KafkaFoxtrotConn) Run() {
 		sarama.Logger = log.New(os.Stdout, "[Sarama] ", log.LstdFlags)
 	}
 	kafkaMsgFactory := getKafkaFoxtrotFactory()
-	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory)
+	offMonitor := offset_monitor.GetOffMonitor(conf.OffsetMonitor)
+	src := source.GetKafkaSource(conf.Source, kafkaMsgFactory, offMonitor)
 	offsetTracker := source.GetKafkaOffsetTracker(conf.PendingAcks, src)
 	hook := GetKafkaHook(offsetTracker, c.EnableDebugLog)
 	sk := sink.GetHTTPSink(conf.Dmux.Size, conf.Sink)
