@@ -348,11 +348,11 @@ func (cg *ConsumerGroup) topicConsumer(name string, topic string, messages chan<
 	metric := metrics.Metric{
 		Type: metrics.Offset,
 	}
-	for i, pid := range myPartitions {
+	for _, pid := range myPartitions {
 		//Create PartitionInfo and send it for ingestion through the partition channel
 		//In case of re-balancing this function will be triggered again and the latest information will be sent
-		metric.Name = "partition_owned." + name + "." + topic + "." + strconv.Itoa(i)
-		metric.Value = int64(pid.ID)
+		metric.Name = "partition_owned." + name + "." + topic + "." + strconv.Itoa(int(pid.ID))
+		metric.Value = int64(1)
 		metrics.Ingest(metric)
 
 		wg.Add(1)
@@ -388,8 +388,7 @@ func (cg *ConsumerGroup) consumePartition(topic string, partition int32, nextOff
 }
 
 // Consumes a partition
-func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messages chan<- *sarama.ConsumerMessage,
-	errors chan<- error, wg *sync.WaitGroup, stopper <-chan struct{}) {
+func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messages chan<- *sarama.ConsumerMessage, errors chan<- error, wg *sync.WaitGroup, stopper <-chan struct{}) {
 	defer wg.Done()
 
 	// Since ProcessingTimeout is the amount of time we'll wait for the final batch

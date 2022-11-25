@@ -141,5 +141,4 @@ func (k *KafkaSource) Stop() {
 //CommitOffsets enables cliento explicity commit the Offset that is processed.
 func (k *KafkaSource) CommitOffsets(data KafkaMsg) (bool, error) {
 	return k.consumer.CommitUpto(data.GetRawMsg())
-
 }
