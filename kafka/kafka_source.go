@@ -1,12 +1,12 @@
 package kafka
 
 import (
+	"os"
 	"time"
-    "os"
 
 	"github.com/Shopify/sarama"
-	"github.com/go-dmux/kafka/kazoo-go"
-	"github.com/go-dmux/kafka/consumer-group"
+	"github.com/flipkart-incubator/go-dmux/kafka/consumer-group"
+	"github.com/flipkart-incubator/go-dmux/kafka/kazoo-go"
 )
 
 //KafkaSourceHook to track messages coming out of the source in order
@@ -83,11 +83,11 @@ func (k *KafkaSource) Generate(out chan<- interface{}) {
 	}
 
 	if kconf.SASLEnabled {
-    		//sarama config plain by default
-    		config.Net.SASL.User = kconf.SASLUsername
-    		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
-    		config.Net.SASL.Enable = true
-    	}
+		//sarama config plain by default
+		config.Net.SASL.User = kconf.SASLUsername
+		config.Net.SASL.Password = os.Getenv(kconf.SASLPasswordKey)
+		config.Net.SASL.Enable = true
+	}
 
 	config.Offsets.ProcessingTimeout = 10 * time.Second
 
